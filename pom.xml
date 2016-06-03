@@ -35,6 +35,7 @@
 
     <modules>
         <module>server-status-monitor-agent</module>
+        <module>deployment-verifier</module>
     </modules>
 
     <dependencyManagement>
