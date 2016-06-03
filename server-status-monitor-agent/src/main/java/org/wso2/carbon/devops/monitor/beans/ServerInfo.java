@@ -24,13 +24,13 @@ import java.util.List;
  */
 public class ServerInfo {
 
-    private List<Patch> patchInfo;
+    private Patch[] patchInfo;
 
-    public List<Patch> getPatchInfo() {
+    public Patch[] getPatchInfo() {
         return patchInfo;
     }
 
-    public void setPatchInfo(List<Patch> patchInfo) {
+    public void setPatchInfo(Patch[] patchInfo) {
         this.patchInfo = patchInfo;
     }
 

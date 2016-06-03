@@ -28,8 +28,6 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An axis2 service that returns the Carbon server info
@@ -48,7 +46,7 @@ public class ServerStatusReporter {
         ServerInfo serverInfo = new ServerInfo();
 
         //1 get patch info
-        List<Patch> patches = getPatchInfo();
+        Patch[] patches = getPatchInfo();
         serverInfo.setPatchInfo(patches);
 
         //2 get dropins info
@@ -57,16 +55,17 @@ public class ServerStatusReporter {
         return serverInfo;
     }
 
-    private List<Patch> getPatchInfo() {
+    private Patch[] getPatchInfo() {
         File patchPath = getPath(System.getProperty("carbon.home"), "repository", "components", "patches");
         File[] patchFiles = patchPath.listFiles();
         if (patchFiles == null) {
-            return new ArrayList<>();
+            return new Patch[0];
         }
 
         //iterate patches
-        List<Patch> patches = new ArrayList<>();
-        for (File patchFile : patchFiles) {
+        Patch[] patches = new Patch[patchFiles.length]; //todo infer the length with skipped urls
+        for (int i = 0; i < patchFiles.length; i++) {
+            File patchFile = patchFiles[i];
             if ("patch0000".equals(patchFile.getName()) || !patchFile.getName().startsWith("patch")) {
                 continue;
             }
@@ -76,19 +75,20 @@ public class ServerStatusReporter {
 
             //iterate bundles inside patches
             File[] bundleFiles = patchFile.listFiles();
-            List<Bundle> bundles = new ArrayList<>();
             if (bundleFiles == null) {
                 continue;
             }
-            for (File bundleFile : bundleFiles) {
+            Bundle[] bundles = new Bundle[bundleFiles.length];
+            for (int j = 0; j < bundleFiles.length; j++) {
+                File bundleFile = bundleFiles[j];
                 Bundle bundle = new Bundle();
                 bundle.setFileName(bundleFile.getName());
                 bundle.setMd5sum(md5sum(bundleFile));
-                bundles.add(bundle);
+                bundles[j] = bundle;
             }
             patch.setBundles(bundles);
 
-            patches.add(patch);
+            patches[i] = patch;
         }
 
         return patches;

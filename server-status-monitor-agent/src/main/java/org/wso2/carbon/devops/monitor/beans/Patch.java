@@ -17,14 +17,12 @@
 */
 package org.wso2.carbon.devops.monitor.beans;
 
-import java.util.List;
-
 /**
  * Patch details
  */
 public class Patch {
     private String patchId;
-    private List<Bundle> bundles;
+    private Bundle[] bundles;
 
     public String getPatchId() {
         return patchId;
@@ -34,11 +32,11 @@ public class Patch {
         this.patchId = patchId;
     }
 
-    public List<Bundle> getBundles() {
+    public Bundle[] getBundles() {
         return bundles;
     }
 
-    public void setBundles(List<Bundle> bundles) {
+    public void setBundles(Bundle[] bundles) {
         this.bundles = bundles;
     }
 }
