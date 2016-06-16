@@ -18,6 +18,11 @@
             <artifactId>jasperreports</artifactId>
             <version>6.2.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.api.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -37,6 +42,13 @@
                                         <bindingFiles>
                                            <bindingFile>${basedir}/src/main/resources/binding.xml</bindingFile>
                                         </bindingFiles>
+                                        <extraargs>
+                                            <extraarg>-client</extraarg>
+                                            <extraarg>-p</extraarg>
+                                            <extraarg>
+                                                http://monitor.devops.carbon.wso2.org=org.wso2.carbon.devops.monitor.client
+                                            </extraarg>
+                                        </extraargs>
                                     </wsdlOption>
                                 </wsdlOptions>
                             </configuration>

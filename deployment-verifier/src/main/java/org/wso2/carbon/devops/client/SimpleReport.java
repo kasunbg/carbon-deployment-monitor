@@ -64,7 +64,7 @@ public class SimpleReport {
 
     }
 
-    public static DefaultTableModel TableModelData() {
+    private static DefaultTableModel TableModelData() {
         String[] columnNames = { "Id", "Name", "Department", "Email" };
         String[][] data = {
                 { "111", "G Conger", " Orthopaedic", "jim@wheremail.com" },

@@ -23,7 +23,6 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.view.JasperViewer;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -37,8 +36,7 @@ import java.util.Map;
 
 public class JasperReportGenerator {
 
-
-    public static void generateReport(InputStream jasperTemplateInputStream, Path destFile, JRDataSource dataSource)
+    public static JasperPrint generateReport(InputStream jasperTemplateInputStream, Path destFile, JRDataSource dataSource)
             throws IOException, JRException {
 
         Files.createDirectories(destFile.getParent());
@@ -49,15 +47,16 @@ public class JasperReportGenerator {
         params.put("ReportTitle", "WSO2 Carbon product deployment information");
 
         JasperCompileManager.compileReportToStream(jasperTemplateInputStream, compileOut);
+//        JasperCompileManager.compileReport(jasperTemplateInputStream)
         JasperPrint jasperPrint = JasperFillManager
                 .fillReport(destFile.toAbsolutePath().toString(), params, dataSource);
 
         JasperExportManager.exportReportToHtmlFile(jasperPrint, "dest.html");
         JasperExportManager.exportReportToPdfFile(jasperPrint, "dest.pdf");
 
-        JasperViewer jasperViewer = new JasperViewer(jasperPrint);
-        jasperViewer.setVisible(true);
+//        JasperViewer jasperViewer = new JasperViewer(jasperPrint);
+//        jasperViewer.setVisible(true);
 
-
+        return jasperPrint;
     }
 }

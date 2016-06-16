@@ -18,9 +18,9 @@
 package org.wso2.carbon.devops.client;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.wso2.carbon.devops.client.jasperreports.JasperReportGenerator;
-import org.wso2.carbon.devops.monitor.ServerStatusReporterPortType;
+import org.wso2.carbon.devops.client.jasperreports.JasperUtils;
+import org.wso2.carbon.devops.monitor.client.ServerStatusReporterPortType;
 import org.wso2.carbon.devops.monitor.beans.xsd.ServerInfo;
 
 import java.io.IOException;
@@ -32,6 +32,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.X509TrustManager;
@@ -43,6 +45,10 @@ import javax.xml.ws.Service;
  * todo.
  */
 public class DeploymentVerifier {
+
+//    private static final String JASPER_SOURCE = "/jasperreports/jasper2.jrxml";
+//    private static final String JASPER_SOURCE = "/jasperreports/report-template.jrxml";
+    private static final String JASPER_SOURCE = "/jasperreports/carbon-deployment-report.jrxml";
 
     private void execute() throws IOException, JRException {
         URL wsdlURL = this.getClass().getResource("/ServerStatusReporter.wsdl");
@@ -61,19 +67,21 @@ public class DeploymentVerifier {
             ((BindingProvider)client).getRequestContext().
                 put("com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory", getUnsecuredSocketFactory());
         }
-
-        ServerInfo result = client.getServerInfo();
+        ServerInfo serverInfo = client.getServerInfo();
 
         //generate report
-        URL reportURL = this.getClass().getResource("/jasperreports/report-template.jrxml");
+        URL reportURL = this.getClass().getResource(JASPER_SOURCE);
         String tmpDir = System.getProperty("java.io.tmpdir");
         Path compiledFile = Paths.get(tmpDir, "deployment-verifier", "CarbonDeploymentReportColumnIndex.jasper");
+
+        List<ServerInfo> serverInfoList = new ArrayList<>();
+        serverInfoList.add(serverInfo);
+        serverInfoList.add(serverInfo);//todo
         JasperReportGenerator.generateReport(reportURL.openStream(), compiledFile,
-                new JRBeanCollectionDataSource(result.getPatchInfo()));
-//                new JRTableModelDataSource(SimpleReport.TableModelData()));
+                JasperUtils.getDataSource(serverInfoList));
 
         System.out.
-                println(result.getPatchInfo().size());
+                println(serverInfo.getPatchInfo().size());
     }
 
     private SSLSocketFactory getUnsecuredSocketFactory() {
@@ -90,7 +98,7 @@ public class DeploymentVerifier {
 
             return context.getSocketFactory();
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //todo
         }
 
         return null;

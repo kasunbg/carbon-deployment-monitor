@@ -17,15 +17,21 @@
 */
 package org.wso2.carbon.devops.monitor;
 
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.util.Utils;
+import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.devops.monitor.beans.Bundle;
 import org.wso2.carbon.devops.monitor.beans.Patch;
 import org.wso2.carbon.devops.monitor.beans.ServerInfo;
+import org.wso2.carbon.devops.monitor.internal.OSGiDataHolder;
+import org.wso2.carbon.ui.CarbonUIUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.net.SocketException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -37,22 +43,56 @@ import java.security.NoSuchAlgorithmException;
  *      Dropins
  *      //Configurations
  *      //Cluster information
+ *
+ *      todo create a serverId and save it in the local registry
+ *      todo extend admin service
  */
 @SuppressWarnings("unused")
 public class ServerStatusReporter {
+
+    private static OSGiDataHolder dataHolder = OSGiDataHolder.getInstance();
+
+    private static final String SERVER_URL = "https://${carbon.local.ip}:${carbon.management.port}"
+            + "${carbon.context}/services/";
 
     public ServerInfo getServerInfo() {
 
         ServerInfo serverInfo = new ServerInfo();
 
-        //1 get patch info
+        //1
+        setProductMetadata(serverInfo);
+
+        //2 get patch info
         Patch[] patches = getPatchInfo();
         serverInfo.setPatchInfo(patches);
 
-        //2 get dropins info
-
+        //3 get dropins info
 
         return serverInfo;
+    }
+
+    private void setProductMetadata(ServerInfo serverInfo) {
+        ServerConfigurationService configService = dataHolder.getServerConfigurationService();
+        String productName = configService.getFirstProperty("Name");
+        String productVersion = configService.getFirstProperty("Version");
+        String profile = System.getProperty("profile", "default");
+
+        ConfigurationContext configContext = dataHolder.getConfigContextService().getServerConfigContext();
+//        String serverURL = CarbonUtils.getServerURL(configService, configContext);
+        String serverURL = CarbonUIUtil.getAdminConsoleURL(configService.getFirstProperty("WebContextRoot"));
+
+        String ip;
+        try {
+            ip = Utils.getIpAddress();
+        } catch (SocketException e) {
+            ip = "";
+        }
+
+        serverInfo.setProductName(productName);
+        serverInfo.setProductVersion(productVersion);
+        serverInfo.setServerProfile(profile);
+        serverInfo.setServerURL(serverURL);
+        serverInfo.setServerIP(ip);
     }
 
     private Patch[] getPatchInfo() {

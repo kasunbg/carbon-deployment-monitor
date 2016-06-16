@@ -24,6 +24,20 @@ import java.util.List;
  */
 public class ServerInfo {
 
+    private String productName;
+
+    private String productVersion;
+
+    private String serverProfile;
+
+    private String hostName; //todo
+
+    private String mgtHostName;
+
+    private String serverIP;
+
+    private String serverURL;
+
     private Patch[] patchInfo;
 
     public Patch[] getPatchInfo() {
@@ -38,6 +52,62 @@ public class ServerInfo {
     public List<DeploymentArtifact> deploymentArtifactInfo;
     public List<DropinsBundle> dropins;
     public List<Bundle> libs;
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductVersion() {
+        return productVersion;
+    }
+
+    public void setProductVersion(String productVersion) {
+        this.productVersion = productVersion;
+    }
+
+    public String getServerProfile() {
+        return serverProfile;
+    }
+
+    public void setServerProfile(String serverProfile) {
+        this.serverProfile = serverProfile;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public String getMgtHostName() {
+        return mgtHostName;
+    }
+
+    public void setMgtHostName(String mgtHostName) {
+        this.mgtHostName = mgtHostName;
+    }
+
+    public String getServerIP() {
+        return serverIP;
+    }
+
+    public void setServerIP(String serverIP) {
+        this.serverIP = serverIP;
+    }
+
+    public String getServerURL() {
+        return serverURL;
+    }
+
+    public void setServerURL(String serverURL) {
+        this.serverURL = serverURL;
+    }
 
     //  public List<> configurations;
 

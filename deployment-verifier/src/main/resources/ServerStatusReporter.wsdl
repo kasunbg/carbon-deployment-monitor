@@ -4,7 +4,14 @@
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://beans.monitor.devops.carbon.wso2.org/xsd">
             <xs:complexType name="ServerInfo">
                 <xs:sequence>
+                    <xs:element minOccurs="0" name="hostName" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="serverIP" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="mgtHostName" nillable="true" type="xs:string"></xs:element>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="patchInfo" nillable="true" type="ax2460:Patch"></xs:element>
+                    <xs:element minOccurs="0" name="productName" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="productVersion" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="serverProfile" nillable="true" type="xs:string"></xs:element>
+                    <xs:element minOccurs="0" name="serverURL" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="Patch">

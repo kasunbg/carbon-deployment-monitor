@@ -36,19 +36,26 @@
     <modules>
         <module>server-status-monitor-agent</module>
         <module>deployment-verifier</module>
-    </modules>
+     <!--   <module>deployment-monitor-core</module>
+-->    
+</modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.core</artifactId>
-                <version>4.2.0</version>
+                <version>4.4.5</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.utils</artifactId>
-                <version>4.2.0</version>
+                <version>4.4.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.ui</artifactId>
+                <version>4.4.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.axis2.wso2</groupId>
@@ -78,5 +85,10 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <properties>
+        <slf4j.api.version>1.7.12</slf4j.api.version>
+        <carbon.import.pkg.version.range>[4.2.0, 5.0.0)</carbon.import.pkg.version.range>
+    </properties>
 
 </project>

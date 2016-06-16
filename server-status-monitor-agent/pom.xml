@@ -42,6 +42,10 @@
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.ui</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.axis2.wso2</groupId>
             <artifactId>axis2</artifactId>
         </dependency>
@@ -55,34 +59,66 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                <artifactId>maven-scr-plugin</artifactId>
+                <version>1.7.4</version>
 
-                        <Bundle-Activator>org.wso2.carbon.devops.monitor.internal.ServerStatusReporterBundleActivator
-                        </Bundle-Activator>
-
-                        <Private-Package>
-                            org.wso2.carbon.devops.monitor.internal
-                        </Private-Package>
-
-                        <Export-Package>
-                            !org.wso2.carbon.devops.monitor.internal,
-                            org.wso2.carbon.devops.monitor.*
-                        </Export-Package>
-
-                        <Import-Package>
-                            org.osgi.*,
-                            *;resolution:=optional
-                        </Import-Package>
-                    </instructions>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-scr-scrdescriptor</id>
+                        <goals>
+                            <goal>scr</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.felix</groupId>-->
+                <!--<artifactId>maven-bundle-plugin</artifactId>-->
+                <!--<version>2.3.5</version>-->
+                <!--<extensions>true</extensions>-->
+                <!--<configuration>-->
+                    <!--<instructions>-->
+                        <!--<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>-->
+                        <!--<Bundle-Name>${project.artifactId}</Bundle-Name>-->
+                        <!--<Bundle-Activator>org.wso2.carbon.devops.monitor.internal.ServerStatusReporterBundleActivator-->
+                        <!--</Bundle-Activator>-->
+
+                        <!--<Private-Package>-->
+                            <!--org.wso2.carbon.devops.monitor.internal-->
+                        <!--</Private-Package>-->
+                        <!--<Export-Package>-->
+                            <!--!org.wso2.carbon.devops.monitor.internal,-->
+                            <!--org.wso2.carbon.devops.monitor.*-->
+                        <!--</Export-Package>-->
+                        <!--<Import-Package>-->
+                            <!--org.osgi.*,-->
+                            <!--org.wso2.carbon.base.api.*,-->
+                            <!--*;resolution:=optional-->
+                        <!--</Import-Package>-->
+                    <!--</instructions>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
+
+    <properties>
+        <bundle.activator>org.wso2.carbon.devops.monitor.internal.ServerStatusReporterBundleActivator</bundle.activator>
+        <private.package>org.wso2.carbon.devops.monitor.internal.*,</private.package>
+        <export.package>
+            !org.wso2.carbon.devops.monitor.internal,
+            org.wso2.carbon.devops.monitor.*
+        </export.package>
+        <import.package>
+            org.osgi.*,
+            org.wso2.carbon.base.api.*,
+            org.wso2.carbon.utils.*;version="${carbon.import.pkg.version.range}",
+            org.wso2.carbon.ui.*;version="${carbon.import.pkg.version.range}",
+            org.apache.axis2.*,
+            *;resolution:=optional
+        </import.package>
+
+        <!-- todo-->
+        <DynamicImport-Package>*</DynamicImport-Package>
+    </properties>
 
 </project>
