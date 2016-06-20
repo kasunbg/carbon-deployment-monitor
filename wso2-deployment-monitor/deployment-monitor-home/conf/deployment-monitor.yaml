@@ -1,0 +1,73 @@
+################################################################################
+#   Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+################################################################################
+
+global:
+  onSuccess: on-success default implementation
+  onFailiure: on-failiure default implementation
+  trustStore : path/to/truststore
+  tenant :
+    - domain : domain
+    - tenantID : 1234
+    - username : username
+    - password : password
+
+testGroup :
+  - test :
+    - name : xyz
+    - class : org.wso2.TestClass
+    - trigger : 60m
+    - enable : true
+    - onSuccess : custom.onSuccss.implementation
+    - onFailiure : custom.onfailure.implementation
+    - servers : gateway,keymanager
+    - test-params :
+       key : value
+       key2 : value2
+       severity : 2
+  - test :
+    - name : abc
+    - class : org.wso2.LoginTest
+    - trigger : 10m
+    - enable : true
+    - onSuccess : custom.onSuccss.implementation
+    - onFailiure : custom.onfailure.implementation
+    - servers : gateway_mgt,gateway_worker,gateway,keymanager
+    - test-params :
+       key : value
+       key2 : value2
+       severity : 1
+
+serverGroup :
+  - server :
+    - name : gateway_mgt
+    - hosts :
+      - https:10.0.10.13:9443
+    - trustsore : path/to/custom/truststotre
+  - server :
+    - name : gateway_worker
+    - hosts :
+      - https:10.0.10.13:9443
+      - https:10.0.10.14:9443
+  - server :
+    - name : gateway
+    - hosts
+       https:gateway.cloud.wso2.com:443
+    - trustsore : path/to/custom/truststotre
+  - server :
+    - name : keymanager
+    - hosts
+      - https:keymanager.cloud.wso2.com:443
+    - trustsore : path/to/custom/truststotre

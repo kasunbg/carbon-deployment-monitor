@@ -34,14 +34,21 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>server-status-monitor-agent</module>
+     <!--   <module>server-status-monitor-agent</module>
         <module>deployment-verifier</module>
-     <!--   <module>deployment-monitor-core</module>
--->    
-</modules>
+     -->      
+        <module>deployment-monitor-core</module>
+        <module>wso2-deployment-monitor</module>
+    </modules>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.wso2.carbon.devops</groupId>
+                <artifactId>deployment-monitor-core</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.core</artifactId>
@@ -87,6 +94,7 @@
     </build>
 
     <properties>
+        <distribution.file.name>wso2dm-${project.version}</distribution.file.name>
         <slf4j.api.version>1.7.12</slf4j.api.version>
         <carbon.import.pkg.version.range>[4.2.0, 5.0.0)</carbon.import.pkg.version.range>
     </properties>
