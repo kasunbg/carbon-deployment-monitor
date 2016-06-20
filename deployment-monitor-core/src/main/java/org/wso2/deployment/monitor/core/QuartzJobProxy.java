@@ -21,6 +21,8 @@ import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.RunStatus;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +30,14 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * Acts as a proxy between quartz and the actual task.
+ * This helps to separate the API and Quartz.
+ *
+ */
 public class QuartzJobProxy implements Job {
+
+    private static final Logger logger = LoggerFactory.getLogger(QuartzJobProxy.class);
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -53,19 +62,9 @@ public class QuartzJobProxy implements Job {
 
             callbackMethod.invoke(callbackInstance, runStatus);
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace(); //todo
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch(ExceptionInInitializerError le) {
-            System.err.printf("Seems like a bad class to this JVM: “%s”.", "classname"); //todo
-            le.printStackTrace();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                | NoSuchMethodException | InvocationTargetException | ExceptionInInitializerError e) {
+            logger.error("Error while instantiating task classes", e);
         }
 
     }

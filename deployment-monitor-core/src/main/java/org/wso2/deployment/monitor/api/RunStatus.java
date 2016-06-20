@@ -19,8 +19,17 @@ package org.wso2.deployment.monitor.api;
 
 import java.util.Map;
 
+/**
+ * Retrieve the job execution status.
+ * This is returned from the {@link DeploymentMonitorTask} instance
+ * and is is passed into the {@link OnResultCallback#callback(RunStatus)} method
+ *
+ */
 public class RunStatus {
 
+    /**
+     * Designates success or failure of the test run
+     */
     private boolean success;
 
     private String message;

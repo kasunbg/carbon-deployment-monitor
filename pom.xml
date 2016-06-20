@@ -38,7 +38,7 @@
         <module>deployment-verifier</module>
      -->      
         <module>deployment-monitor-core</module>
-        <module>wso2-deployment-monitor</module>
+        <module>distribution</module>
     </modules>
 
     <dependencyManagement>

@@ -17,6 +17,9 @@
 */
 package org.wso2.deployment.monitor.core;
 
+/**
+ * runtime exception handling
+ */
 public class DeploymentMonitorException extends RuntimeException {
 
     public DeploymentMonitorException(String message) {

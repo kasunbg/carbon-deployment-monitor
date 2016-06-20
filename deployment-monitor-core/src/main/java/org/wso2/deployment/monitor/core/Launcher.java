@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * todo.
+ * The entry point.
  */
 public class Launcher {
 
@@ -55,14 +55,17 @@ public class Launcher {
         Map<String, String> globalConfig = (Map<String, String>) config.get(LauncherConstants.GLOBAL_CONFIG);
         List<Map> tests = (List<Map>) config.get(LauncherConstants.TEST_GROUP_CONFIG);
 
+        //call schedule manager
         for (Map test : tests) {
-            String clazz = (String) test.get("class");
+//            String clazz = (String) test.get("class");
+//            clazz = clazz.trim();
 
-
+            test.clear();
+            serverGroups.clear();
+            globalConfig.clear();
         }
 
 
-        System.out.println("");
 //        config.get("server_group")
 
     }
@@ -71,8 +74,7 @@ public class Launcher {
         Path monitorConf = Paths.get(System.getProperty(LauncherConstants.DEPLOYMENT_MONITOR_HOME), "conf",
                 LauncherConstants.DEPLOYMENT_MONITOR_CONFIG_FILE);
 
-        System.out.println(monitorConf.toFile().getAbsolutePath());
-        try(InputStream confInputStream = Files.newInputStream(monitorConf)) {
+        try (InputStream confInputStream = Files.newInputStream(monitorConf)) {
             Yaml yaml = new Yaml();
             Map confMap = (Map) yaml.load(confInputStream);
 
