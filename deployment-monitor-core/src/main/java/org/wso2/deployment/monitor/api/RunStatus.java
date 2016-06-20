@@ -21,18 +21,18 @@ import java.util.Map;
 
 public class RunStatus {
 
-    private boolean status;
+    private boolean success;
 
     private String message;
 
     private Map<String, Object> customTaskDetails;
 
-    public boolean isStatus() {
-        return status;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public String getMessage() {

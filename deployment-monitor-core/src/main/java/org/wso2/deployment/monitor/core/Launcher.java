@@ -36,6 +36,7 @@ public class Launcher {
 
     private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) {
 
         //argument parsing

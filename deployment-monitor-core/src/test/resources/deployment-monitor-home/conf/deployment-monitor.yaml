@@ -30,7 +30,9 @@ testGroup :
   -
     name : xyz
     class : org.wso2.TestClass
+    triggerType: simple
     trigger : 60m
+    #trigger : * 60 * * * *
     enable : true
     onSuccess : custom.onSuccss.implementation
     onFailiure : custom.onfailure.implementation
