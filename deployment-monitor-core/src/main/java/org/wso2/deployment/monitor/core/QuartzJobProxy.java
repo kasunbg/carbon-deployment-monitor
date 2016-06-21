@@ -24,10 +24,10 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.RunStatus;
+import org.wso2.deployment.monitor.api.ServerGroup;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -46,11 +46,11 @@ public class QuartzJobProxy implements Job {
         try {
             String taskClassName = dataMap.getString("taskClass");
             String callbackClassName = dataMap.getString("callbackClass");
-            Object serverList = dataMap.get("serverGroupList");
+            Object serverGroup = dataMap.get("serverGroup");
             Object customParams = dataMap.get("customParams");
 
             Class taskClass = Class.forName(taskClassName);
-            Method executeMethod = taskClass.getDeclaredMethod("execute", List.class, Properties.class);
+            Method executeMethod = taskClass.getDeclaredMethod("execute", ServerGroup.class, Properties.class);
 
             Class callbackClass = Class.forName(callbackClassName);
             Method callbackMethod = callbackClass.getDeclaredMethod("callback", RunStatus.class);
@@ -58,7 +58,7 @@ public class QuartzJobProxy implements Job {
 
             Object taskInstance = taskClass.newInstance();
             Object callbackInstance = callbackClass.newInstance();
-            RunStatus runStatus = (RunStatus) executeMethod.invoke(taskInstance, serverList, customParams);
+            RunStatus runStatus = (RunStatus) executeMethod.invoke(taskInstance, serverGroup, customParams);
 
             callbackMethod.invoke(callbackInstance, runStatus);
 

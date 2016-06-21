@@ -17,12 +17,15 @@
 */
 package org.wso2.deployment.monitor.core;
 
+import org.apache.log4j.PropertyConfigurator;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.ServerGroup;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
+import org.wso2.deployment.monitor.scheduler.ScheduleManager;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.representer.Representer;
@@ -46,6 +49,8 @@ public class Launcher {
         if (System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME) == null) {
             System.setProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME, ".");
         }
+        PropertyConfigurator.configure(MonitoringConstants.LOG4J_PROPERTIES_CONFIG_PATH);
+
         logger.info("Deployment Monitor Home {}", System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME));
 
         Launcher launcher = new Launcher();
@@ -59,11 +64,16 @@ public class Launcher {
         launcher.mergeGlobalConfigToServerGroups(serverGroups, global);
 
         //call schedule manager
-        DummyScheduleManager scheduleManager = new DummyScheduleManager(); //todo
-        for (TaskConfig task : tasks) {
-            if (task.isEnable()) {
-                scheduleManager.schedule(task, serverGroups);
+        try {
+            ScheduleManager scheduleManager = new ScheduleManager();
+            for (TaskConfig task : tasks) {
+                if (task.isEnable()) {
+                    scheduleManager.scheduleTask(task, serverGroups);
+                }
             }
+            scheduleManager.startScheduler();
+        } catch (SchedulerException e) {
+            logger.error("Scheduler error. ", e);
         }
     }
 

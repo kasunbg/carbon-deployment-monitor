@@ -57,19 +57,20 @@ tasks:
   -
     enable: true
     name: xyz
-    className: org.wso2.TestClass
+    group: apicloud
+    className: org.wso2.deployment.monitor.task.SimpleTask
     triggerType: simple
-    trigger: 60m
-    #trigger: * 60 * * * *
-    onResult: custom.onResult.implementation
+    trigger: 10s
+#    trigger: 0 0/1 * 1/1 * ? *
     servers: [gateway, keymanager]
     taskParams:
        key: value
        key2: value2
        severity: 2
   -
-    enable: true
+    enable: false
     name: abc
+    group: appcloud
     className: org.wso2.LoginTest
     triggerType: cron
     trigger: 60m

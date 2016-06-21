@@ -26,6 +26,8 @@ public class MonitoringConstants {
 
     public static final String DEPLOYMENT_MONITOR_CONFIG_FILE = "deployment-monitor.yaml";
 
+    public static final String LOG4J_PROPERTIES_CONFIG_PATH = "log4j.properties";
+
     public static final String DEFAULT_TENANT_KEY = "default.tenant";
 
 }
