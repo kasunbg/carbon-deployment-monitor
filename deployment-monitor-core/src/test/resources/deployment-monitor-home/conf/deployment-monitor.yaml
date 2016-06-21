@@ -17,62 +17,60 @@
 # A copy of distribution's monitor.yaml for testing purposes
 
 global:
-  onSuccess: on-success default implementation
-  onFailure: on-failiure default implementation
-  trustStore : path/to/truststore
-  tenant :
-    domain : domain
-    tenantID : 1234
-    username : username
-    password : password
+  onResult: custom.onResult.implementation
+  trustStore: path/to/truststore
+  tenant:
+    domain: domain
+    tenantID: 1234
+    username: username
+    password: password
 
-testGroup :
+serverGroups:
   -
-    name : xyz
-    class : org.wso2.TestClass
-    triggerType: simple
-    trigger : 60m
-    #trigger : * 60 * * * *
-    enable : true
-    onSuccess : custom.onSuccss.implementation
-    onFailiure : custom.onfailure.implementation
-    servers : gateway,keymanager
-    test-params :
-       key : value
-       key2 : value2
-       severity : 2
-  -
-    name : abc
-    class : org.wso2.LoginTest
-    trigger : 10m
-    enable : true
-    onSuccess : custom.onSuccss.implementation
-    onFailiure : custom.onfailure.implementation
-    servers : gateway_mgt,gateway_worker,gateway,keymanager
-    test-params :
-       key : value
-       key2 : value2
-       severity : 1
-
-serverGroup :
-  -
-    name : gateway_mgt
-    hosts :
+    name: gateway_mgt
+    hosts:
       - https://10.0.10.13:9443
       - https://10.0.10.13:9443
-    trustsore : path/to/custom/truststotre
+    trustStore: path/to/custom/truststotre
   -
-    name : gateway_worker
-    hosts :
+    name: gateway_worker
+    hosts:
       - https://10.0.10.13:9443
       - https://10.0.10.14:9443
   -
-    name : gateway
+    name: gateway
     hosts:
       - https://gateway.cloud.wso2.com:443
-    trustsore : path/to/custom/truststotre
+    trustStore: path/to/custom/truststotre
   -
-    name : keymanager
-    hosts :
+    name: keymanager
+    hosts:
       - https://keymanager.cloud.wso2.com:443
-    trustsore : path/to/custom/truststotre
+    trustStore: path/to/custom/truststotre
+
+tasks:
+  -
+    enable: true
+    name: xyz
+    className: org.wso2.TestClass
+    triggerType: simple
+    trigger: 60m
+    #trigger: * 60 * * * *
+    onResult: custom.onResult.implementation
+    servers: [gateway, keymanager]
+    taskParams:
+       key: value
+       key2: value2
+       severity: 2
+  -
+    enable: true
+    name: abc
+    className: org.wso2.LoginTest
+    triggerType: cron
+    trigger: 60m
+    onResult: custom.onResult.implementation
+    servers: [gateway_mgt, gateway_worker, gateway,keymanager]
+    taskParams:
+       key: value
+       key2: value2
+       severity: 1

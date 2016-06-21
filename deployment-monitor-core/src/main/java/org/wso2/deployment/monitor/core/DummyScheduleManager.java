@@ -15,32 +15,19 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.api;
+package org.wso2.deployment.monitor.core;
 
-import java.util.ArrayList;
+import org.wso2.deployment.monitor.api.ServerGroup;
+import org.wso2.deployment.monitor.core.model.TaskConfig;
+
 import java.util.List;
 
 /**
- * The server group bean that correspond to the
- * serverGroup configuration in deployment-monitor.yaml.
- *
+ * todo
  */
-public class ServerGroup {
-    private String name = "";
-    private List<String> hosts = new ArrayList<>();
-    private String trustStore = "";
+public class DummyScheduleManager {
 
-    public String getName() {
-        return name;
+    public void schedule(TaskConfig config, List<ServerGroup> serverGroups) {
+
     }
-
-    public List<String> getHosts() {
-        return hosts;
-    }
-
-    public String getTrustStore() {
-        return trustStore;
-    }
-
-
 }

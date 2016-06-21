@@ -19,7 +19,12 @@ package org.wso2.deployment.monitor.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.deployment.monitor.api.ServerGroup;
+import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
+import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.BeanAccess;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The entry point.
@@ -49,41 +53,37 @@ public class Launcher {
         logger.info("Deployment Monitor Home {}", System.getProperty(LauncherConstants.DEPLOYMENT_MONITOR_HOME));
 
         Launcher launcher = new Launcher();
-        Map config = launcher.getMonitorConfig();
+        DeploymentMonitorConfiguration config = launcher.getMonitorConfig();
 
-        List<Map> serverGroups = (List<Map>) config.get(LauncherConstants.SERVER_GROUP_CONFIG);
-        Map<String, String> globalConfig = (Map<String, String>) config.get(LauncherConstants.GLOBAL_CONFIG);
-        List<Map> tests = (List<Map>) config.get(LauncherConstants.TEST_GROUP_CONFIG);
+        List<ServerGroup> serverGroups = config.getServerGroups();
+//        GlobalConfig global = config.getGlobal();
+        List<TaskConfig> tasks = config.getTasks();
 
         //call schedule manager
-        for (Map test : tests) {
-//            String clazz = (String) test.get("class");
-//            clazz = clazz.trim();
+        DummyScheduleManager scheduleManager = new DummyScheduleManager(); //todo
+        for (TaskConfig task : tasks) {
+            scheduleManager.schedule(task, serverGroups);
 
-            test.clear();
-            serverGroups.clear();
-            globalConfig.clear();
         }
-
-
-//        config.get("server_group")
-
     }
 
-    private Map getMonitorConfig() {
+    private DeploymentMonitorConfiguration getMonitorConfig() {
         Path monitorConf = Paths.get(System.getProperty(LauncherConstants.DEPLOYMENT_MONITOR_HOME), "conf",
                 LauncherConstants.DEPLOYMENT_MONITOR_CONFIG_FILE);
 
         try (InputStream confInputStream = Files.newInputStream(monitorConf)) {
-            Yaml yaml = new Yaml();
-            Map confMap = (Map) yaml.load(confInputStream);
+            Representer representer = new Representer();
+            representer.getPropertyUtils().setSkipMissingProperties(true);
+
+            Yaml yaml = new Yaml(representer);
+            yaml.setBeanAccess(BeanAccess.FIELD);
+            DeploymentMonitorConfiguration config = yaml.loadAs(confInputStream, DeploymentMonitorConfiguration.class);
 
             if (logger.isDebugEnabled()) {
-                logger.debug("configuration map = {}", confMap);
+                logger.debug("configuration map = {}", config);
             }
 
-            return confMap;
-
+            return config;
         } catch (IOException e) {
             throw new DeploymentMonitorException(e.getMessage(), e);
         }

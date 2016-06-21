@@ -33,16 +33,14 @@ global:
 
 test:
   -
-    class: ~
+    class: dsds
     custom-params:
       param1: value1
       param2: value2
     enabled: true
     name: ~
     schedule: ~
-    server-groups:
-      - publisher-mgt
-      - gateway-worker
+    server-groups: [publisher-mgt, gateway-worker]
   -
     class: ~
     custom-params:
@@ -53,4 +51,4 @@ test:
     schedule: ~
     server-groups:
       - publisher-mgt
-      - gateway-worker
+      - gateway-workerlue2
