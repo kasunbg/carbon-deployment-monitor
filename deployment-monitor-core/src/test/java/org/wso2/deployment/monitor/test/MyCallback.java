@@ -15,12 +15,16 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.core;
+package org.wso2.deployment.monitor.test;
 
-/**
- * todo
- */
-public class LauncherConstants {
+import org.wso2.deployment.monitor.api.OnResultCallback;
+import org.wso2.deployment.monitor.api.RunStatus;
 
+public class MyCallback implements OnResultCallback {
 
+    @Override
+    public void callback(RunStatus runStatus) {
+        System.out.
+                println("callback " + runStatus);
+    }
 }

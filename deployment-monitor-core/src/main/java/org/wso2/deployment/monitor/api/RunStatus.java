@@ -17,6 +17,7 @@
 */
 package org.wso2.deployment.monitor.api;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +34,10 @@ public class RunStatus {
     private boolean success;
 
     private String message;
+
+    private List<ServerGroup> successServerGroups;
+
+    private List<ServerGroup> failedServerGroups;
 
     private Map<String, Object> customTaskDetails;
 
@@ -58,5 +63,21 @@ public class RunStatus {
 
     public void setCustomTaskDetails(Map<String, Object> customTaskDetails) {
         this.customTaskDetails = customTaskDetails;
+    }
+
+    public List<ServerGroup> getSuccessServerGroups() {
+        return successServerGroups;
+    }
+
+    public void setSuccessServerGroups(List<ServerGroup> successServerGroups) {
+        this.successServerGroups = successServerGroups;
+    }
+
+    public List<ServerGroup> getFailedServerGroups() {
+        return failedServerGroups;
+    }
+
+    public void setFailedServerGroups(List<ServerGroup> failedServerGroups) {
+        this.failedServerGroups = failedServerGroups;
     }
 }

@@ -19,6 +19,7 @@
 global:
   onResult: custom.onResult.implementation
   trustStore: path/to/truststore
+  trustStorePassword: password
   tenant:
     domain: domain
     tenantID: 1234
@@ -29,24 +30,28 @@ serverGroups:
   -
     name: gateway_mgt
     hosts:
-      - https://10.0.10.13:9443
-      - https://10.0.10.13:9443
-    trustStore: path/to/custom/truststotre
+      - https://gwm001:9443
+      - https://gwm002:9443
+
   -
     name: gateway_worker
     hosts:
-      - https://10.0.10.13:9443
-      - https://10.0.10.14:9443
+      - https://gw001:9443
+      - https://gw002:9443
+
   -
     name: gateway
     hosts:
       - https://gateway.cloud.wso2.com:443
-    trustStore: path/to/custom/truststotre
+    trustStore: path/to/custom/truststore
+    trustStorePassword: password
+
   -
     name: keymanager
     hosts:
       - https://keymanager.cloud.wso2.com:443
     trustStore: path/to/custom/truststotre
+    trustStorePassword: password
 
 tasks:
   -

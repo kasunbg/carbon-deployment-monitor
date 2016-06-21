@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.ServerGroup;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
+import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -40,36 +41,72 @@ public class Launcher {
 
     private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
 
-    @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-
-        //argument parsing
-        //config parsing
-        //invoke quartz
-
-        if (System.getProperty(LauncherConstants.DEPLOYMENT_MONITOR_HOME) == null) {
-            System.setProperty(LauncherConstants.DEPLOYMENT_MONITOR_HOME, ".");
+        
+        if (System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME) == null) {
+            System.setProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME, ".");
         }
-        logger.info("Deployment Monitor Home {}", System.getProperty(LauncherConstants.DEPLOYMENT_MONITOR_HOME));
+        logger.info("Deployment Monitor Home {}", System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME));
 
         Launcher launcher = new Launcher();
         DeploymentMonitorConfiguration config = launcher.getMonitorConfig();
 
         List<ServerGroup> serverGroups = config.getServerGroups();
-//        GlobalConfig global = config.getGlobal();
+        GlobalConfig global = config.getGlobal();
         List<TaskConfig> tasks = config.getTasks();
+
+        launcher.mergeGlobalConfigToTaskConfig(tasks, global);
+        launcher.mergeGlobalConfigToServerGroups(serverGroups, global);
 
         //call schedule manager
         DummyScheduleManager scheduleManager = new DummyScheduleManager(); //todo
         for (TaskConfig task : tasks) {
-            scheduleManager.schedule(task, serverGroups);
-
+            if (task.isEnable()) {
+                scheduleManager.schedule(task, serverGroups);
+            }
         }
     }
 
+    /**
+     * Merge following global parameters into TaskConfig
+     *  - onResult
+     *  - tenantConfig
+     *
+     */
+    private void mergeGlobalConfigToTaskConfig(List<TaskConfig> tasks, GlobalConfig global) {
+        for (TaskConfig taskConfig : tasks) {
+            if (taskConfig.getOnResult().isEmpty()) {
+                taskConfig.setOnResult(global.getOnResult());
+            }
+            taskConfig.getTaskParams().put(MonitoringConstants.DEFAULT_TENANT_KEY, global.getTenant());
+        }
+    }
+
+    /**
+     * Merge following global parameters into ServerGroups
+     *  - trustStore
+     *  - trustStorePassword
+     *
+     */
+    private void mergeGlobalConfigToServerGroups(List<ServerGroup> serverGroups, GlobalConfig global) {
+        for (ServerGroup serverGroup : serverGroups) {
+            if (serverGroup.getTrustStore().isEmpty()) {
+                serverGroup.setTrustStore(global.getTrustStore());
+            }
+            if (serverGroup.getTrustStorePassword().isEmpty()) {
+                serverGroup.setTrustStorePassword(global.getTrustStorePassword());
+            }
+        }
+    }
+
+    /**
+     * parse deployment-monitor.yaml
+     *
+     * @return DeploymentMonitorConfiguration bean
+     */
     private DeploymentMonitorConfiguration getMonitorConfig() {
-        Path monitorConf = Paths.get(System.getProperty(LauncherConstants.DEPLOYMENT_MONITOR_HOME), "conf",
-                LauncherConstants.DEPLOYMENT_MONITOR_CONFIG_FILE);
+        Path monitorConf = Paths.get(System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME), "conf",
+                MonitoringConstants.DEPLOYMENT_MONITOR_CONFIG_FILE);
 
         try (InputStream confInputStream = Files.newInputStream(monitorConf)) {
             Representer representer = new Representer();

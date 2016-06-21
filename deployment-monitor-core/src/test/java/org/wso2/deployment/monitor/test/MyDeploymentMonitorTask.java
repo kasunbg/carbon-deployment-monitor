@@ -15,12 +15,20 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.core;
+package org.wso2.deployment.monitor.test;
 
-/**
- * todo
- */
-public class LauncherConstants {
+import org.wso2.deployment.monitor.api.DeploymentMonitorTask;
+import org.wso2.deployment.monitor.api.RunStatus;
+import org.wso2.deployment.monitor.api.ServerGroup;
 
+import java.util.List;
+import java.util.Properties;
 
+public class MyDeploymentMonitorTask implements DeploymentMonitorTask {
+    @Override
+    public RunStatus execute(List<ServerGroup> serverGroupList, Properties customParams) {
+        System.out.
+                println(this.getClass().getName());
+        return null;
+    }
 }

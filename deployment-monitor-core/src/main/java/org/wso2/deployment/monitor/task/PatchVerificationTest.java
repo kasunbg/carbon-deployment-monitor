@@ -15,12 +15,10 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.core;
+package org.wso2.deployment.monitor.task;
 
 /**
  * todo
  */
-public class LauncherConstants {
-
-
+public class PatchVerificationTest {
 }

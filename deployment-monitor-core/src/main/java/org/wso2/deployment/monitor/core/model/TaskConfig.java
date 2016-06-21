@@ -28,10 +28,10 @@ public class TaskConfig {
 
     private boolean enable = true;
     private String name = "taskName";
-    private String className = "className";
+    private String className = "";
     private String triggerType = "simple";
     private String trigger = "60m";
-    private String onResult = "callbackClassName";
+    private String onResult = "";
     private List<String> servers = new ArrayList<>();
     private Properties taskParams = new Properties();
 
@@ -57,6 +57,10 @@ public class TaskConfig {
 
     public String getOnResult() {
         return onResult;
+    }
+
+    public void setOnResult(String onResult) {
+        this.onResult = onResult;
     }
 
     public List<String> getServers() {

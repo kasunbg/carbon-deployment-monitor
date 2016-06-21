@@ -26,9 +26,10 @@ import java.util.List;
  *
  */
 public class ServerGroup {
-    private String name = "";
+    private String name = "wso2carbon";
     private List<String> hosts = new ArrayList<>();
     private String trustStore = "";
+    private String trustStorePassword = "";
 
     public String getName() {
         return name;
@@ -42,5 +43,15 @@ public class ServerGroup {
         return trustStore;
     }
 
+    public void setTrustStore(String trustStore) {
+        this.trustStore = trustStore;
+    }
 
+    public String getTrustStorePassword() {
+        return trustStorePassword;
+    }
+
+    public void setTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
+    }
 }

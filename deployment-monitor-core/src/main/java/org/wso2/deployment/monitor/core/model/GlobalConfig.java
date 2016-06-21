@@ -23,7 +23,8 @@ package org.wso2.deployment.monitor.core.model;
 public class GlobalConfig {
 
     private String onResult = "";
-    private String trustStore = "";
+    private String trustStore = "wso2carbon.jks";
+    private String trustStorePassword = "wso2carbon";
     private TenantConfig tenant = new TenantConfig();
 
     public String getOnResult() {
@@ -36,6 +37,10 @@ public class GlobalConfig {
 
     public TenantConfig getTenant() {
         return tenant;
+    }
+
+    public String getTrustStorePassword() {
+        return trustStorePassword;
     }
 
     /**
