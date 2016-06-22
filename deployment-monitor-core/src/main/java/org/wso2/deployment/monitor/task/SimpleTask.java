@@ -37,7 +37,7 @@ public class SimpleTask implements DeploymentMonitorTask {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a (Z z)");
 
     @Override public RunStatus execute(ServerGroup serverGroup, Properties customParams) {
-        logger.info(serverGroup.getName() + " Simple Task Executed at : " + simpleDateFormat.format(new Date()));
+        logger.info(serverGroup.getName() + ".SimpleTask Executed at : " + simpleDateFormat.format(new Date()));
         RunStatus runStatus = new RunStatus();
         runStatus.setSuccess(true);
         runStatus.setMessage(serverGroup.getName() + ".SimpleTask");
