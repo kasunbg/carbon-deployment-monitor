@@ -271,7 +271,7 @@ do
     -Dcarbon.registry.root=/ \
     -Djava.command="$JAVACMD" \
     -Dcarbon.home="$DEPLOYMENT_MONITOR_HOME" \
-    -Djava.util.logging.config.file="$DEPLOYMENT_MONITOR_HOME/bin/bootstrap/logging.properties" \
+    -Dlog4j.configurationFile="file:$DEPLOYMENT_MONITOR_HOME/conf/log4j2.xml" \
     -Djava.security.egd=file:/dev/./urandom \
     -Dfile.encoding=UTF8 \
     org.wso2.deployment.monitor.core.Launcher $*

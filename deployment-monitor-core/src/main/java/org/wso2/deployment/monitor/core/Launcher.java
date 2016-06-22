@@ -17,7 +17,6 @@
 */
 package org.wso2.deployment.monitor.core;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +48,6 @@ public class Launcher {
         if (System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME) == null) {
             System.setProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME, ".");
         }
-
-        String log4jConfigPath = Paths.get(System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME), "conf",
-                MonitoringConstants.LOG4J_PROPERTIES_CONFIG_PATH).toString();
-        PropertyConfigurator.configure(log4jConfigPath);
-
-        logger.info("Deployment Monitor Home {}", System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME));
 
         Launcher launcher = new Launcher();
         DeploymentMonitorConfiguration config = launcher.getMonitorConfig();
