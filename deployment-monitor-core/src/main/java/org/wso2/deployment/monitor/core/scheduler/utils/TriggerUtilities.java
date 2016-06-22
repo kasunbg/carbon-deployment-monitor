@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.deployment.monitor.scheduler.utils;
+package org.wso2.deployment.monitor.core.scheduler.utils;
 
 import org.quartz.CronExpression;
 

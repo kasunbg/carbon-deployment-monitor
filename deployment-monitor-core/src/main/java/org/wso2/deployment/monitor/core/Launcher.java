@@ -25,7 +25,7 @@ import org.wso2.deployment.monitor.api.ServerGroup;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
-import org.wso2.deployment.monitor.scheduler.ScheduleManager;
+import org.wso2.deployment.monitor.core.scheduler.ScheduleManager;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.representer.Representer;

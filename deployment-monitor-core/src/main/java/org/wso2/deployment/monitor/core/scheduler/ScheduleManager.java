@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.deployment.monitor.scheduler;
+package org.wso2.deployment.monitor.core.scheduler;
 
 import org.quartz.CronTrigger;
 import org.quartz.DateBuilder;
@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.ServerGroup;
 import org.wso2.deployment.monitor.core.QuartzJobProxy;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
-import org.wso2.deployment.monitor.scheduler.utils.SchedulerConstants;
-import org.wso2.deployment.monitor.scheduler.utils.TriggerUtilities;
+import org.wso2.deployment.monitor.core.scheduler.utils.SchedulerConstants;
+import org.wso2.deployment.monitor.core.scheduler.utils.TriggerUtilities;
 
 import java.util.HashMap;
 import java.util.List;

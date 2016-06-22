@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.deployment.monitor.scheduler;
+package org.wso2.deployment.monitor.core.scheduler;
 
 import org.quartz.JobDetail;
 import org.quartz.JobKey;

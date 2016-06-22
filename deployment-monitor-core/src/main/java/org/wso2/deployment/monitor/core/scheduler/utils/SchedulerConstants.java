@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.deployment.monitor.scheduler.utils;
+package org.wso2.deployment.monitor.core.scheduler.utils;
 
 /**
  * Constants related to scheduling
