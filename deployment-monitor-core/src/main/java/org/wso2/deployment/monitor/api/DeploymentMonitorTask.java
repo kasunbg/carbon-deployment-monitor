@@ -17,7 +17,6 @@
 */
 package org.wso2.deployment.monitor.api;
 
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -31,10 +30,10 @@ public interface DeploymentMonitorTask {
      * A new instance of the implemented classes will be created for each
      * schedule run.
      *
-     * @param serverGroupList List of server groups.
+     * @param serverGroup List of server groups.
      * @param customParams custom parameters defined in the job configuration
      * @return true or false depending on the test success status
      */
-    RunStatus execute(List<ServerGroup> serverGroupList, Properties customParams);
+    RunStatus execute(ServerGroup serverGroup, Properties customParams);
 
 }

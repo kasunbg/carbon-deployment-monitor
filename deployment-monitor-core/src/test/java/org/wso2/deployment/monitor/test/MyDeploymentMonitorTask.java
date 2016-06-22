@@ -21,12 +21,11 @@ import org.wso2.deployment.monitor.api.DeploymentMonitorTask;
 import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.api.ServerGroup;
 
-import java.util.List;
 import java.util.Properties;
 
 public class MyDeploymentMonitorTask implements DeploymentMonitorTask {
-    @Override
-    public RunStatus execute(List<ServerGroup> serverGroupList, Properties customParams) {
+
+    @Override public RunStatus execute(ServerGroup serverGroup, Properties customParams) {
         System.out.
                 println(this.getClass().getName());
         return null;

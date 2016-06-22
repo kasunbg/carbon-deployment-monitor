@@ -15,61 +15,66 @@
 ################################################################################
 
 global:
-  onSuccess: on-success default implementation
-  onFailure: on-failiure default implementation
-  trustStore : path/to/truststore
-  tenant :
-    domain : domain
-    tenantID : 1234
-    username : username
-    password : password
+  onResult: org.wso2.deployment.monitor.task.SimpleCallback
+  trustStore: path/to/truststore
+  trustStorePassword: password
+  tenant:
+    domain: domain
+    tenantID: 1234
+    username: username
+    password: password
 
-serverGroup :
+serverGroups:
   -
-    name : gateway_mgt
-    hosts :
-      - https://10.0.10.13:9443
-      - https://10.0.10.13:9443
-    trustsore : path/to/custom/truststotre
+    name: gateway_mgt
+    hosts:
+      - https://gwm001:9443
+      - https://gwm002:9443
+
   -
-    name : gateway_worker
-    hosts :
-      - https://10.0.10.13:9443
-      - https://10.0.10.14:9443
+    name: gateway_worker
+    hosts:
+      - https://gw001:9443
+      - https://gw002:9443
+
   -
-    name : gateway
+    name: gateway
     hosts:
       - https://gateway.cloud.wso2.com:443
-    trustsore : path/to/custom/truststotre
-  -
-    name : keymanager
-    hosts :
-      - https://keymanager.cloud.wso2.com:443
-    trustsore : path/to/custom/truststotre
+    trustStore: path/to/custom/truststore
+    trustStorePassword: password
 
-taskGroup :
   -
-    enable : true
-    name : xyz
-    className : org.wso2.TestClass
+    name: keymanager
+    hosts:
+      - https://keymanager.cloud.wso2.com:443
+    trustStore: path/to/custom/truststotre
+    trustStorePassword: password
+
+tasks:
+  -
+    enable: true
+    name: SimpleTask
+    group: apicloud
+    className: org.wso2.deployment.monitor.task.SimpleTask
     triggerType: simple
-    trigger : 60m
-    #trigger : * 60 * * * *
-    onResult : custom.onResult.implementation
-    servers : [gateway, keymanager]
-    taskParams :
-       key : value
-       key2 : value2
-       severity : 2
+    trigger: 10s
+#    trigger: 0 0/1 * 1/1 * ? *
+    servers: [gateway, keymanager]
+    taskParams:
+       key: value
+       key2: value2
+       severity: 2
   -
-    enable : true
-    name : abc
-    className : org.wso2.LoginTest
+    enable: false
+    name: abc
+    group: appcloud
+    className: org.wso2.LoginTest
     triggerType: cron
-    trigger : 60m
-    onResult : custom.onResult.implementation
-    servers : [gateway_mgt, gateway_worker, gateway,keymanager]
-    taskParams :
-       key : value
-       key2 : value2
-       severity : 1
+    trigger: 60m
+    onResult: custom.onResult.implementation
+    servers: [gateway_mgt, gateway_worker, gateway,keymanager]
+    taskParams:
+       key: value
+       key2: value2
+       severity: 1
