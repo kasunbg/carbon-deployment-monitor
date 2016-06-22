@@ -15,7 +15,7 @@
 ################################################################################
 
 global:
-  onResult: custom.onResult.implementation
+  onResult: org.wso2.deployment.monitor.task.SimpleCallback
   trustStore: path/to/truststore
   trustStorePassword: password
   tenant:
@@ -54,7 +54,7 @@ serverGroups:
 tasks:
   -
     enable: true
-    name: xyz
+    name: SimpleTask
     group: apicloud
     className: org.wso2.deployment.monitor.task.SimpleTask
     triggerType: simple

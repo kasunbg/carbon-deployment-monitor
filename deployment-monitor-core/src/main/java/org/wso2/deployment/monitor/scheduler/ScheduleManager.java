@@ -117,6 +117,13 @@ public class ScheduleManager {
         }
     }
 
+    /**
+     * Un-Schedule a task
+     * @param jobName Name of the Job. This will be <code>ServerName + "." + TaskName </code>
+     *                i.e gateway.SimpleTask
+     * @param jobGroup Group name of the Task
+     * @throws SchedulerException
+     */
     public void unScheduleTask(String jobName, String jobGroup) throws SchedulerException {
         scheduler.unscheduleJob(triggerKey(jobName, jobGroup));
     }
