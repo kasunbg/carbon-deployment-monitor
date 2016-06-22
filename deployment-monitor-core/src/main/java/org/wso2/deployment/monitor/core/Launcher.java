@@ -64,8 +64,9 @@ public class Launcher {
         launcher.mergeGlobalConfigToServerGroups(serverGroups, global);
 
         //call schedule manager
+        ScheduleManager scheduleManager;
         try {
-            ScheduleManager scheduleManager = new ScheduleManager();
+            scheduleManager = new ScheduleManager();
             for (TaskConfig task : tasks) {
                 if (task.isEnable()) {
                     scheduleManager.scheduleTask(task, serverGroups);
@@ -73,7 +74,7 @@ public class Launcher {
             }
             scheduleManager.startScheduler();
         } catch (SchedulerException e) {
-            logger.error("Scheduler error. ", e);
+            logger.error("Error occurred while scheduling the tasks.", e);
         }
     }
 

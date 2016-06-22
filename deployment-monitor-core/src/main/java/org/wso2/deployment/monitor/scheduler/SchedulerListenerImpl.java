@@ -25,16 +25,12 @@ import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
- * Scheduler listener extending SchedulerListenerSupport implemented in this class
+ * This class will listen to various scheduler events
  */
 public class SchedulerListenerImpl implements SchedulerListener {
 
     private static final Logger logger = LoggerFactory.getLogger(SchedulerListenerImpl.class);
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a (Z z)");
 
     @Override public void jobScheduled(Trigger trigger) {
         if (logger.isDebugEnabled()) {
@@ -43,8 +39,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void jobUnscheduled(TriggerKey triggerKey) {
-        Date date = new Date();
-        logger.info("Job : " + triggerKey + " un-scheduled at : " + simpleDateFormat.format(date));
+        logger.info("Job : " + triggerKey + " un-scheduled.");
     }
 
     @Override public void triggerFinalized(Trigger trigger) {
@@ -74,9 +69,9 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void jobDeleted(JobKey jobKey) {
-//        if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.info("Deleted Job : " + jobKey);
-//        }
+        }
     }
 
     @Override public void jobPaused(JobKey jobKey) {
@@ -96,8 +91,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void schedulerError(String s, SchedulerException e) {
-        Date date = new Date();
-        logger.error("Scheduler error : " + s + " occurred at : " + simpleDateFormat.format(date), e);
+        logger.error("Scheduler error : " + s + " occurred.", e);
     }
 
     @Override public void schedulerInStandbyMode() {
@@ -105,8 +99,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void schedulerStarted() {
-        Date date = new Date();
-        logger.info("Scheduler started at : " + simpleDateFormat.format(date));
+        logger.info("Scheduler was started.");
     }
 
     @Override public void schedulerStarting() {
@@ -114,8 +107,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void schedulerShutdown() {
-        Date date = new Date();
-        logger.info("Scheduler shutdown at : " + simpleDateFormat.format(date));
+        logger.info("Scheduler was shutdown.");
     }
 
     @Override public void schedulerShuttingdown() {

@@ -24,7 +24,7 @@ import org.wso2.deployment.monitor.api.OnResultCallback;
 import org.wso2.deployment.monitor.api.RunStatus;
 
 /**
- * Simple Implementation for callbakc
+ * Simple Implementation for callback
  */
 public class SimpleCallback implements OnResultCallback {
     private static final Logger logger = LoggerFactory.getLogger(SimpleCallback.class);

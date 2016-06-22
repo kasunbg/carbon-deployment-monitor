@@ -17,32 +17,11 @@
 package org.wso2.deployment.monitor.scheduler.utils;
 
 import org.quartz.CronExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * Utilities for Quartz triggers implemented in this class
  */
 public class TriggerUtilities {
-
-    private static final Logger logger = LoggerFactory.getLogger(TriggerUtilities.class);
-
-    /**
-     * Enum for trigger types
-     */
-    private enum TriggerType {
-        CRON, SIMPLE, NONE
-    }
-
-    /**
-     * Trigger types in underscore case format
-     */
-    private static final String CRON_TRIGGER = "cron";
-    private static final String SIMPLE_TRIGGER = "simple";
-
-    private static final String TRIGGER_TYPE = "triggerType";
 
     /**
      * for simple trigger specifications
@@ -50,24 +29,6 @@ public class TriggerUtilities {
     public static final String MINUTES = "m";
     public static final String HOURS = "h";
     public static final String SECONDS = "s";
-
-    /**
-     * Returns trigger type of a particular Task
-     *
-     * @return Quartz trigger type
-     */
-    public static TriggerType getTriggerType(Map testGroup) {
-        String triggerType = (String) testGroup.get(TRIGGER_TYPE);
-
-        if (SIMPLE_TRIGGER.equals(triggerType)) {
-            return TriggerType.CRON;
-        } else if (CRON_TRIGGER.equals(triggerType)) {
-            return TriggerType.SIMPLE;
-        } else {
-            logger.warn("Error while getting trigger type");
-            return TriggerType.NONE;
-        }
-    }
 
     /**
      * Checks validity of a Cron expression
