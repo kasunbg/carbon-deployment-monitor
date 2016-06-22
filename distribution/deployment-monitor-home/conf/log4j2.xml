@@ -19,18 +19,18 @@
 
 <Configuration>
     <Appenders>
-        <Console name="DM_CONSOLE" target="SYSTEM_OUT">
+        <Console name="CARBON_CONSOLE" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d] %5p {%c} - %m%ex%n"/>
         </Console>
-        <RollingFile name="DM_LOGFILE" fileName="${sys:dm.home}/logs/carbon.log"
-                     filePattern="${sys:dm.home}/logs/deployment-monitor-%d{MM-dd-yyyy}.log">
+        <RollingFile name="CARBON_LOGFILE" fileName="${sys:carbon.home}/logs/carbon.log"
+                     filePattern="${sys:carbon.home}/logs/carbon-%d{MM-dd-yyyy}.log">
             <PatternLayout pattern="[%d] %5p {%c} - %m%ex%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
         </RollingFile>
-        <RollingFile name="AUDIT_LOGFILE" fileName="${sys:dm.home}/logs/audit.log"
-                     filePattern="${sys:dm.home}/logs/audit-%d{MM-dd-yyyy}.log">
+        <RollingFile name="AUDIT_LOGFILE" fileName="${sys:carbon.home}/logs/audit.log"
+                     filePattern="${sys:carbon.home}/logs/audit-%d{MM-dd-yyyy}.log">
             <PatternLayout pattern="[%d] %5p %X %m%ex%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -39,8 +39,8 @@
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="DM_CONSOLE"/>
-            <AppenderRef ref="DM_LOGFILE"/>
+            <AppenderRef ref="CARBON_CONSOLE"/>
+            <AppenderRef ref="CARBON_LOGFILE"/>
         </Root>
         <Logger name="AUDIT_LOG" level="info" additivity="false">
             <AppenderRef ref="AUDIT_LOGFILE"/>
