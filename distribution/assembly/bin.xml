@@ -20,7 +20,19 @@
     <fileSets>
         <fileSet>
             <directory>deployment-monitor-home/bin/</directory>
-            <outputDirectory>${distribution.file.name}/conf/</outputDirectory>
+            <outputDirectory>${distribution.file.name}/bin/</outputDirectory>
+            <fileMode>644</fileMode>
+            <excludes>
+                <exclude>**/*.sh</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>deployment-monitor-home/bin/</directory>
+            <outputDirectory>${distribution.file.name}/bin/</outputDirectory>
+            <includes>
+                <include>**/*.sh</include>
+            </includes>
+            <fileMode>755</fileMode>
         </fileSet>
         <fileSet>
             <directory>deployment-monitor-home/conf/</directory>
@@ -28,7 +40,7 @@
         </fileSet>
         <fileSet>
             <directory>deployment-monitor-home/lib/</directory>
-            <outputDirectory>${distribution.file.name}/conf/</outputDirectory>
+            <outputDirectory>${distribution.file.name}/lib/</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>deployment-monitor-home/</directory>
@@ -42,6 +54,12 @@
             <outputDirectory>/${distribution.file.name}/lib</outputDirectory>
             <includes>
                 <include>org.wso2.carbon.devops:deployment-monitor-core:jar</include>
+                <include>org.yaml:snakeyaml:jar</include>
+                <include>org.quartz-scheduler:quartz:jar</include>
+                <include>org.slf4j:slf4j-api:jar</include>
+                <!-- todo replace with log4j2 -->
+                <include>org.slf4j:slf4j-log4j12:jar</include>
+                <include>log4j:log4j:jar</include>
             </includes>
         </dependencySet>
     </dependencySets>
