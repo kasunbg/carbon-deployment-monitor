@@ -49,7 +49,10 @@ public class Launcher {
         if (System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME) == null) {
             System.setProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME, ".");
         }
-        PropertyConfigurator.configure(MonitoringConstants.LOG4J_PROPERTIES_CONFIG_PATH);
+
+        String log4jConfigPath = Paths.get(System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME), "conf",
+                MonitoringConstants.LOG4J_PROPERTIES_CONFIG_PATH).toString();
+        PropertyConfigurator.configure(log4jConfigPath);
 
         logger.info("Deployment Monitor Home {}", System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME));
 
