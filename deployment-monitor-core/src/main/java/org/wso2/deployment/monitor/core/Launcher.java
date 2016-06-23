@@ -59,6 +59,9 @@ public class Launcher {
         launcher.mergeGlobalConfigToTaskConfig(tasks, global);
         launcher.mergeGlobalConfigToServerGroups(serverGroups, global);
 
+        //setting general trust store params. If required tests can override these
+        launcher.setTrustStoreParams(global.getTrustStore(), global.getTrustStorePassword());
+
         //call schedule manager
         ScheduleManager scheduleManager;
         try {
@@ -132,5 +135,11 @@ public class Launcher {
             throw new DeploymentMonitorException(e.getMessage(), e);
         }
 
+    }
+
+    private void setTrustStoreParams(String path, String password) {
+        System.setProperty("javax.net.ssl.trustStore", path);
+        System.setProperty("javax.net.ssl.trustStorePassword", password);
+        System.setProperty("javax.net.ssl.trustStoreType", "JKS");
     }
 }

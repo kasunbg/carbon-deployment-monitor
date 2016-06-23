@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.deployment.monitor.task;
+package org.wso2.deployment.monitor.impl.task;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,16 +31,16 @@ import java.util.Properties;
 /**
  * A simple Task Implementation which prints a log
  */
-public class SimpleTask implements DeploymentMonitorTask {
-    private static final Logger logger = LoggerFactory.getLogger(SimpleTask.class);
+public class SimpleLoggingTask implements DeploymentMonitorTask {
+    private static final Logger logger = LoggerFactory.getLogger(SimpleLoggingTask.class);
 
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a (Z z)");
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a (Z z)");
 
     @Override public RunStatus execute(ServerGroup serverGroup, Properties customParams) {
-        logger.info(serverGroup.getName() + ".SimpleTask Executed at : " + simpleDateFormat.format(new Date()));
+        logger.info(serverGroup.getName() + ".SimpleLoggingTask Executed at : " + simpleDateFormat.format(new Date()));
         RunStatus runStatus = new RunStatus();
         runStatus.setSuccess(true);
-        runStatus.setMessage(serverGroup.getName() + ".SimpleTask");
+        runStatus.setMessage(serverGroup.getName() + ".SimpleLoggingTask");
         return runStatus;
     }
 

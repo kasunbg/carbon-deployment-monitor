@@ -15,7 +15,7 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.task;
+package org.wso2.deployment.monitor.impl.task;
 
 /**
  * todo

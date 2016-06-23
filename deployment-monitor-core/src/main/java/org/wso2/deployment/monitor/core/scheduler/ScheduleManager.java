@@ -120,7 +120,7 @@ public class ScheduleManager {
     /**
      * Un-Schedule a task
      * @param jobName Name of the Job. This will be <code>ServerName + "." + TaskName </code>
-     *                i.e gateway.SimpleTask
+     *                i.e gateway.SimpleLoggingTask
      * @param jobGroup Group name of the Task
      * @throws SchedulerException
      */
