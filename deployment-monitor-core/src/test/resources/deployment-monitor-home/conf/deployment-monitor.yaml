@@ -18,8 +18,8 @@
 
 global:
   onResult: org.wso2.deployment.monitor.impl.callback.SimpleLoggingCallBack
-  trustStore: path/to/truststore
-  trustStorePassword: password
+  trustStore: resources/client-truststore.jks
+  trustStorePassword: wso2carbon
   tenant:
     domain: domain
     tenantID: 1234
