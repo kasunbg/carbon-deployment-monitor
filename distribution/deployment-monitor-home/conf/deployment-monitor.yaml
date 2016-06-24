@@ -16,6 +16,8 @@
 
 global:
   onResult: org.wso2.deployment.monitor.impl.callback.SimpleLoggingCallBack
+  keyStore: resources/wso2carbon.jks
+  keyStorePassword: wso2carbon
   trustStore: resources/client-truststore.jks
   trustStorePassword: wso2carbon
   tenant:
@@ -23,6 +25,18 @@ global:
     tenantID: 1234
     username: username
     password: password
+
+notifications:
+  email:
+    enabled: true
+    tlsEnabled: true
+    authentication: true
+    username: username
+    password: password
+    smtpServer: smtp.server
+    smtpPort: 25
+    fromAddress: from@wso2.com
+    toAddresses: [to@wso2.com]
 
 serverGroups:
   -

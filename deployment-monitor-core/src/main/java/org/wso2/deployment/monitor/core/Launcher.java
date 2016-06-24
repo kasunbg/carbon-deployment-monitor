@@ -20,20 +20,12 @@ package org.wso2.deployment.monitor.core;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.deployment.monitor.api.ServerGroup;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.GlobalConfig;
+import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.wso2.deployment.monitor.core.scheduler.ScheduleManager;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.introspector.BeanAccess;
-import org.yaml.snakeyaml.representer.Representer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -44,13 +36,13 @@ public class Launcher {
     private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
 
     public static void main(String[] args) {
-        
+
         if (System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME) == null) {
             System.setProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME, ".");
         }
 
         Launcher launcher = new Launcher();
-        DeploymentMonitorConfiguration config = launcher.getMonitorConfig();
+        DeploymentMonitorConfiguration config = ConfigurationManager.getConfiguration();
 
         List<ServerGroup> serverGroups = config.getServerGroups();
         GlobalConfig global = config.getGlobal();
@@ -60,6 +52,7 @@ public class Launcher {
         launcher.mergeGlobalConfigToServerGroups(serverGroups, global);
 
         //setting general trust store params. If required tests can override these
+        launcher.setKeyStoreProperties(global.getKeyStore(), global.getKeyStorePassword());
         launcher.setTrustStoreParams(global.getTrustStore(), global.getTrustStorePassword());
 
         //call schedule manager
@@ -109,32 +102,11 @@ public class Launcher {
         }
     }
 
-    /**
-     * parse deployment-monitor.yaml
-     *
-     * @return DeploymentMonitorConfiguration bean
-     */
-    private DeploymentMonitorConfiguration getMonitorConfig() {
-        Path monitorConf = Paths.get(System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME), "conf",
-                MonitoringConstants.DEPLOYMENT_MONITOR_CONFIG_FILE);
-
-        try (InputStream confInputStream = Files.newInputStream(monitorConf)) {
-            Representer representer = new Representer();
-            representer.getPropertyUtils().setSkipMissingProperties(true);
-
-            Yaml yaml = new Yaml(representer);
-            yaml.setBeanAccess(BeanAccess.FIELD);
-            DeploymentMonitorConfiguration config = yaml.loadAs(confInputStream, DeploymentMonitorConfiguration.class);
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("configuration map = {}", config);
-            }
-
-            return config;
-        } catch (IOException e) {
-            throw new DeploymentMonitorException(e.getMessage(), e);
-        }
-
+    private void setKeyStoreProperties(String path, String password) {
+        System.setProperty("javax.net.ssl.keyStore", path);
+        System.setProperty("javax.net.ssl.keyStorePassword", password);
+        System.setProperty("Security.KeyStore.Location", path);
+        System.setProperty("Security.KeyStore.Password", password);
     }
 
     private void setTrustStoreParams(String path, String password) {

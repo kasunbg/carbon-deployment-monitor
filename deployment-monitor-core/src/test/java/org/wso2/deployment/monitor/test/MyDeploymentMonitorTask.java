@@ -19,7 +19,7 @@ package org.wso2.deployment.monitor.test;
 
 import org.wso2.deployment.monitor.api.DeploymentMonitorTask;
 import org.wso2.deployment.monitor.api.RunStatus;
-import org.wso2.deployment.monitor.api.ServerGroup;
+import org.wso2.deployment.monitor.core.model.ServerGroup;
 
 import java.util.Properties;
 

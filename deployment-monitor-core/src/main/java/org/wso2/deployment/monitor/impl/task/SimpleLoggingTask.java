@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.DeploymentMonitorTask;
 import org.wso2.deployment.monitor.api.RunStatus;
-import org.wso2.deployment.monitor.api.ServerGroup;
+import org.wso2.deployment.monitor.core.model.ServerGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
