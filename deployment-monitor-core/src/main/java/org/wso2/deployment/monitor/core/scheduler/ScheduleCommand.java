@@ -18,10 +18,12 @@
 package org.wso2.deployment.monitor.core.scheduler;
 
 import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.Command;
+import org.wso2.deployment.monitor.core.DeploymentMonitorException;
 import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
@@ -41,11 +43,14 @@ public class ScheduleCommand extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduleCommand.class);
 
+    @Option(name = "-all", usage = "Schedule all the tasks", aliases = {"--all"})
+    private boolean scheduleAll = false;
+
     /**
      * The list of task names to run/schedule.
      */
     @Argument(index = 0, metaVar = "<task-name ...>", usage = "list of task names. Specify <todo> for all.", //todo
-              required = true, multiValued = true)
+              required = false, multiValued = true)
     private List<String> taskNamesToRun = new ArrayList<>();
 
     @Override
@@ -53,7 +58,16 @@ public class ScheduleCommand extends Command {
         List<ServerGroup> serverGroups = deploymentMonitorConfiguration.getServerGroups();
         List<TaskConfig> allTasks = deploymentMonitorConfiguration.getTasks();
 
-        List<TaskConfig> tasksToRun = TaskUtils.filterTasksByName(allTasks, getTaskNamesToRun());
+        List<TaskConfig> tasksToRun;
+        if (scheduleAll) {
+            tasksToRun = allTasks;
+        } else {
+            if (taskNamesToRun.size() == 0) {
+                throw new DeploymentMonitorException("Please specify either -all or a list of task names to schedule.");
+            }
+            tasksToRun = TaskUtils.filterTasksByName(allTasks, getTaskNamesToRun());
+        }
+
         //call schedule manager
         ScheduleManager scheduleManager;
         try {
@@ -78,5 +92,10 @@ public class ScheduleCommand extends Command {
     public List<String> getTaskNamesToRun() {
         return taskNamesToRun;
     }
+
+    public void setScheduleAll(boolean scheduleAll) {
+        this.scheduleAll = scheduleAll;
+    }
+
 
 }

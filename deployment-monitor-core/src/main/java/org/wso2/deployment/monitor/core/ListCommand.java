@@ -17,24 +17,13 @@
 */
 package org.wso2.deployment.monitor.core;
 
-import org.kohsuke.args4j.Argument;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 
 public class ListCommand extends Command {
 
-    /**
-     * The list of task names available to run/schedule.
-     */
-    @Argument(index = 0, metaVar = "<sub-command ...>", usage = "Detailed list", //todo
-              required = false, multiValued = false)
-    private String subList = "";
-
     @Override
     public void execute(DeploymentMonitorConfiguration deploymentMonitorConfiguration) {
-        if (subList.isEmpty()) {
-        }
-
         System.out.println("\nList of available tasks:");
         for (TaskConfig taskConfig : deploymentMonitorConfiguration.getTasks()) {
             System.out.println(taskConfig.getName());

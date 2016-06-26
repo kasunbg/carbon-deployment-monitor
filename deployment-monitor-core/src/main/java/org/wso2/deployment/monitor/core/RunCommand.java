@@ -18,6 +18,7 @@
 package org.wso2.deployment.monitor.core;
 
 import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
@@ -38,11 +39,14 @@ public class RunCommand extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(RunCommand.class);
 
+    @Option(name = "-all", usage = "Schedule all the tasks", aliases = {"--all"})
+    private boolean scheduleAll = false;
+
     /**
      * The list of task names to run/schedule.
      */
     @Argument(index = 0, metaVar = "<task-name ...>", usage = "list of task names. Specify <todo> for all.", //todo
-              required = true, multiValued = true)
+              required = false, multiValued = true)
     private List<String> taskNamesToRun = new ArrayList<>();
 
     @Override
@@ -50,7 +54,15 @@ public class RunCommand extends Command {
         List<ServerGroup> allServerGroups = deploymentMonitorConfiguration.getServerGroups();
         List<TaskConfig> allTasks = deploymentMonitorConfiguration.getTasks();
 
-        List<TaskConfig> tasksToRun = TaskUtils.filterTasksByName(allTasks, taskNamesToRun);
+        List<TaskConfig> tasksToRun;
+        if (scheduleAll) {
+            tasksToRun = allTasks;
+        } else {
+            if (taskNamesToRun.size() == 0) {
+                throw new DeploymentMonitorException("Please specify either -all or a list of task names to run.");
+            }
+            tasksToRun = TaskUtils.filterTasksByName(allTasks, taskNamesToRun);
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("Running {} tasks once...", tasksToRun.size());

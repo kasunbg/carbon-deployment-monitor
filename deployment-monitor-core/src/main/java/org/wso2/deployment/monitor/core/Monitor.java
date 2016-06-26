@@ -23,8 +23,6 @@ import org.kohsuke.args4j.spi.SubCommandHandler;
 import org.kohsuke.args4j.spi.SubCommands;
 import org.wso2.deployment.monitor.core.scheduler.ScheduleCommand;
 
-import java.util.List;
-
 public class Monitor {
 
     @Argument(index = 0, metaVar = "<sub-command>", usage = "Test strategy - Run once or schedule periodically.",
@@ -39,9 +37,7 @@ public class Monitor {
     private static class DefaultCommand extends ScheduleCommand {
 
         DefaultCommand() {
-            List<String> taskNamesToRun = getTaskNamesToRun();
-            taskNamesToRun.clear();
-            taskNamesToRun.add("*");
+            setScheduleAll(true);
         }
     }
 
