@@ -17,6 +17,9 @@
 */
 package org.wso2.deployment.monitor.core;
 
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,38 +38,87 @@ public class Launcher {
 
     private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
 
+    private enum RunStrategy {
+        RUN,
+        SCHEDULE
+    }
+
+//    @Option(name="-run", usage="Run the specified tasks once",
+//            forbids = "schedule", metaVar="task-names")
+//    private String run;
+//
+//    @Option(name="-schedule", usage="Scheduler the specified tasks as per the trigger",
+//            forbids = "run", metaVar="task-names")
+//    private String schedule;
+//
+    /**
+     *  receives other command line parameters than options
+     */
+    @Argument(index = 0, usage = "The run strategy", metaVar = "Run strategy")
+    private RunStrategy runStrategy;
+
+    /**
+     *  receives other command line parameters than options
+     */
+    @Argument(index = 1, multiValued = false, usage = "testss", metaVar = "task-list")
+    private String tasks ;
+//    private List<String> tasks = new ArrayList<>();
+
     public static void main(String[] args) {
 
+        new Launcher().doMain(args);
+    }
+
+    private void doMain(String[] args) {
         if (System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME) == null) {
             System.setProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME, ".");
         }
 
         Launcher launcher = new Launcher();
         DeploymentMonitorConfiguration config = ConfigurationManager.getConfiguration();
-
-        List<ServerGroup> serverGroups = config.getServerGroups();
-        GlobalConfig global = config.getGlobal();
-        List<TaskConfig> tasks = config.getTasks();
-
-        launcher.mergeGlobalConfigToTaskConfig(tasks, global);
-        launcher.mergeGlobalConfigToServerGroups(serverGroups, global);
-
-        //setting general trust store params. If required tests can override these
-        launcher.setKeyStoreProperties(global.getKeyStore(), global.getKeyStorePassword());
-        launcher.setTrustStoreParams(global.getTrustStore(), global.getTrustStorePassword());
-
-        //call schedule manager
-        ScheduleManager scheduleManager;
+        CmdOptions options = new CmdOptions();
+        CmdLineParser parser = new CmdLineParser(options);
         try {
-            scheduleManager = new ScheduleManager();
-            for (TaskConfig task : tasks) {
-                if (task.isEnable()) {
-                    scheduleManager.scheduleTask(task, serverGroups);
+            parser.parseArgument(args);
+
+            logger.info("Deployment Monitor Home {}", System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME));
+
+            List<ServerGroup> serverGroups = config.getServerGroups();
+            GlobalConfig global = config.getGlobal();
+            List<TaskConfig> tasks = config.getTasks();
+
+            launcher.mergeGlobalConfigToTaskConfig(tasks, global);
+            launcher.mergeGlobalConfigToServerGroups(serverGroups, global);
+
+            //setting general trust store params. If required tests can override these
+            launcher.setKeyStoreProperties(global.getKeyStore(), global.getKeyStorePassword());
+            launcher.setTrustStoreParams(global.getTrustStore(), global.getTrustStorePassword());
+
+            //call schedule manager
+            ScheduleManager scheduleManager;
+            try {
+                scheduleManager = new ScheduleManager();
+                for (TaskConfig task : tasks) {
+                    try {
+                        if (task.isEnable()) {
+                            scheduleManager.scheduleTask(task, serverGroups);
+                        }
+                    } catch (SchedulerException e) {
+                        logger.error("Error occurred while scheduling the task - " + task.getName(), e);
+
+                    }
                 }
+                scheduleManager.startScheduler();
+            } catch (SchedulerException e) {
+                logger.error("Error occurred while scheduling the tasks.", e);
             }
-            scheduleManager.startScheduler();
-        } catch (SchedulerException e) {
-            logger.error("Error occurred while scheduling the tasks.", e);
+
+        } catch (CmdLineException e) {
+            //            parser.printSingleLineUsage(System.err);
+            //            logger.error(e.getMessage());
+            System.out.println(e.getMessage());
+            parser.printUsage(System.err);
+            System.exit(1);
         }
     }
 
