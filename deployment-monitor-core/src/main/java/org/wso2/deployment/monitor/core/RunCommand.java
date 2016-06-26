@@ -17,6 +17,7 @@
 */
 package org.wso2.deployment.monitor.core;
 
+import org.kohsuke.args4j.Argument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
@@ -25,7 +26,6 @@ import org.wso2.deployment.monitor.core.model.TaskConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,33 +38,20 @@ public class RunCommand extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(RunCommand.class);
 
+    /**
+     * The list of task names to run/schedule.
+     */
+    @Argument(index = 0, metaVar = "<task-name ...>", usage = "list of task names. Specify <todo> for all.", //todo
+              required = true, multiValued = true)
+    private List<String> taskNamesToRun = new ArrayList<>();
+
     @Override
     public void execute(DeploymentMonitorConfiguration deploymentMonitorConfiguration) {
         List<ServerGroup> allServerGroups = deploymentMonitorConfiguration.getServerGroups();
         List<TaskConfig> allTasks = deploymentMonitorConfiguration.getTasks();
 
-        List<String> taskNamesToRun = getTaskNames();
+        List<TaskConfig> tasksToRun = TaskUtils.filterTasksByName(allTasks, taskNamesToRun);
 
-        List<TaskConfig> tasksToRun = new ArrayList<>(taskNamesToRun.size());
-        if (taskNamesToRun.contains("*")) {
-            tasksToRun = allTasks;
-        } else {
-            for (TaskConfig taskConfig : allTasks) {
-                Iterator<String> it = taskNamesToRun.iterator();
-                while (it.hasNext()) {
-                    if (it.next().equals(taskConfig.getName())) {
-                        tasksToRun.add(taskConfig);
-                        it.remove();
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!taskNamesToRun.isEmpty()) {
-            logger.warn("These task names were not found in {} - {}",
-                    MonitoringConstants.DEPLOYMENT_MONITOR_CONFIG_FILE, taskNamesToRun);
-        }
         if (logger.isDebugEnabled()) {
             logger.debug("Running {} tasks once...", tasksToRun.size());
         }

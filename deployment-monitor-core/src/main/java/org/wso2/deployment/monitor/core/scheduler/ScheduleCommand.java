@@ -17,14 +17,17 @@
 */
 package org.wso2.deployment.monitor.core.scheduler;
 
+import org.kohsuke.args4j.Argument;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.Command;
+import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,18 +41,27 @@ public class ScheduleCommand extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduleCommand.class);
 
+    /**
+     * The list of task names to run/schedule.
+     */
+    @Argument(index = 0, metaVar = "<task-name ...>", usage = "list of task names. Specify <todo> for all.", //todo
+              required = true, multiValued = true)
+    private List<String> taskNamesToRun = new ArrayList<>();
+
     @Override
     public void execute(DeploymentMonitorConfiguration deploymentMonitorConfiguration) {
         List<ServerGroup> serverGroups = deploymentMonitorConfiguration.getServerGroups();
-        List<TaskConfig> tasks = deploymentMonitorConfiguration.getTasks();
+        List<TaskConfig> allTasks = deploymentMonitorConfiguration.getTasks();
 
+        List<TaskConfig> tasksToRun = TaskUtils.filterTasksByName(allTasks, taskNamesToRun);
         //call schedule manager
         ScheduleManager scheduleManager;
         try {
             scheduleManager = new ScheduleManager();
-            for (TaskConfig task : tasks) {
+            for (TaskConfig task : tasksToRun) {
                 try {
                     if (task.isEnable()) {
+                        logger.debug("Scheduling '{}'", task.getName());
                         scheduleManager.scheduleTask(task, serverGroups);
                     }
                 } catch (SchedulerException e) {
@@ -61,6 +73,6 @@ public class ScheduleCommand extends Command {
         } catch (SchedulerException e) {
             logger.error("Error occurred while scheduling the tasks.", e);
         }
-
     }
+
 }

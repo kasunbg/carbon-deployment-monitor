@@ -34,12 +34,12 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     @Override public void jobScheduled(Trigger trigger) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Job Scheduled : " + trigger);
+            logger.debug("Job Scheduled : {}", trigger);
         }
     }
 
     @Override public void jobUnscheduled(TriggerKey triggerKey) {
-        logger.info("Job : " + triggerKey + " un-scheduled");
+        logger.info("Job : {} un-scheduled", triggerKey);
     }
 
     @Override public void triggerFinalized(Trigger trigger) {
@@ -64,13 +64,13 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     @Override public void jobAdded(JobDetail jobDetail) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Added Job : " + jobDetail);
+            logger.debug("Added Job : {}", jobDetail);
         }
     }
 
     @Override public void jobDeleted(JobKey jobKey) {
         if (logger.isDebugEnabled()) {
-            logger.info("Deleted Job : " + jobKey);
+            logger.debug("Deleted Job : {}", jobKey);
         }
     }
 
@@ -99,7 +99,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void schedulerStarted() {
-        logger.info("Scheduler was started");
+        logger.debug("Scheduler was started");
     }
 
     @Override public void schedulerStarting() {
@@ -107,7 +107,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void schedulerShutdown() {
-        logger.info("Scheduler was shutdown");
+        logger.debug("Scheduler was shutdown");
     }
 
     @Override public void schedulerShuttingdown() {

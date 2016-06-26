@@ -17,28 +17,12 @@
 */
 package org.wso2.deployment.monitor.core;
 
-import org.kohsuke.args4j.Argument;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * todo
  */
 public abstract class Command {
-
-    /**
-     * The list of task names to run/schedule.
-     * Added into the parent class since this is common for both Run and Schedule.
-     */
-    @Argument(index = 0, metaVar = "<task-names>", usage = "list of task names. Specify * for all.",
-              required = true, multiValued = true)
-    private List<String> taskNames = new ArrayList<>();
-
-    public List<String> getTaskNames() {
-        return taskNames;
-    }
 
     public abstract void execute(DeploymentMonitorConfiguration deploymentMonitorConfiguration);
 }

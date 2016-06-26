@@ -21,15 +21,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
+import org.wso2.deployment.monitor.core.model.TaskConfig;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 public class TaskUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskUtils.class);
 
+    /**
+     * Call a given task.
+     * todo handle failure scenarios.
+     */
     public static void callTask(String taskClassName, String callbackClassName,
             ServerGroup serverGroup, Properties customParams) {
         try {
@@ -44,13 +52,40 @@ public class TaskUtils {
             RunStatus runStatus = (RunStatus) executeMethod.invoke(taskInstance, serverGroup, customParams);
 
             callbackMethod.invoke(callbackInstance, runStatus);
-
         } catch (ClassNotFoundException e) {
             logger.error("The task or callback class not found - {}", e.getMessage());
         } catch (InstantiationException | IllegalAccessException
                 | NoSuchMethodException | InvocationTargetException | ExceptionInInitializerError e) {
             logger.error("Error while instantiating task classes", e);
         }
+    }
 
+    /**
+     * Returns a filtered list of TaskConfig that contain the provided list of task names.
+     *
+     */
+    public static List<TaskConfig> filterTasksByName(List<TaskConfig> allTasks, List<String> taskNamesFilter) {
+        List<TaskConfig> filteredTasks = new ArrayList<>(taskNamesFilter.size());
+        if (taskNamesFilter.contains("*")) {
+            filteredTasks = allTasks;
+        } else {
+            for (TaskConfig taskConfig : allTasks) {
+                Iterator<String> it = taskNamesFilter.iterator();
+                while (it.hasNext()) {
+                    if (it.next().equals(taskConfig.getName())) {
+                        filteredTasks.add(taskConfig);
+                        it.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!taskNamesFilter.isEmpty()) {
+            logger.warn("task name(s) {} were not found in {}",
+                    taskNamesFilter, MonitoringConstants.DEPLOYMENT_MONITOR_CONFIG_FILE);
+        }
+
+        return filteredTasks;
     }
 }

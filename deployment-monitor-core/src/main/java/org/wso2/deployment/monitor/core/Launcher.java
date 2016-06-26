@@ -72,34 +72,30 @@ public class Launcher {
             System.setProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME, ".");
         }
 
-        Launcher launcher = new Launcher();
         DeploymentMonitorConfiguration config = ConfigurationManager.getConfiguration();
         Monitor monitor = new Monitor();
         CmdLineParser parser = new CmdLineParser(monitor);
         try {
             parser.parseArgument(args);
 
-            logger.info("Deployment Monitor Home {}", System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME));
+            logger.debug("Deployment Monitor Home {}", System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME));
 
             List<ServerGroup> serverGroups = config.getServerGroups();
             GlobalConfig global = config.getGlobal();
             List<TaskConfig> tasks = config.getTasks();
 
-            launcher.mergeGlobalConfigToTaskConfig(tasks, global);
-            launcher.mergeGlobalConfigToServerGroups(serverGroups, global);
+            mergeGlobalConfigToTaskConfig(tasks, global);
+            mergeGlobalConfigToServerGroups(serverGroups, global);
 
             //setting general trust store params. If required tests can override these
-            launcher.setKeyStoreProperties(global.getKeyStore(), global.getKeyStorePassword());
-            launcher.setTrustStoreParams(global.getTrustStore(), global.getTrustStorePassword());
+            setKeyStoreProperties(global.getKeyStore(), global.getKeyStorePassword());
+            setTrustStoreParams(global.getTrustStore(), global.getTrustStorePassword());
 
             monitor.cmd.execute(config);
 
         } catch (CmdLineException e) {
-            //            parser.printSingleLineUsage(System.err);
-            //            logger.error(e.getMessage());
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             parser.printUsage(System.err);
-            System.exit(1);
         }
     }
 
