@@ -203,13 +203,6 @@ elif [ "$CMD" = "version" ]; then
   exit 0
 fi
 
-# ---------- Handle the SSL Issue with proper JDK version --------------------
-jdk_18=`$JAVA_HOME/bin/java -version 2>&1 | grep "1.[8]"`
-if [ "$jdk_18" = "" ]; then
-   echo " Starting WSO2 Carbon (in unsupported JDK)"
-   echo " [ERROR] CARBON is supported only on JDK 1.8"
-fi
-
 CARBON_XBOOTCLASSPATH=""
 for f in "$DEPLOYMENT_MONITOR_HOME"/bin/bootstrap/xboot/*.jar
 do
