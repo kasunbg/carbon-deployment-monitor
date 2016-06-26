@@ -23,7 +23,6 @@ import org.kohsuke.args4j.spi.SubCommandHandler;
 import org.kohsuke.args4j.spi.SubCommands;
 import org.wso2.deployment.monitor.core.scheduler.ScheduleCommand;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Monitor {
@@ -38,12 +37,12 @@ public class Monitor {
     public Command cmd = new DefaultCommand();
 
     private static class DefaultCommand extends ScheduleCommand {
-        public List<String> getTaskNamesToRun() {
-            List<String> defaultTasks = new ArrayList<>();
-            defaultTasks.add("*");
-            return defaultTasks;
-        }
 
-    };
+        DefaultCommand() {
+            List<String> taskNamesToRun = getTaskNamesToRun();
+            taskNamesToRun.clear();
+            taskNamesToRun.add("*");
+        }
+    }
 
 }

@@ -53,7 +53,7 @@ public class ScheduleCommand extends Command {
         List<ServerGroup> serverGroups = deploymentMonitorConfiguration.getServerGroups();
         List<TaskConfig> allTasks = deploymentMonitorConfiguration.getTasks();
 
-        List<TaskConfig> tasksToRun = TaskUtils.filterTasksByName(allTasks, taskNamesToRun);
+        List<TaskConfig> tasksToRun = TaskUtils.filterTasksByName(allTasks, getTaskNamesToRun());
         //call schedule manager
         ScheduleManager scheduleManager;
         try {
@@ -73,6 +73,10 @@ public class ScheduleCommand extends Command {
         } catch (SchedulerException e) {
             logger.error("Error occurred while scheduling the tasks.", e);
         }
+    }
+
+    public List<String> getTaskNamesToRun() {
+        return taskNamesToRun;
     }
 
 }
