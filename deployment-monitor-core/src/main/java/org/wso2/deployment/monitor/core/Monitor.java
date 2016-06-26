@@ -32,11 +32,13 @@ public class Monitor {
               required = false, handler = SubCommandHandler.class)
     @SubCommands({
                          @SubCommand(name = "run", impl = RunCommand.class),
-                         @SubCommand(name = "schedule", impl = ScheduleCommand.class)
+                         @SubCommand(name = "schedule", impl = ScheduleCommand.class),
+                         @SubCommand(name = "list", impl = ListCommand.class)
                  })
-    public Command cmd = new ScheduleCommand() {
-        //default
-        public List<String> getTaskNames() {
+    public Command cmd = new DefaultCommand();
+
+    private static class DefaultCommand extends ScheduleCommand {
+        public List<String> getTaskNamesToRun() {
             List<String> defaultTasks = new ArrayList<>();
             defaultTasks.add("*");
             return defaultTasks;
