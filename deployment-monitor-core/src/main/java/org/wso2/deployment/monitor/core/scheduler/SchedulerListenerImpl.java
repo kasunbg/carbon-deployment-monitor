@@ -39,7 +39,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void jobUnscheduled(TriggerKey triggerKey) {
-        logger.info("Job : " + triggerKey + " un-scheduled.");
+        logger.info("Job : " + triggerKey + " un-scheduled");
     }
 
     @Override public void triggerFinalized(Trigger trigger) {
@@ -91,7 +91,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void schedulerError(String s, SchedulerException e) {
-        logger.error("Scheduler error : " + s + " occurred.", e);
+        logger.error("Scheduler error : " + s + " occurred", e);
     }
 
     @Override public void schedulerInStandbyMode() {
@@ -99,7 +99,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void schedulerStarted() {
-        logger.info("Scheduler was started.");
+        logger.info("Scheduler was started");
     }
 
     @Override public void schedulerStarting() {
@@ -107,7 +107,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void schedulerShutdown() {
-        logger.info("Scheduler was shutdown.");
+        logger.info("Scheduler was shutdown");
     }
 
     @Override public void schedulerShuttingdown() {

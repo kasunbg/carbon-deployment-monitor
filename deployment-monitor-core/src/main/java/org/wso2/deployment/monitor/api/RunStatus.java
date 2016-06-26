@@ -35,9 +35,9 @@ public class RunStatus {
 
     private String message;
 
-    private List<ServerGroup> successServerGroups;
+    private List<String> successHosts;
 
-    private List<ServerGroup> failedServerGroups;
+    private List<String> failedHosts;
 
     private Map<String, Object> customTaskDetails;
 
@@ -65,19 +65,19 @@ public class RunStatus {
         this.customTaskDetails = customTaskDetails;
     }
 
-    public List<ServerGroup> getSuccessServerGroups() {
-        return successServerGroups;
+    public List<String> getSuccessHosts() {
+        return successHosts;
     }
 
-    public void setSuccessServerGroups(List<ServerGroup> successServerGroups) {
-        this.successServerGroups = successServerGroups;
+    public void setSuccessHosts(List<String> successHosts) {
+        this.successHosts = successHosts;
     }
 
-    public List<ServerGroup> getFailedServerGroups() {
-        return failedServerGroups;
+    public List<String> getFailedHosts() {
+        return failedHosts;
     }
 
-    public void setFailedServerGroups(List<ServerGroup> failedServerGroups) {
-        this.failedServerGroups = failedServerGroups;
+    public void setFailedHosts(List<String> failedHosts) {
+        this.failedHosts = failedHosts;
     }
 }

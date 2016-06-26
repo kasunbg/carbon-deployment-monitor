@@ -17,9 +17,9 @@
 # A copy of distribution's monitor.yaml for testing purposes
 
 global:
-  onResult: org.wso2.deployment.monitor.task.SimpleCallback
-  trustStore: path/to/truststore
-  trustStorePassword: password
+  onResult: org.wso2.deployment.monitor.impl.callback.SimpleLoggingCallBack
+  trustStore: resources/client-truststore.jks
+  trustStorePassword: wso2carbon
   tenant:
     domain: domain
     tenantID: 1234
@@ -56,9 +56,9 @@ serverGroups:
 tasks:
   -
     enable: true
-    name: SimpleTask
+    name: SimpleLoggingTask
     group: apicloud
-    className: org.wso2.deployment.monitor.task.SimpleTask
+    className: org.wso2.deployment.monitor.impl.task.SimpleLoggingTask
     triggerType: simple
     trigger: 10s
 #    trigger: 0 0/1 * 1/1 * ? *

@@ -15,19 +15,10 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.core;
-
-import org.wso2.deployment.monitor.api.ServerGroup;
-import org.wso2.deployment.monitor.core.model.TaskConfig;
-
-import java.util.List;
+package org.wso2.deployment.monitor.impl.task;
 
 /**
  * todo
  */
-public class DummyScheduleManager {
-
-    public void schedule(TaskConfig config, List<ServerGroup> serverGroups) {
-
-    }
+public class PatchVerificationTest {
 }

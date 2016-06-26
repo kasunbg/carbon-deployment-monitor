@@ -17,8 +17,6 @@
 */
 package org.wso2.deployment.monitor.core.model;
 
-import org.wso2.deployment.monitor.api.ServerGroup;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +27,18 @@ public class DeploymentMonitorConfiguration {
 
     private GlobalConfig global = new GlobalConfig();
 
+    private NotificationsConfig notifications = new NotificationsConfig();
+
     private List<ServerGroup> serverGroups = new ArrayList<>();
 
     private List<TaskConfig> tasks = new ArrayList<>();
 
     public GlobalConfig getGlobal() {
         return global;
+    }
+
+    public NotificationsConfig getNotificationsConfig() {
+        return notifications;
     }
 
     public List<ServerGroup> getServerGroups() {

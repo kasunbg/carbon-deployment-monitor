@@ -26,8 +26,8 @@ import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.deployment.monitor.api.ServerGroup;
 import org.wso2.deployment.monitor.core.QuartzJobProxy;
+import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.wso2.deployment.monitor.core.scheduler.utils.SchedulerConstants;
 import org.wso2.deployment.monitor.core.scheduler.utils.TriggerUtilities;
@@ -120,7 +120,7 @@ public class ScheduleManager {
     /**
      * Un-Schedule a task
      * @param jobName Name of the Job. This will be <code>ServerName + "." + TaskName </code>
-     *                i.e gateway.SimpleTask
+     *                i.e gateway.SimpleLoggingTask
      * @param jobGroup Group name of the Task
      * @throws SchedulerException
      */

@@ -17,6 +17,8 @@
 */
 package org.wso2.deployment.monitor.api;
 
+import org.wso2.deployment.monitor.core.model.ServerGroup;
+
 import java.util.Properties;
 
 /**

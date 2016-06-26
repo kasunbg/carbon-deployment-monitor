@@ -24,7 +24,7 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.RunStatus;
-import org.wso2.deployment.monitor.api.ServerGroup;
+import org.wso2.deployment.monitor.core.model.ServerGroup;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
