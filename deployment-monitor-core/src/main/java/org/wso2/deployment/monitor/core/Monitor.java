@@ -21,19 +21,21 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.spi.SubCommand;
 import org.kohsuke.args4j.spi.SubCommandHandler;
 import org.kohsuke.args4j.spi.SubCommands;
+import org.wso2.deployment.monitor.core.scheduler.ScheduleCommand;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CmdOptions {
+public class Monitor {
 
     @Argument(index = 0, metaVar = "<sub-command>", usage = "Test strategy - Run once or schedule periodically.",
               required = false, handler = SubCommandHandler.class)
     @SubCommands({
-                         @SubCommand(name = "run", impl = Run.class),
-                         @SubCommand(name = "schedule", impl = Schedule.class)
+                         @SubCommand(name = "run", impl = RunCommand.class),
+                         @SubCommand(name = "schedule", impl = ScheduleCommand.class)
                  })
-    private Command cmd = new Schedule() {
+    public Command cmd = new ScheduleCommand() {
+        //default
         public List<String> getTaskNames() {
             List<String> defaultTasks = new ArrayList<>();
             defaultTasks.add("*");
@@ -41,27 +43,5 @@ public class CmdOptions {
         }
 
     };
-
-    public Command getCmd() {
-        return cmd;
-    }
-
-    public abstract static class Command {
-        /**
-         * The list of task names to run/schedule.
-         * Added into the parent class since this is common for both Run and Schedule.
-         */
-        @Argument(index = 0, metaVar = "<task-names>", usage = "list of task names. Specify * for all.",
-                  required = true, multiValued = true)
-        private List<String> taskNames = new ArrayList<>();
-
-        public List<String> getTaskNames() {
-            return taskNames;
-        }
-    }
-
-    public static class Run extends Command { }
-
-    public static class Schedule extends Command { }
 
 }

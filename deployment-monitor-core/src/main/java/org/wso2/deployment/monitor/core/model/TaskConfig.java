@@ -75,4 +75,10 @@ public class TaskConfig {
     public Properties getTaskParams() {
         return taskParams;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+       return true;
+    }
+
 }

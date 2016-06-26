@@ -20,14 +20,12 @@ package org.wso2.deployment.monitor.core;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
-import org.wso2.deployment.monitor.core.scheduler.ScheduleManager;
 
 import java.util.List;
 
@@ -76,8 +74,8 @@ public class Launcher {
 
         Launcher launcher = new Launcher();
         DeploymentMonitorConfiguration config = ConfigurationManager.getConfiguration();
-        CmdOptions options = new CmdOptions();
-        CmdLineParser parser = new CmdLineParser(options);
+        Monitor monitor = new Monitor();
+        CmdLineParser parser = new CmdLineParser(monitor);
         try {
             parser.parseArgument(args);
 
@@ -94,24 +92,7 @@ public class Launcher {
             launcher.setKeyStoreProperties(global.getKeyStore(), global.getKeyStorePassword());
             launcher.setTrustStoreParams(global.getTrustStore(), global.getTrustStorePassword());
 
-            //call schedule manager
-            ScheduleManager scheduleManager;
-            try {
-                scheduleManager = new ScheduleManager();
-                for (TaskConfig task : tasks) {
-                    try {
-                        if (task.isEnable()) {
-                            scheduleManager.scheduleTask(task, serverGroups);
-                        }
-                    } catch (SchedulerException e) {
-                        logger.error("Error occurred while scheduling the task - " + task.getName(), e);
-
-                    }
-                }
-                scheduleManager.startScheduler();
-            } catch (SchedulerException e) {
-                logger.error("Error occurred while scheduling the tasks.", e);
-            }
+            monitor.cmd.execute(config);
 
         } catch (CmdLineException e) {
             //            parser.printSingleLineUsage(System.err);

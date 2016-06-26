@@ -23,11 +23,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Properties;
 
 /**
@@ -43,29 +40,11 @@ public class QuartzJobProxy implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
-        try {
-            String taskClassName = dataMap.getString("taskClass");
-            String callbackClassName = dataMap.getString("callbackClass");
-            Object serverGroup = dataMap.get("serverGroup");
-            Object customParams = dataMap.get("customParams");
+        String taskClassName = dataMap.getString("taskClass");
+        String callbackClassName = dataMap.getString("callbackClass");
+        Object serverGroup = dataMap.get("serverGroup");
+        Object customParams = dataMap.get("customParams");
 
-            Class taskClass = Class.forName(taskClassName);
-            Method executeMethod = taskClass.getDeclaredMethod("execute", ServerGroup.class, Properties.class);
-
-            Class callbackClass = Class.forName(callbackClassName);
-            Method callbackMethod = callbackClass.getDeclaredMethod("callback", RunStatus.class);
-
-
-            Object taskInstance = taskClass.newInstance();
-            Object callbackInstance = callbackClass.newInstance();
-            RunStatus runStatus = (RunStatus) executeMethod.invoke(taskInstance, serverGroup, customParams);
-
-            callbackMethod.invoke(callbackInstance, runStatus);
-
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                | NoSuchMethodException | InvocationTargetException | ExceptionInInitializerError e) {
-            logger.error("Error while instantiating task classes", e);
-        }
-
+        TaskUtils.callTask(taskClassName, callbackClassName, (ServerGroup) serverGroup, (Properties) customParams);
     }
 }

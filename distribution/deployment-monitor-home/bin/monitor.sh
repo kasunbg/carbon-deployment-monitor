@@ -270,7 +270,7 @@ do
     -Djava.io.tmpdir="$DEPLOYMENT_MONITOR_HOME/tmp" \
     -Dcarbon.registry.root=/ \
     -Djava.command="$JAVACMD" \
-    -Dcarbon.home="$DEPLOYMENT_MONITOR_HOME" \
+    -Ddeployment.monitor.home="$DEPLOYMENT_MONITOR_HOME" \
     -Dlog4j.configurationFile="file:$DEPLOYMENT_MONITOR_HOME/conf/log4j2.xml" \
     -Djava.security.egd=file:/dev/./urandom \
     -Dfile.encoding=UTF8 \
