@@ -96,20 +96,19 @@ public class EmailSender {
      * Sends mail with specified params
      *
      * @param subject Subject of the mail
-     * @param text1   Text body part one
-     * @param text2   Text body part two
+     * @param body   Text body part one
      */
-    public void send(String subject, String text1, String text2) {
+    public void send(String subject, String body) {
 
         if (isEmailEnabled) {
             Properties props = new Properties();
-            props.put("mail.smtp.starttls.enable", isTlsEnabled);
-            props.put("mail.smtp.host", smtpServer);
-            props.put("mail.smtp.port", smtpPort);
+            props.put(EmailConstants.MAIL_SMTP_STARTTLS_ENABLE, String.valueOf(isTlsEnabled));
+            props.put(EmailConstants.MAIL_SMTP_SERVER, smtpServer);
+            props.put(EmailConstants.MAIL_SMTP_PORT, smtpPort);
 
             Session session;
             if (authEnabled) {
-                props.put("mail.smtp.auth", "true");
+                props.put(EmailConstants.MAIL_SMTP_AUTH, "true");
                 session = Session.getInstance(props, new MailAuthenticator(mailUser, mailUserPwd));
             } else {
                 session = Session.getDefaultInstance(props);
@@ -136,18 +135,14 @@ public class EmailSender {
                 InternetAddress[] to = new InternetAddress[addressTo.size()];
                 to = addressTo.toArray(to);
                 simpleMessage.setRecipients(RecipientType.TO, to);
-                simpleMessage.setSubject("Cloud Heartbeat: " + subject);
+                simpleMessage.setSubject(EmailConstants.SUBJECT_START + subject);
 
                 Multipart multipart = new MimeMultipart();
 
-                BodyPart part1 = new MimeBodyPart();
-                part1.setContent(text1, "text/html");
+                BodyPart bodyPart = new MimeBodyPart();
+                bodyPart.setContent(body, EmailConstants.BODY_CONTENT_TYPE);
 
-                BodyPart part2 = new MimeBodyPart();
-                part2.setContent(text2, "text/html");
-
-                multipart.addBodyPart(part1);
-                multipart.addBodyPart(part2);
+                multipart.addBodyPart(bodyPart);
 
                 simpleMessage.setContent(multipart);
                 Transport.send(simpleMessage);
