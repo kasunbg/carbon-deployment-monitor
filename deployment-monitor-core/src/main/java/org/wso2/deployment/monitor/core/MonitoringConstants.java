@@ -28,4 +28,5 @@ public class MonitoringConstants {
 
     public static final String DEFAULT_TENANT_KEY = "default.tenant";
 
+    public static final String TIMEOUT = "timeout";
 }

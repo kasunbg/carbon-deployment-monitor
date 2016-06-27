@@ -21,14 +21,14 @@ global:
   trustStore: resources/client-truststore.jks
   trustStorePassword: wso2carbon
   tenant:
-    domain: domain
+    domain: carbon.super
     tenantID: -1234
-    username: username
-    password: password
+    username: admin
+    password: admin
 
 notifications:
   email:
-    enabled: true
+    enabled: false
     tlsEnabled: true
     authentication: true
     username: username
@@ -40,16 +40,15 @@ notifications:
 
 serverGroups:
   -
-    name: gateway_mgt
+    name: IdentityServer
     hosts:
-      - https://gwm001:9443
-      - https://gwm002:9443
+      - https://localhost:9443
 
   -
-    name: gateway_worker
+    name: CarbonServers
     hosts:
-      - https://gw001:9443
-      - https://gw002:9443
+      - https://localhost:9443
+      - https://localhost:9444
 
   -
     name: gateway
@@ -69,7 +68,7 @@ tasks:
   -
     enable: true
     name: SimpleLoggingTask
-    group: apicloud
+    group: default
     className: org.wso2.deployment.monitor.impl.task.SimpleLoggingTask
     triggerType: simple
     trigger: 10s
@@ -81,14 +80,26 @@ tasks:
        severity: 2
   -
     enable: false
-    name: abc
-    group: appcloud
-    className: org.wso2.LoginTest
-    triggerType: cron
-    trigger: 60m
-    onResult: custom.onResult.implementation
-    servers: [gateway_mgt, gateway_worker, gateway,keymanager]
+    name: TenantLogin
+    group: apicloud
+    className: org.wso2.deployment.monitor.impl.task.TenantLoginTask
+    triggerType: simple
+    trigger: 30s
+    servers: [IdentityServer]
     taskParams:
-       key: value
+       timeout: 120 #in seconds
+       key2: value2
+       severity: 1
+  -
+    enable: false
+    name: ServerTenantLogin
+    group: carbon
+    className: org.wso2.deployment.monitor.impl.task.ServerTenantLoginTask
+    onResult: org.wso2.deployment.monitor.impl.callback.ServerLoginCallback
+    triggerType: simple
+    trigger: 30s
+    servers: [CarbonServers]
+    taskParams:
+       timeout: 120
        key2: value2
        severity: 1
