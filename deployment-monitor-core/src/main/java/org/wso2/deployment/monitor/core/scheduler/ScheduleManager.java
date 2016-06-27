@@ -95,6 +95,11 @@ public class ScheduleManager {
             serverGroupMap.put(serverGroup.getName(), serverGroup);
         }
         for (String serverName : taskConfig.getServers()) {
+            if (serverGroupMap.get(serverName) == null) {
+                logger.warn("Unable to find a Server Group with the name : " + serverName
+                        + ". Task will not be scheduled for this server");
+                continue;
+            }
             dataMap.put(SchedulerConstants.SERVER_GROUP, serverGroupMap.get(serverName));
 
             String jobName = serverName + "." + taskConfig.getName();
