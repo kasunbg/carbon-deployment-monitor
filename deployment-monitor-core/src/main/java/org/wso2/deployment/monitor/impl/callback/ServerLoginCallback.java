@@ -25,25 +25,25 @@ import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
 
 /**
- * Simple Logging Implementation for callback
+ * Simple Implementation for callback
  */
-public class SimpleLoggingCallBack implements OnResultCallback {
-    private static final Logger logger = LoggerFactory.getLogger(SimpleLoggingCallBack.class);
+public class ServerLoginCallback implements OnResultCallback {
+    private static final Logger logger = LoggerFactory.getLogger(ServerLoginCallback.class);
 
     @Override public void callback(RunStatus runStatus) {
         if (runStatus.isSuccess()) {
             logger.info(" [Task Successful] " + runStatus.getMessage());
         } else {
             String msg = " [Task Failed] " + runStatus.getMessage();
-            if (!runStatus.getCustomTaskDetails().isEmpty()
-                    && runStatus.getCustomTaskDetails().get("Exception") != null) {
-                Exception e = (Exception) runStatus.getCustomTaskDetails().get("Exception");
-                logger.error(msg, e);
-                EmailSender.getInstance().send(msg, e.getMessage());
-            } else {
-                logger.error(msg);
-                EmailSender.getInstance().send(msg, msg);
+            StringBuilder failedHosts = new StringBuilder();
+            String sep = "";
+            for(String host : runStatus.getFailedHosts()) {
+                failedHosts.append(sep).append(host).append(" - ").append(runStatus.getCustomTaskDetails().get(host));
+                sep = ", ";
             }
+            logger.error(msg + " Failed Hosts : [ " + failedHosts.toString() + " ]");
+            EmailSender.getInstance()
+                    .send(msg, "Failed Hosts [ " + failedHosts.toString() + " ]");
         }
     }
 }

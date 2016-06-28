@@ -31,4 +31,6 @@ public class MonitoringConstants {
     public static final String SERVER_AGENT_URL_CONTEXT = "services/ServerStatusReporter";
 
     public static final String SERVER_AGENT_SERVER_INFO_OP = "getServerInfo";
+
+    public static final String TIMEOUT = "timeout";
 }

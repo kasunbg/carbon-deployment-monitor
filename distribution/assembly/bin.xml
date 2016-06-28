@@ -52,16 +52,19 @@
         <!-- Include monitoring modules here -->
         <dependencySet>
             <outputDirectory>/${distribution.file.name}/lib</outputDirectory>
-            <includes>
-                <include>org.wso2.carbon.devops:deployment-monitor-core:jar</include>
-                <include>org.yaml:snakeyaml:jar</include>
-                <include>org.quartz-scheduler:quartz:jar</include>
-                <include>org.slf4j:slf4j-api:jar</include>
-                <include>org.apache.logging.log4j:log4j-slf4j-impl:jar</include>
-                <include>org.apache.logging.log4j:log4j-api:jar</include>
-                <include>org.apache.logging.log4j:log4j-core:jar</include>
-                <include>args4j:args4j:jar</include>
-            </includes>
+            <!--<includes>-->
+                <!--<include>org.wso2.carbon.devops:deployment-monitor-core:jar</include>-->
+                <!--<include>org.yaml:snakeyaml:jar</include>-->
+                <!--<include>org.quartz-scheduler:quartz:jar</include>-->
+                <!--<include>org.slf4j:slf4j-api:jar</include>-->
+                <!--<include>org.apache.logging.log4j:log4j-slf4j-impl:jar</include>-->
+                <!--<include>org.apache.logging.log4j:log4j-api:jar</include>-->
+                <!--<include>org.apache.logging.log4j:log4j-core:jar</include>-->
+                <!--<include>args4j:args4j:jar</include>-->
+                <!--<include>org.wso2.carbon:org.wso2.carbon.authenticator.stub:jar</include>-->
+                <!--<include>org.apache.axis2.wso2:axis2:jar</include>-->
+                <!--<include>org.apache.ws.commons.axiom.wso2:axiom:jar</include>-->
+            <!--</includes>-->
         </dependencySet>
     </dependencySets>
 </assembly>
