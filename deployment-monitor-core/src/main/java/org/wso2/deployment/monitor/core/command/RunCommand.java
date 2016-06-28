@@ -91,8 +91,8 @@ public class RunCommand extends Command {
                 }
 
                 logger.info("\n--- Running task '{}' @ '{}' ---", taskConfig.getName(), serverGroupName);
-                TaskUtils.callTask(taskConfig.getClassName(), taskConfig.getOnResult(), serverGroup,
-                        taskConfig.getTaskParams());
+                TaskUtils.callTask(taskConfig.getName(), taskConfig.getClassName(), taskConfig.getOnResult(),
+                        serverGroup, taskConfig.getTaskParams());
             }
         }
     }

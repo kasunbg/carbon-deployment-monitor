@@ -87,25 +87,14 @@ tasks:
     taskParams:
        severity: 2
   -
-    name: TenantLogin
-    enable: false
-    group: identitycloud
-    className: org.wso2.deployment.monitor.impl.task.TenantLoginTask
-    triggerType: simple
-    trigger: 30s
-    servers: [IdentityServer]
-    taskParams:
-       timeout: 120 #in seconds
-       severity: 1
-  -
-    name: ServerTenantLogin
+    name: TenantLoginTask
     enable: false
     group: carbon
-    className: org.wso2.deployment.monitor.impl.task.ServerTenantLoginTask
-    onResult: org.wso2.deployment.monitor.impl.callback.ServerLoginCallback
+    className: org.wso2.deployment.monitor.impl.task.TenantLoginTask
+    onResult: org.wso2.deployment.monitor.impl.callback.TenantLoginCallback
     triggerType: simple
-    trigger: 30s
-    servers: [CarbonServers]
+    trigger: 1m
+    servers: [IdentityServer,CarbonServers]
     taskParams:
        timeout: 120
        severity: 1

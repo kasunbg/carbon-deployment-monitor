@@ -33,6 +33,10 @@ public class RunStatus {
      */
     private boolean success = true;
 
+    private String taskName;
+
+    private String serverGroupName;
+
     private String message;
 
     private List<String> successHosts;
@@ -47,6 +51,22 @@ public class RunStatus {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getServerGroupName() {
+        return serverGroupName;
+    }
+
+    public void setServerGroupName(String serverGroupName) {
+        this.serverGroupName = serverGroupName;
     }
 
     public String getMessage() {

@@ -28,60 +28,68 @@ import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 /**
- * Tenant Login based on Carbon Authentication.
- * NOTE: This cannot be used for multiple hosts. For multiple hosts use {@link ServerTenantLoginTask}
+ * Tenant login test scenario for set of hosts in a cluster implemented in this class
  */
 public class TenantLoginTask implements DeploymentMonitorTask {
-
-    private static final String TASK_NAME = "TenantLoginTask";
 
     @Override public RunStatus execute(ServerGroup serverGroup, Properties customParams) {
         GlobalConfig.TenantConfig tenantConfig = (GlobalConfig.TenantConfig) customParams
                 .get(MonitoringConstants.DEFAULT_TENANT_KEY);
         //Timeout value is defined in seconds, hence converting to milli seconds
         int timeout = ((int) customParams.get(MonitoringConstants.TIMEOUT)) * 1000;
-        String failedMsg = serverGroup.getName() + " : " + TASK_NAME + " Failed : ";
 
-        //In this test we consider only one host, hence getting the first element.
-        String host = serverGroup.getHosts().get(0);
-        String endPoint = host + "/services/AuthenticationAdmin";
         AuthenticationAdminStub authenticationAdminStub;
-        try {
-            authenticationAdminStub = new AuthenticationAdminStub(endPoint);
-        } catch (AxisFault axisFault) {
-            return createFaultStatus(failedMsg + axisFault.getMessage(), axisFault);
-        }
-
-        try {
-            authenticationAdminStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(timeout);
-            boolean loginSuccess = authenticationAdminStub
-                    .login(tenantConfig.getUsername(), tenantConfig.getPassword(), "localhost");
-            if (loginSuccess) {
-                RunStatus status = new RunStatus();
-                status.setSuccess(true);
-                status.setMessage(serverGroup.getName() + " : " + TASK_NAME + " SUCCESS");
-                return status;
-            } else {
-                return createFaultStatus(failedMsg + "Invalid Credentials", null);
-            }
-        } catch (RemoteException | LoginAuthenticationExceptionException e) {
-            return createFaultStatus(failedMsg + e.getMessage(), e);
-        }
-    }
-
-    private RunStatus createFaultStatus(String msg, Object e) {
         RunStatus status = new RunStatus();
-        Map<String, Object> customReturnDetails;
-        status.setSuccess(false);
-        status.setMessage(msg);
-        customReturnDetails = new HashMap<>();
-        customReturnDetails.put("Exception", e);
-        status.setCustomTaskDetails(customReturnDetails);
-        return status;
+
+        List<String> failedHosts = new ArrayList<>();
+        List<String> successHosts = new ArrayList<>();
+
+        //We use this map to send the details of each failed host
+        Map<String, Object> resultMap = new HashMap<>();
+
+        for (String host : serverGroup.getHosts()) {
+            String endPoint = host + "/services/AuthenticationAdmin";
+            try {
+                authenticationAdminStub = new AuthenticationAdminStub(endPoint);
+            } catch (AxisFault axisFault) {
+                failedHosts.add(host);
+                resultMap.put(host, axisFault.getMessage());
+                continue;
+            }
+
+            try {
+                authenticationAdminStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(timeout);
+                boolean loginSuccess = authenticationAdminStub
+                        .login(tenantConfig.getUsername(), tenantConfig.getPassword(), "localhost");
+                if (loginSuccess) {
+                    successHosts.add(host);
+                } else {
+                    failedHosts.add(host);
+                    resultMap.put(host, "Invalid Credentials");
+                }
+            } catch (RemoteException | LoginAuthenticationExceptionException e) {
+                failedHosts.add(host);
+                resultMap.put(host, e.getMessage());
+            }
+
+        }
+        if (failedHosts.isEmpty()) {
+            status.setSuccess(true);
+            status.setSuccessHosts(successHosts);
+            return status;
+        } else {
+            status.setSuccess(false);
+            status.setFailedHosts(failedHosts);
+            status.setCustomTaskDetails(resultMap);
+            return status;
+        }
+
     }
 }
