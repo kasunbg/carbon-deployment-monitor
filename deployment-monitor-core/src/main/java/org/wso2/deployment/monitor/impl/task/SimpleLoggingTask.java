@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * A simple Task Implementation which prints a log
+ * A simple Task Implementation that prints a log
  */
 public class SimpleLoggingTask implements DeploymentMonitorTask {
     private static final Logger logger = LoggerFactory.getLogger(SimpleLoggingTask.class);
