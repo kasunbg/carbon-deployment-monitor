@@ -38,7 +38,7 @@ public class TaskUtils {
      * Call a given task.
      * todo handle failure scenarios.
      */
-    public static void callTask(String taskClassName, String callbackClassName,
+    public static void callTask(String taskName, String taskClassName, String callbackClassName,
             ServerGroup serverGroup, Properties customParams) {
         try {
             Class<?> taskClass = Class.forName(taskClassName);
@@ -50,6 +50,8 @@ public class TaskUtils {
             Object taskInstance = taskClass.newInstance();
             Object callbackInstance = callbackClass.newInstance();
             RunStatus runStatus = (RunStatus) executeMethod.invoke(taskInstance, serverGroup, customParams);
+            runStatus.setTaskName(taskName);
+            runStatus.setServerGroupName(serverGroup.getName());
 
             callbackMethod.invoke(callbackInstance, runStatus);
         } catch (ClassNotFoundException e) {

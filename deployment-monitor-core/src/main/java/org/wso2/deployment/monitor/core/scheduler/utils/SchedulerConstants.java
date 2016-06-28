@@ -25,6 +25,8 @@ public class SchedulerConstants {
 
     public static final String TASK_CLASS = "taskClass";
 
+    public static final String TASK_NAME = "taskName";
+
     public static final String CALLBACK_CLASS = "callbackClass";
 
     public static final String CUSTOM_PARAMS = "customParams";

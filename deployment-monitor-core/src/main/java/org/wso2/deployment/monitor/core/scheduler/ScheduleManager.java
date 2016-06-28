@@ -86,6 +86,7 @@ public class ScheduleManager {
     public void scheduleTask(TaskConfig taskConfig, List<ServerGroup> serverGroups) throws SchedulerException {
         JobDataMap dataMap = new JobDataMap();
         dataMap.put(SchedulerConstants.TASK_CLASS, taskConfig.getClassName());
+        dataMap.put(SchedulerConstants.TASK_NAME, taskConfig.getName());
         dataMap.put(SchedulerConstants.CALLBACK_CLASS, taskConfig.getOnResult());
         dataMap.put(SchedulerConstants.CUSTOM_PARAMS, taskConfig.getTaskParams());
 

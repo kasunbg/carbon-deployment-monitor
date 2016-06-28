@@ -27,21 +27,21 @@ import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
 /**
  * Simple Implementation for callback
  */
-public class ServerLoginCallback implements OnResultCallback {
-    private static final Logger logger = LoggerFactory.getLogger(ServerLoginCallback.class);
+public class TenantLoginCallback implements OnResultCallback {
+    private static final Logger logger = LoggerFactory.getLogger(TenantLoginCallback.class);
 
     @Override public void callback(RunStatus runStatus) {
         if (runStatus.isSuccess()) {
-            logger.info(" [Task Successful] " + runStatus.getMessage());
+            logger.info(" [Task Successful] " +  runStatus.getServerGroupName() + " : " + runStatus.getTaskName());
         } else {
-            String msg = " [Task Failed] " + runStatus.getMessage();
+            String msg = " [Task Failed] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName();
             StringBuilder failedHosts = new StringBuilder();
             String sep = "";
             for(String host : runStatus.getFailedHosts()) {
                 failedHosts.append(sep).append(host).append(" - ").append(runStatus.getCustomTaskDetails().get(host));
                 sep = ", ";
             }
-            logger.error(msg + " Failed Hosts : [ " + failedHosts.toString() + " ]");
+            logger.error(msg + ", Failed Hosts : [ " + failedHosts.toString() + " ]");
             EmailSender.getInstance()
                     .send(msg, "Failed Hosts [ " + failedHosts.toString() + " ]");
         }
