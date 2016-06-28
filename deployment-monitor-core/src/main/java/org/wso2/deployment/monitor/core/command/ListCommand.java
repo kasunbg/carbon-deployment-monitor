@@ -15,19 +15,30 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.core;
+package org.wso2.deployment.monitor.core.command;
 
+import org.wso2.deployment.monitor.core.Command;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
+import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 
 public class ListCommand extends Command {
 
     @Override
     public void execute(DeploymentMonitorConfiguration deploymentMonitorConfiguration) {
-        System.out.println("\nList of available tasks:");
+
+        System.out.println("usage: [run | schedule] [-all | <task-names>...]");
+
+        System.out.println("\nList of tasks:");
         for (TaskConfig taskConfig : deploymentMonitorConfiguration.getTasks()) {
-            System.out.println(taskConfig.getName());
+            System.out.println("\t - " + taskConfig.getName());
         }
 
+        System.out.println("\nList of server groups:");
+        for (ServerGroup serverGroup : deploymentMonitorConfiguration.getServerGroups()) {
+            System.out.println("\t - " + serverGroup.getName());
+        }
+
+        System.out.println();
     }
 }
