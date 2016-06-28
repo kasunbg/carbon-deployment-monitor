@@ -45,7 +45,7 @@ public class TenantLoginTask implements DeploymentMonitorTask {
                 .get(MonitoringConstants.DEFAULT_TENANT_KEY);
         //Timeout value is defined in seconds, hence converting to milli seconds
         int timeout = ((int) customParams.get(MonitoringConstants.TIMEOUT)) * 1000;
-        String failedMsg = serverGroup.getName() + " - " + TASK_NAME + " Failed. ";
+        String failedMsg = serverGroup.getName() + " : " + TASK_NAME + " Failed : ";
 
         //In this test we consider only one host, hence getting the first element.
         String host = serverGroup.getHosts().get(0);
@@ -64,7 +64,7 @@ public class TenantLoginTask implements DeploymentMonitorTask {
             if (loginSuccess) {
                 RunStatus status = new RunStatus();
                 status.setSuccess(true);
-                status.setMessage(serverGroup.getName() + " - " + TASK_NAME + " SUCCESS");
+                status.setMessage(serverGroup.getName() + " : " + TASK_NAME + " SUCCESS");
                 return status;
             } else {
                 return createFaultStatus(failedMsg + "Invalid Credentials", null);

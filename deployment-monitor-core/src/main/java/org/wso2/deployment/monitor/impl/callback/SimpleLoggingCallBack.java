@@ -39,7 +39,7 @@ public class SimpleLoggingCallBack implements OnResultCallback {
                     && runStatus.getCustomTaskDetails().get("Exception") != null) {
                 Exception e = (Exception) runStatus.getCustomTaskDetails().get("Exception");
                 logger.error(msg, e);
-                EmailSender.getInstance().send(msg, msg + e.getMessage());
+                EmailSender.getInstance().send(msg, e.getMessage());
             } else {
                 logger.error(msg);
                 EmailSender.getInstance().send(msg, msg);

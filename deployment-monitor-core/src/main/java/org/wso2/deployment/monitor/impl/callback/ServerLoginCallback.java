@@ -24,8 +24,6 @@ import org.wso2.deployment.monitor.api.OnResultCallback;
 import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
 
-import java.util.StringJoiner;
-
 /**
  * Simple Implementation for callback
  */
@@ -37,10 +35,11 @@ public class ServerLoginCallback implements OnResultCallback {
             logger.info(" [Task Successful] " + runStatus.getMessage());
         } else {
             String msg = " [Task Failed] " + runStatus.getMessage();
-            StringJoiner failedHosts = new StringJoiner(", ");
-            for (String host : runStatus.getFailedHosts()) {
-                String reason = (String) runStatus.getCustomTaskDetails().get(host);
-                failedHosts.add(host + " - " + reason);
+            StringBuilder failedHosts = new StringBuilder();
+            String sep = "";
+            for(String host : runStatus.getFailedHosts()) {
+                failedHosts.append(sep).append(host).append(" - ").append(runStatus.getCustomTaskDetails().get(host));
+                sep = ", ";
             }
             logger.error(msg + " Failed Hosts : [ " + failedHosts.toString() + " ]");
             EmailSender.getInstance()

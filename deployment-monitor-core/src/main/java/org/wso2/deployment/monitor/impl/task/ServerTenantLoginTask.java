@@ -88,7 +88,7 @@ public class ServerTenantLoginTask implements DeploymentMonitorTask {
             return status;
         } else {
             status.setSuccess(false);
-            status.setMessage(serverGroup.getName() + " - " + TASK_NAME + " Failed. ");
+            status.setMessage(serverGroup.getName() + " : " + TASK_NAME + " Failed. ");
             status.setFailedHosts(failedHosts);
             status.setCustomTaskDetails(resultMap);
             return status;
