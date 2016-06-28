@@ -22,8 +22,6 @@ import org.kohsuke.args4j.spi.SubCommand;
 import org.kohsuke.args4j.spi.SubCommandHandler;
 import org.kohsuke.args4j.spi.SubCommands;
 import org.wso2.deployment.monitor.core.Command;
-import org.wso2.deployment.monitor.core.command.ListCommand;
-import org.wso2.deployment.monitor.core.command.RunCommand;
 import org.wso2.deployment.monitor.core.scheduler.ScheduleCommand;
 
 public class Monitor {
