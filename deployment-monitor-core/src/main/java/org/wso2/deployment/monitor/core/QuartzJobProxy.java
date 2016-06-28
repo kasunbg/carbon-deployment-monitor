@@ -40,11 +40,13 @@ public class QuartzJobProxy implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
+        String taskName = dataMap.getString("taskName");
         String taskClassName = dataMap.getString("taskClass");
         String callbackClassName = dataMap.getString("callbackClass");
         Object serverGroup = dataMap.get("serverGroup");
         Object customParams = dataMap.get("customParams");
 
-        TaskUtils.callTask(taskClassName, callbackClassName, (ServerGroup) serverGroup, (Properties) customParams);
+        TaskUtils.callTask(taskName, taskClassName, callbackClassName, (ServerGroup) serverGroup,
+                (Properties) customParams);
     }
 }
