@@ -14,6 +14,8 @@
 #   limitations under the License.
 ################################################################################
 
+# A copy of distribution's monitor.yaml for testing purposes
+
 global:
   onResult: org.wso2.deployment.monitor.impl.callback.SimpleLoggingCallBack
   keyStore: resources/wso2carbon.jks
@@ -39,11 +41,6 @@ notifications:
     toAddresses: [to@wso2.com]
 
 serverGroups:
-  -
-    name: esb
-    hosts:
-      - https://esb01:9443
-      - https://esb02:9453
   -
     name: gateway_mgt
     hosts:
@@ -72,8 +69,8 @@ serverGroups:
 
 tasks:
   -
-    name: SimpleLoggingTask
     enable: true
+    name: SimpleLoggingTask
     group: apicloud
     className: org.wso2.deployment.monitor.impl.task.SimpleLoggingTask
     triggerType: simple
@@ -85,19 +82,19 @@ tasks:
        key2: value2
        severity: 2
   -
-    name: PatchVerificationTask
     enable: true
+    name: PatchVerificationTask
     group: apicloud
     className: org.wso2.deployment.monitor.impl.task.PatchVerificationTask
     triggerType: simple
     trigger: 10s
-    servers: [esb]
+#    trigger: 0 0/1 * 1/1 * ? *
+    servers: [gateway, keymanager]
     taskParams:
        severity: 2
-
   -
-    name: dummyTask
     enable: false
+    name: abc
     group: appcloud
     className: org.wso2.LoginTest
     triggerType: cron

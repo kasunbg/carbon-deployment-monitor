@@ -66,8 +66,9 @@ public class TaskUtils {
      */
     public static List<TaskConfig> filterTasksByName(List<TaskConfig> allTasks, List<String> taskNamesFilter) {
         List<TaskConfig> filteredTasks = new ArrayList<>(taskNamesFilter.size());
-        if (taskNamesFilter.contains("*")) {
+        if (taskNamesFilter.size() == 1 && taskNamesFilter.contains("*")) {
             filteredTasks = allTasks;
+            taskNamesFilter.remove(0);
         } else {
             for (TaskConfig taskConfig : allTasks) {
                 Iterator<String> it = taskNamesFilter.iterator();
@@ -87,5 +88,14 @@ public class TaskUtils {
         }
 
         return filteredTasks;
+    }
+
+    public static String getDeploymentMonitorHome() {
+        String home = System.getenv(MonitoringConstants.DEPLOYMENT_MONITOR_HOME);
+        if (home == null) {
+            home = System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME);
+        }
+
+        return home;
     }
 }
