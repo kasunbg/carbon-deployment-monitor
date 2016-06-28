@@ -15,12 +15,15 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.core;
+package org.wso2.deployment.monitor.core.command;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.deployment.monitor.core.Command;
+import org.wso2.deployment.monitor.core.DeploymentMonitorException;
+import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
@@ -75,6 +78,10 @@ public class RunCommand extends Command {
         }
 
         for (TaskConfig taskConfig : tasksToRun) {
+            if (!taskConfig.isEnable()) {
+                continue;
+            }
+
             for (String serverGroupName : taskConfig.getServers()) {
                 ServerGroup serverGroup = allServerGroupMap.get(serverGroupName);
                 if (serverGroup == null) {
@@ -83,7 +90,7 @@ public class RunCommand extends Command {
                     continue;
                 }
 
-                logger.info("--- Running task '{}' @ '{}' ---", taskConfig.getName(), serverGroupName);
+                logger.info("\n--- Running task '{}' @ '{}' ---", taskConfig.getName(), serverGroupName);
                 TaskUtils.callTask(taskConfig.getClassName(), taskConfig.getOnResult(), serverGroup,
                         taskConfig.getTaskParams());
             }

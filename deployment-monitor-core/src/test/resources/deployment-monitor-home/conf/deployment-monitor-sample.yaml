@@ -28,28 +28,44 @@ global:
     username: username
     password: password
 
+notifications:
+  email:
+    enabled: true
+    tlsEnabled: true
+    authentication: true
+    username: username
+    password: password
+    smtpServer: smtp.server
+    smtpPort: 25
+    fromAddress: from@wso2.com
+    toAddresses: [to@wso2.com]
+
 serverGroups:
-  -
-    name: esb
-    hosts:
-      - https://esb01:9443
-      - https://esb02:9453
   -
     name: gateway_mgt
     hosts:
-      - https://localhost:9443
-      - https://localhost:9443
+      - https://gwm001:9443
+      - https://gwm002:9443
 
   -
     name: gateway_worker
     hosts:
-      - https://localhost:9443
-      - https://localhost:9443
+      - https://gw001:9443
+      - https://gw002:9443
+
+  -
+    name: gateway
+    hosts:
+      - https://gateway.cloud.wso2.com:443
+    trustStore: path/to/custom/truststore
+    trustStorePassword: password
 
   -
     name: keymanager
     hosts:
-      - https://localhost:9443
+      - https://keymanager.cloud.wso2.com:443
+    trustStore: path/to/custom/truststotre
+    trustStorePassword: password
 
 tasks:
   -
@@ -60,7 +76,7 @@ tasks:
     triggerType: simple
     trigger: 10s
 #    trigger: 0 0/1 * 1/1 * ? *
-    servers: [esb, keymanager]
+    servers: [gateway, keymanager]
     taskParams:
        key: value
        key2: value2
@@ -71,8 +87,9 @@ tasks:
     group: apicloud
     className: org.wso2.deployment.monitor.impl.task.PatchVerificationTask
     triggerType: simple
-    trigger: 5s
-    servers: [esb]
+    trigger: 10s
+#    trigger: 0 0/1 * 1/1 * ? *
+    servers: [gateway, keymanager]
     taskParams:
        severity: 2
   -
@@ -88,15 +105,3 @@ tasks:
        key: value
        key2: value2
        severity: 1
-
-notifications:
-  email:
-    enabled: true
-    tlsEnabled: true
-    authentication: true
-    username: username
-    password: password
-    smtpServer: smtp.server
-    smtpPort: 25
-    fromAddress: from@wso2.com
-    toAddresses: [to@wso2.com]

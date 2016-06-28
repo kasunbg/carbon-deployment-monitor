@@ -15,12 +15,13 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.core;
+package org.wso2.deployment.monitor.core.command;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.spi.SubCommand;
 import org.kohsuke.args4j.spi.SubCommandHandler;
 import org.kohsuke.args4j.spi.SubCommands;
+import org.wso2.deployment.monitor.core.Command;
 import org.wso2.deployment.monitor.core.scheduler.ScheduleCommand;
 
 public class Monitor {
@@ -30,7 +31,8 @@ public class Monitor {
     @SubCommands({
                          @SubCommand(name = "run", impl = RunCommand.class),
                          @SubCommand(name = "schedule", impl = ScheduleCommand.class),
-                         @SubCommand(name = "list", impl = ListCommand.class)
+                         @SubCommand(name = "list", impl = ListCommand.class),
+                         @SubCommand(name = "help", impl = ListCommand.class)
                  })
     public Command cmd = new DefaultCommand();
 

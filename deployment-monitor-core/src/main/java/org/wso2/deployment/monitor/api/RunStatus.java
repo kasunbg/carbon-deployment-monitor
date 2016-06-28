@@ -31,7 +31,7 @@ public class RunStatus {
     /**
      * Designates success or failure of the test run
      */
-    private boolean success;
+    private boolean success = true;
 
     private String message;
 

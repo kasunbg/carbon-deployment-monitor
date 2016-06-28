@@ -17,16 +17,19 @@
 */
 package org.wso2.deployment.monitor.core;
 
-import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.deployment.monitor.core.command.Monitor;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -36,34 +39,7 @@ public class Launcher {
 
     private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
 
-    private enum RunStrategy {
-        RUN,
-        SCHEDULE
-    }
-
-//    @Option(name="-run", usage="Run the specified tasks once",
-//            forbids = "schedule", metaVar="task-names")
-//    private String run;
-//
-//    @Option(name="-schedule", usage="Scheduler the specified tasks as per the trigger",
-//            forbids = "run", metaVar="task-names")
-//    private String schedule;
-//
-    /**
-     *  receives other command line parameters than options
-     */
-    @Argument(index = 0, usage = "The run strategy", metaVar = "Run strategy")
-    private RunStrategy runStrategy;
-
-    /**
-     *  receives other command line parameters than options
-     */
-    @Argument(index = 1, multiValued = false, usage = "testss", metaVar = "task-list")
-    private String tasks ;
-//    private List<String> tasks = new ArrayList<>();
-
     public static void main(String[] args) {
-
         new Launcher().doMain(args);
     }
 
@@ -132,15 +108,34 @@ public class Launcher {
     }
 
     private void setKeyStoreProperties(String path, String password) {
-        System.setProperty("javax.net.ssl.keyStore", path);
+        Path finalPath = sanitizePath(path);
+
+        System.setProperty("javax.net.ssl.keyStore", finalPath.toString());
         System.setProperty("javax.net.ssl.keyStorePassword", password);
-        System.setProperty("Security.KeyStore.Location", path);
-        System.setProperty("Security.KeyStore.Password", password);
     }
 
+
     private void setTrustStoreParams(String path, String password) {
-        System.setProperty("javax.net.ssl.trustStore", path);
+        Path finalPath = sanitizePath(path);
+
+        System.setProperty("javax.net.ssl.trustStore", finalPath.toString());
         System.setProperty("javax.net.ssl.trustStorePassword", password);
         System.setProperty("javax.net.ssl.trustStoreType", "JKS");
     }
+
+    private Path sanitizePath(String originalPath) {
+        Path finalPath = Paths.get(originalPath);
+        if (Files.exists(finalPath)) {
+            return finalPath;
+        }
+        if(!Paths.get(originalPath).isAbsolute()) {
+            finalPath = Paths.get(TaskUtils.getDeploymentMonitorHome(), originalPath);
+            if (Files.exists(finalPath)) {
+                return finalPath;
+            }
+        }
+
+        throw new IllegalArgumentException("Path not found " + originalPath);
+    }
+
 }

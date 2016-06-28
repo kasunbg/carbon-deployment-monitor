@@ -239,8 +239,8 @@ fi
 
 # ----- Execute The Requested Command -----------------------------------------
 
-echo JAVA_HOME environment variable is set to $JAVA_HOME
-echo DEPLOYMENT_MONITOR_HOME environment variable is set to $DEPLOYMENT_MONITOR_HOME
+#echo JAVA_HOME environment variable is set to $JAVA_HOME
+#echo DEPLOYMENT_MONITOR_HOME environment variable is set to $DEPLOYMENT_MONITOR_HOME
 
 cd "$DEPLOYMENT_MONITOR_HOME"
 
@@ -267,6 +267,7 @@ do
     -Dlog4j.configurationFile="file:$DEPLOYMENT_MONITOR_HOME/conf/log4j2.xml" \
     -Djava.security.egd=file:/dev/./urandom \
     -Dfile.encoding=UTF8 \
+    -DenableNonSecureMode=true \
     org.wso2.deployment.monitor.core.Launcher $*
     status=$?
 done

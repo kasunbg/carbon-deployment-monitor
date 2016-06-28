@@ -29,7 +29,7 @@
     <artifactId>carbon-deployment-verifier-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - </name>
+    <name>WSO2 Deployment Monitor - Parent</name>
     <description>Server </description>
     <url>http://wso2.org</url>
 

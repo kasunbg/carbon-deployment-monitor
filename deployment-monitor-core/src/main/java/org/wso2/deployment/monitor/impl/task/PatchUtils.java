@@ -17,8 +17,30 @@
 */
 package org.wso2.deployment.monitor.impl.task;
 
+import org.wso2.carbon.devops.monitor.beans.xsd.Patch;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * todo
  */
-public class PatchVerificationTest {
+public class PatchUtils {
+
+    /**
+     * todo
+     */
+    @SuppressWarnings("unused")
+    public static void compare(Map<String, Patch> first, Map<String, Patch> second) {
+        Set<String> firstKeySet = new HashSet<>(first.keySet());
+        Set<String> secondKeySet = new HashSet<>(second.keySet());
+
+        firstKeySet.removeAll(second.keySet());
+        secondKeySet.removeAll(first.keySet());
+
+        System.out.println(firstKeySet);
+        System.out.println(secondKeySet);
+    }
+
 }

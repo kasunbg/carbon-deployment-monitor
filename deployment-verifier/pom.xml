@@ -39,6 +39,7 @@
                                 <wsdlOptions>
                                     <wsdlOption>
                                         <wsdl>${basedir}/src/main/resources/ServerStatusReporter.wsdl</wsdl>
+                                        <wsdlLocation>ServerStatusReporter.wsdl</wsdlLocation>
                                         <bindingFiles>
                                            <bindingFile>${basedir}/src/main/resources/binding.xml</bindingFile>
                                         </bindingFiles>

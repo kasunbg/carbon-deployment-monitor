@@ -103,7 +103,7 @@ public class ServerStatusReporter {
         }
 
         //iterate patches
-        Patch[] patches = new Patch[patchFiles.length]; //todo infer the length with skipped urls
+        Patch[] patches = new Patch[patchFiles.length - 1]; //todo infer the length with skipped urls
         for (int i = 0; i < patchFiles.length; i++) {
             File patchFile = patchFiles[i];
             if ("patch0000".equals(patchFile.getName()) || !patchFile.getName().startsWith("patch")) {

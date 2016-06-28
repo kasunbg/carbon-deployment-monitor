@@ -66,9 +66,10 @@ serverGroups:
 
 tasks:
   -
-    enable: true
     name: SimpleLoggingTask
-    group: default
+    enable: true
+    group: apicloud
+    group: apicloud
     className: org.wso2.deployment.monitor.impl.task.SimpleLoggingTask
     triggerType: simple
     trigger: 10s
@@ -79,6 +80,18 @@ tasks:
        key2: value2
        severity: 2
   -
+    name: PatchVerificationTask
+    enable: true
+    group: apicloud
+    className: org.wso2.deployment.monitor.impl.task.PatchVerificationTask
+    triggerType: simple
+    trigger: 10s
+    servers: [esb]
+    taskParams:
+       severity: 2
+
+  -
+    name: dummyTask
     enable: false
     name: TenantLogin
     group: apicloud
@@ -103,3 +116,5 @@ tasks:
        timeout: 120
        key2: value2
        severity: 1
+
+

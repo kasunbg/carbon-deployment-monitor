@@ -61,6 +61,10 @@ public class DeploymentVerifier {
         Service service = Service.create(wsdlURL, serviceName);
         ServerStatusReporterPortType client = service.getPort(ServerStatusReporterPortType.class);
 
+        ((BindingProvider)client).getRequestContext().put(
+                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                "https://esb01:9443/services/ServerStatusReporter/getServerInfo");
+
         boolean nonSecureMode = Boolean.parseBoolean(System.getProperty("enableNonSecureMode"));
         if (nonSecureMode) {
             //only for oracle jdk

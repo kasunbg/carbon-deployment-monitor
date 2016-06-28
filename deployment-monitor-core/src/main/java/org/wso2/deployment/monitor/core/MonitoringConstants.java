@@ -22,11 +22,15 @@ package org.wso2.deployment.monitor.core;
  */
 public class MonitoringConstants {
 
-    public static final String DEPLOYMENT_MONITOR_HOME = "dm.home";
+    public static final String DEPLOYMENT_MONITOR_HOME = "deployment.monitor.home";
 
     public static final String DEPLOYMENT_MONITOR_CONFIG_FILE = "deployment-monitor.yaml";
 
     public static final String DEFAULT_TENANT_KEY = "default.tenant";
+
+    public static final String SERVER_AGENT_URL_CONTEXT = "services/ServerStatusReporter";
+
+    public static final String SERVER_AGENT_SERVER_INFO_OP = "getServerInfo";
 
     public static final String TIMEOUT = "timeout";
 }
