@@ -11,6 +11,45 @@
 
     <artifactId>deployment-monitor-core</artifactId>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/main/resources/ServerStatusReporter.wsdl</wsdl>
+                                    <wsdlLocation>ServerStatusReporter.wsdl</wsdlLocation>
+                                    <bindingFiles>
+                                        <bindingFile>${basedir}/src/main/resources/binding.xml</bindingFile>
+                                    </bindingFiles>
+                                    <extraargs>
+                                        <extraarg>-client</extraarg>
+                                        <extraarg>-p</extraarg>
+                                        <extraarg>
+                                            http://monitor.devops.carbon.wso2.org=org.wso2.carbon.devops.monitor.client
+                                        </extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -57,5 +96,19 @@
             <artifactId>args4j</artifactId>
             <version>2.33</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.wink</groupId>
+            <artifactId>wink-client</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
     </dependencies>
+
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+    </properties>
 </project>
