@@ -68,7 +68,6 @@ tasks:
   -
     name: SimpleLoggingTask
     enable: true
-    group: apicloud
     className: org.wso2.deployment.monitor.impl.task.SimpleLoggingTask
     triggerType: simple
     trigger: 10s
@@ -79,7 +78,6 @@ tasks:
   -
     name: PatchVerificationTask
     enable: true
-    group: apicloud
     className: org.wso2.deployment.monitor.impl.task.PatchVerificationTask
     triggerType: simple
     trigger: 10s
@@ -89,7 +87,6 @@ tasks:
   -
     name: TenantLogin
     enable: false
-    group: identitycloud
     className: org.wso2.deployment.monitor.impl.task.TenantLoginTask
     triggerType: simple
     trigger: 30s
@@ -100,7 +97,6 @@ tasks:
   -
     name: ServerTenantLogin
     enable: false
-    group: carbon
     className: org.wso2.deployment.monitor.impl.task.ServerTenantLoginTask
     onResult: org.wso2.deployment.monitor.impl.callback.ServerLoginCallback
     triggerType: simple
@@ -112,7 +108,6 @@ tasks:
   -
     name: dummyTask
     enable: false
-    group: appcloud
     className: org.wso2.LoginTest
     triggerType: cron
     trigger: 60m

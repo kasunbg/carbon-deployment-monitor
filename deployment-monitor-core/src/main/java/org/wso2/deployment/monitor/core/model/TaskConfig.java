@@ -28,7 +28,6 @@ public class TaskConfig {
 
     private boolean enable = true;
     private String name = "taskName";
-    private String group = "taskGroup";
     private String className = "";
     private String triggerType = "simple";
     private String trigger = "60m";
@@ -42,10 +41,6 @@ public class TaskConfig {
 
     public String getName() {
         return name;
-    }
-
-    public String getGroup() {
-        return group;
     }
 
     public String getClassName() {

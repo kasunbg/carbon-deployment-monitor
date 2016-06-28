@@ -102,21 +102,21 @@ public class ScheduleManager {
             }
             dataMap.put(SchedulerConstants.SERVER_GROUP, serverGroupMap.get(serverName));
 
-            String jobName = serverName + "." + taskConfig.getName();
-            JobDetail job = newJob(QuartzJobProxy.class).withIdentity(jobName, taskConfig.getGroup())
+            String jobName = taskConfig.getName();
+            JobDetail job = newJob(QuartzJobProxy.class).withIdentity(jobName, serverName)
                     .usingJobData(dataMap).build();
 
             Trigger trigger;
             if (SchedulerConstants.SIMPLE_TRIGGER.equalsIgnoreCase(taskConfig.getTriggerType())) {
                 if (taskConfig.getTrigger().endsWith(TriggerUtilities.SECONDS)) {
-                    trigger = getSimpleTriggerInSeconds(jobName, taskConfig.getGroup(), taskConfig.getTrigger());
+                    trigger = getSimpleTriggerInSeconds(jobName, serverName, taskConfig.getTrigger());
                 } else if (taskConfig.getTrigger().endsWith(TriggerUtilities.MINUTES)) {
-                    trigger = getSimpleTriggerInMinutes(jobName, taskConfig.getGroup(), taskConfig.getTrigger());
+                    trigger = getSimpleTriggerInMinutes(jobName, serverName, taskConfig.getTrigger());
                 } else {
-                    trigger = getSimpleTriggerInHours(jobName, taskConfig.getGroup(), taskConfig.getTrigger());
+                    trigger = getSimpleTriggerInHours(jobName, serverName, taskConfig.getTrigger());
                 }
             } else {
-                trigger = getCronTrigger(jobName, taskConfig.getGroup(), taskConfig.getTrigger());
+                trigger = getCronTrigger(jobName, serverName, taskConfig.getTrigger());
             }
             scheduler.scheduleJob(job, trigger);
         }
