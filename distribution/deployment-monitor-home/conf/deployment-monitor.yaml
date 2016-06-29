@@ -88,7 +88,7 @@ tasks:
     name: TenantLoginTask
     enable: false
     className: org.wso2.deployment.monitor.impl.task.TenantLoginTask
-    onResult: org.wso2.deployment.monitor.impl.callback.TenantLoginCallback
+    onResult: org.wso2.deployment.monitor.impl.callback.MultiHostCallback
     triggerType: simple
     trigger: 1m
     servers: [IdentityServer,CarbonServers]
@@ -99,7 +99,7 @@ tasks:
     name: PingTask
     enable: true
     className: org.wso2.deployment.monitor.impl.task.PingTask
-    onResult: org.wso2.deployment.monitor.impl.callback.TenantLoginCallback
+    onResult: org.wso2.deployment.monitor.impl.callback.MultiHostCallback
     triggerType: simple
     trigger: 30s
     servers: [IdentityServer]
