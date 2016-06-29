@@ -27,8 +27,8 @@ import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
 /**
  * Simple Implementation for callback
  */
-public class TenantLoginCallback implements OnResultCallback {
-    private static final Logger logger = LoggerFactory.getLogger(TenantLoginCallback.class);
+public class MultiHostCallback implements OnResultCallback {
+    private static final Logger logger = LoggerFactory.getLogger(MultiHostCallback.class);
 
     @Override public void callback(RunStatus runStatus) {
         if (runStatus.isSuccess()) {

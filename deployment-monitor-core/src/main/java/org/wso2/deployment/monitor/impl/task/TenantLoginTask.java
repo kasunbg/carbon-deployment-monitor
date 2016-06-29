@@ -66,8 +66,9 @@ public class TenantLoginTask implements DeploymentMonitorTask {
 
             try {
                 authenticationAdminStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(timeout);
+                String username =  tenantConfig.getUsername() + "@" + tenantConfig.getDomain();
                 boolean loginSuccess = authenticationAdminStub
-                        .login(tenantConfig.getUsername(), tenantConfig.getPassword(), "localhost");
+                        .login(username, tenantConfig.getPassword(), "localhost");
                 if (loginSuccess) {
                     successHosts.add(host);
                 } else {
