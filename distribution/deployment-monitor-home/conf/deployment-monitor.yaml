@@ -96,9 +96,21 @@ tasks:
        timeout: 120
        severity: 1
   -
+    name: PingTask
+    enable: true
+    className: org.wso2.deployment.monitor.impl.task.PingTask
+    onResult: org.wso2.deployment.monitor.impl.callback.TenantLoginCallback
+    triggerType: simple
+    trigger: 30s
+    servers: [IdentityServer]
+    taskParams:
+       path: /carbon/product/about.html         # Path to ping (URL will be http://localhost:9443/path)
+       statusCode: 200                          # The status code which is accepted as OK
+       responseContains: About WSO2 Carbon      # Content of the response body to check
+       severity: 1
+  -
     name: dummyTask
     enable: false
-    group: appcloud
     className: org.wso2.LoginTest
     triggerType: cron
     trigger: 60m
