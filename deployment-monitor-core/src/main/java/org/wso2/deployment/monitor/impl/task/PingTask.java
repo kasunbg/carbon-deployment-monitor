@@ -63,8 +63,8 @@ public class PingTask implements DeploymentMonitorTask {
         }
 
         String bodyValue;
-        if (customParams.getProperty("responseContains") != null) {
-            bodyValue = customParams.getProperty("responseContains");
+        if (customParams.get("responseContains") != null) {
+            bodyValue = (String) customParams.get("responseContains");
         } else {
             bodyValue = "About WSO2 Carbon";
         }
