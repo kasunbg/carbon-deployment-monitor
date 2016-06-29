@@ -36,6 +36,14 @@ import java.util.Properties;
  */
 public class PingTask implements DeploymentMonitorTask {
 
+    //Default values for the check
+    private static final String DEFAULT_PATH = "/carbon/product/about.html";
+    private static final String DEFAULT_RESPONSE_CONTAIN = "About WSO2 Carbon";
+
+    private static final String PATH = "path";
+    private static final String STATUS_CODE = "statusCode";
+    private static final String RESPONSE_CONTAINS = "responseContains";
+
     @Override public RunStatus execute(ServerGroup serverGroup, Properties customParams) {
 
         RunStatus status = new RunStatus();
@@ -49,24 +57,24 @@ public class PingTask implements DeploymentMonitorTask {
 
         //Check for below values in the response
         String path;
-        if (customParams.get("path") != null) {
-            path = (String) customParams.get("path");
+        if (customParams.get(PATH) != null) {
+            path = (String) customParams.get(PATH);
         } else {
-            path = "/carbon/product/about.html";
+            path = DEFAULT_PATH;
         }
 
         int statusCode;
-        if (customParams.get("statusCode") != null) {
-            statusCode = (Integer) customParams.get("statusCode");
+        if (customParams.get(STATUS_CODE) != null) {
+            statusCode = (Integer) customParams.get(STATUS_CODE);
         } else {
             statusCode = HttpStatus.SC_OK;
         }
 
         String bodyValue;
-        if (customParams.get("responseContains") != null) {
-            bodyValue = (String) customParams.get("responseContains");
+        if (customParams.get(RESPONSE_CONTAINS) != null) {
+            bodyValue = (String) customParams.get(RESPONSE_CONTAINS);
         } else {
-            bodyValue = "About WSO2 Carbon";
+            bodyValue = DEFAULT_RESPONSE_CONTAIN;
         }
 
         for (String host : serverGroup.getHosts()) {
