@@ -95,7 +95,8 @@ public class TaskUtils {
     }
 
     /**
-     * Returns a Map of the server groups of the given task
+     * Returns a Map of server groups of the given task
+     *
      * @param taskConfig {@link TaskConfig}
      * @return {@link Map}
      */
@@ -124,13 +125,14 @@ public class TaskUtils {
     }
 
     /**
-     * Returns a Map of the server groups of the Task with the given name
+     * Returns a Map of server groups of the Task with the given name
+     *
      * @param name Name of the task
      * @return {@link Map}
      */
     public static Map<String, ServerGroup> getServerGroupsByTaskName(String name) {
         TaskConfig taskConfig = getTaskConfigByName(name);
-        if(taskConfig != null){
+        if (taskConfig != null) {
             return getServerGroupsByTaskConfig(taskConfig);
         } else {
             return new Hashtable<>();
@@ -139,13 +141,14 @@ public class TaskUtils {
 
     /**
      * Returns a {@link TaskConfig} with the given name
+     *
      * @param name Task Name
      * @return {@link TaskConfig}
      */
-    public static TaskConfig getTaskConfigByName(String name){
+    public static TaskConfig getTaskConfigByName(String name) {
         List<TaskConfig> taskConfigs = ConfigurationManager.getConfiguration().getTasks();
         for (TaskConfig taskConfig : taskConfigs) {
-            if (taskConfig.getName().equals(name)){
+            if (taskConfig.getName().equals(name)) {
                 return taskConfig;
             }
         }
