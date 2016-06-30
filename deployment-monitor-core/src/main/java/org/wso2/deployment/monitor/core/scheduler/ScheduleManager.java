@@ -51,6 +51,7 @@ public class ScheduleManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduleManager.class);
 
+    private static volatile ScheduleManager scheduleManager = null;
     private Scheduler scheduler;
     //This is used to randomly schedule all the tests between a given time
     private Random generator;
@@ -58,11 +59,25 @@ public class ScheduleManager {
     /**
      * Initializes ScheduleManager
      */
-    public ScheduleManager() throws SchedulerException {
+    private ScheduleManager() throws SchedulerException {
         scheduler = StdSchedulerFactory.getDefaultScheduler();
         SchedulerListenerImpl schedulerListener = new SchedulerListenerImpl();
         scheduler.getListenerManager().addSchedulerListener(schedulerListener);
         generator = new Random();
+    }
+
+    /**
+     * Initializes a ScheduleManager if it is null and return it
+     * @return a {@link ScheduleManager} instance
+     * @throws SchedulerException
+     */
+    public static ScheduleManager getInstance() throws SchedulerException {
+        if (scheduleManager == null) {
+            synchronized (ScheduleManager.class) {
+                scheduleManager = new ScheduleManager();
+            }
+        }
+        return scheduleManager;
     }
 
     /**

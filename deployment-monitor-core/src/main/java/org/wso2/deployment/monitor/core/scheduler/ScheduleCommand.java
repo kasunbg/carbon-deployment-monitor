@@ -71,7 +71,7 @@ public class ScheduleCommand extends Command {
         //call schedule manager
         ScheduleManager scheduleManager;
         try {
-            scheduleManager = new ScheduleManager();
+            scheduleManager = ScheduleManager.getInstance();
             for (TaskConfig task : tasksToRun) {
                 try {
                     if (task.isEnable()) {
