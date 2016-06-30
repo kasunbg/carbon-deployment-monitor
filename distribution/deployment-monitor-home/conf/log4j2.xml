@@ -20,7 +20,7 @@
 <Configuration>
     <Appenders>
         <Console name="MONITOR_CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%p] %c{1} - %m%ex%n"/>
+            <PatternLayout pattern="%m%ex%n"/>
         </Console>
         <RollingFile name="MONITOR_LOGFILE" fileName="${sys:deployment.monitor.home}/logs/monitor.log"
                      filePattern="${sys:deployment.monitor.home}/logs/monitor-%d{MM-dd-yyyy}.log">
