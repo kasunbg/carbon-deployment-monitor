@@ -17,6 +17,7 @@
 */
 package org.wso2.deployment.monitor.api;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class RunStatus {
 
     private List<String> failedHosts;
 
-    private Map<String, Object> customTaskDetails;
+    private Map<String, Object> customTaskDetails = new HashMap<>();
 
     public boolean isSuccess() {
         return success;

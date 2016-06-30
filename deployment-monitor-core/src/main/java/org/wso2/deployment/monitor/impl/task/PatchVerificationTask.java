@@ -89,86 +89,82 @@ public class PatchVerificationTask implements DeploymentMonitorTask {
 
     @Override
     public RunStatus execute(ServerGroup serverGroup, Properties customParams) {
-        logger.info("-- Running patch verification task ---");
+        logger.info("--- Running patch verification task ---");
 
         if (serverGroup.getHosts().size() <= 1) {
-            logger.warn("Patch comparison skipped for '{}' since at least hosts are required.");
+            logger.warn("Patch comparison skipped for '{}' since at least two hosts are required.",
+                    serverGroup.getName());
             return new RunStatus();
         }
 
+        boolean isSuccess = true;
         Iterator<String> hostsIterator = serverGroup.getHosts().iterator();
-        Map<String, Patch> firstPatchMap = patchListToMap(
-                getServerInfo(hostsIterator.next()).getPatchInfo());
+        Map<String, Patch> firstPatchMap = patchListToMap(getServerInfo(hostsIterator.next()).getPatchInfo());
+        logger.info("Comparing patches in servers in '{}' against the server '{}'", serverGroup.getName(),
+                serverGroup.getHosts().get(0));
+        logger.info("Patches in {}: {}", serverGroup.getHosts().get(0), firstPatchMap.keySet());
         while (hostsIterator.hasNext()) {
-            ServerInfo serverInfo = getServerInfo(hostsIterator.next());
+            String host = hostsIterator.next();
+            ServerInfo serverInfo = getServerInfo(host);
             Map<String, Patch> patchMap = patchListToMap(serverInfo.getPatchInfo());
+            PatchDiffBean patchDiffBean = PatchUtils.compare(firstPatchMap, patchMap);
 
-            logger.debug(patchMap.keySet().toString());
-            logger.debug(firstPatchMap.toString());
-            //do comparison
-            //print warnings if any
-            //debug success messages
+            if (!patchDiffBean.getMissingPatches().isEmpty()) {
+                logger.warn("Missing patches in {} : {}", host, patchDiffBean.getMissingPatches());
+                isSuccess = false;
+            }
+            if (!patchDiffBean.getExtraPatches().isEmpty()) {
+                logger.warn("Extra patches in {} : {}", host, patchDiffBean.getExtraPatches());
+                isSuccess = false;
+            }
 
             //do md5sum checks
-//            System.out.println(serverInfo);
         }
-
-        //dummy values
-        logger.info("Comparing patches in servers in '{}' against the server '{}'",
-                serverGroup.getName(), serverGroup.getHosts().get(0));
-        logger.info("Patch differences found:");
-        logger.warn("Missing patches in {} : {}", serverGroup.getHosts().get(1),
-                new String[] { "patch1234", "patch2345" });
-        logger.warn("Extra patches in {} : {}", serverGroup.getHosts().get(1), new String[] { "patch9999" });
-
-        logger.warn("Missing patches in {} : {}", "https://esb03:9443", new String[] { "patch1234", "patch2345"});
 
         logger.info("--- End of patch verification task ---\n");
 
         RunStatus runStatus = new RunStatus();
-        runStatus.setSuccess(true);
-        runStatus.setMessage("Successfully verified the patches in " + serverGroup.getName());
+        runStatus.setSuccess(isSuccess);
+        runStatus.setMessage("Verified the patches in " + serverGroup.getName());
         return runStatus;
     }
 
+    /**
+     * Invoke the server agent and get the server info
+     *
+     * @param host the host - ex. https://localhost:9443/
+     * @return The server info bean
+     */
     private ServerInfo getServerInfo(String host) {
-        URL url = getAgentURL(host);
-
-        return invokeServerAgent(url.toString());
-    }
-
-    private URL getAgentURL(String host) {
+        URL url;
         try {
             URL baseURL = new URL(host);
             String agentSubContext = MonitoringConstants.SERVER_AGENT_URL_CONTEXT + "/" +
                     MonitoringConstants.SERVER_AGENT_SERVER_INFO_OP;
-            return new URL(baseURL, agentSubContext);
+            url = new URL(baseURL, agentSubContext);
+
+            if (!"https".equals(url.getProtocol())) {
+                throw new DeploymentMonitorException(
+                        "The server agent is only available over https. " + "Failed URL: " + url);
+            }
         } catch (MalformedURLException e) {
-            e.printStackTrace(); //todo
             throw new DeploymentMonitorException("Server agent URL generation failed for " + host, e);
         }
 
-    }
-
-    public ServerInfo invokeServerAgent(String endpoint) {
         URL wsdlURL = PatchVerificationTask.class.getResource("/ServerStatusReporter.wsdl");
-        if (wsdlURL == null) {
-            throw new DeploymentMonitorException("Missing ServerStatusReporter WSDL");
-        }
-        QName serviceName = new QName("http://monitor.devops.carbon.wso2.org", "ServerStatusReporter");
+        QName serviceName = new QName(MonitoringConstants.SERVER_AGENT_NAMESPACE,
+                MonitoringConstants.SERVER_AGENT_NAME);
         Service service = Service.create(wsdlURL, serviceName);
         ServerStatusReporterPortType client = service.getPort(ServerStatusReporterPortType.class);
 
         boolean nonSecureMode = Boolean.parseBoolean(System.getProperty("enableNonSecureMode"));
         if (nonSecureMode) {
             //only for oracle jdk
-            ((BindingProvider)client).getRequestContext().
-                    put("com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory", getUnsecuredSocketFactory());
+            ((BindingProvider) client).getRequestContext().
+                    put(MonitoringConstants.JAXWS_SSL_SOCKETFACTORY, getUnsecuredSocketFactory());
         }
 
-        ((BindingProvider)client).getRequestContext().put(
-                BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                endpoint);
+        ((BindingProvider) client).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url.toString());
 
         return client.getServerInfo();
     }

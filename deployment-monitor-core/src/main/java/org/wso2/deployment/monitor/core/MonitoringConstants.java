@@ -28,9 +28,16 @@ public class MonitoringConstants {
 
     public static final String DEFAULT_TENANT_KEY = "default.tenant";
 
+    public static final String SERVER_AGENT_NAME = "ServerStatusReporter";
+
+    public static final String SERVER_AGENT_NAMESPACE = "http://monitor.devops.carbon.wso2.org";
+
     public static final String SERVER_AGENT_URL_CONTEXT = "services/ServerStatusReporter";
 
     public static final String SERVER_AGENT_SERVER_INFO_OP = "getServerInfo";
+
+    public static final String JAXWS_SSL_SOCKETFACTORY = "com.sun.xml.internal.ws.transport.https."
+            + "client.SSLSocketFactory";
 
     public static final String TIMEOUT = "timeout";
 }

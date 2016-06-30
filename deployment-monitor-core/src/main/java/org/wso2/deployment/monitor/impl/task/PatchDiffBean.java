@@ -17,32 +17,26 @@
 */
 package org.wso2.deployment.monitor.impl.task;
 
-import org.wso2.carbon.devops.monitor.beans.xsd.Patch;
-
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-/**
- * todo
- */
-public class PatchUtils {
+public class PatchDiffBean {
 
-    /**
-     * todo
-     */
-    public static PatchDiffBean compare(Map<String, Patch> first, Map<String, Patch> second) {
-        Set<String> firstKeySet = new HashSet<>(first.keySet());
-        Set<String> secondKeySet = new HashSet<>(second.keySet());
+    private Set<String> missingPatches;
+    private Set<String> extraPatches;
 
-        firstKeySet.removeAll(second.keySet()); //missing in second list
-        secondKeySet.removeAll(first.keySet()); //extras in second list
-
-        PatchDiffBean patchDiffBean = new PatchDiffBean();
-        patchDiffBean.setMissingPatches(firstKeySet);
-        patchDiffBean.setExtraPatches(secondKeySet);
-
-        return patchDiffBean;
+    public Set<String> getMissingPatches() {
+        return missingPatches;
     }
 
+    public void setMissingPatches(Set<String> missingPatches) {
+        this.missingPatches = missingPatches;
+    }
+
+    public Set<String> getExtraPatches() {
+        return extraPatches;
+    }
+
+    public void setExtraPatches(Set<String> extraPatches) {
+        this.extraPatches = extraPatches;
+    }
 }
