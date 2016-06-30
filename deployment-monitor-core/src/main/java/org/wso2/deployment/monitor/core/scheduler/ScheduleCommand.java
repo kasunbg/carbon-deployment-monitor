@@ -55,7 +55,6 @@ public class ScheduleCommand extends Command {
 
     @Override
     public void execute(DeploymentMonitorConfiguration deploymentMonitorConfiguration) {
-        List<ServerGroup> serverGroups = deploymentMonitorConfiguration.getServerGroups();
         List<TaskConfig> allTasks = deploymentMonitorConfiguration.getTasks();
 
         List<TaskConfig> tasksToRun;
@@ -71,16 +70,15 @@ public class ScheduleCommand extends Command {
         //call schedule manager
         ScheduleManager scheduleManager;
         try {
-            scheduleManager = new ScheduleManager();
+            scheduleManager = ScheduleManager.getInstance();
             for (TaskConfig task : tasksToRun) {
                 try {
                     if (task.isEnable()) {
                         logger.debug("Scheduling '{}'", task.getName());
-                        scheduleManager.scheduleTask(task, serverGroups);
+                        scheduleManager.scheduleTask(task);
                     }
                 } catch (SchedulerException e) {
                     logger.error("Error occurred while scheduling the task - " + task.getName(), e);
-
                 }
             }
             scheduleManager.startScheduler();
