@@ -34,7 +34,7 @@ public class SchedulerConstants {
     //Trigger types
     public static final String SIMPLE_TRIGGER = "simple";
 
-    public static final String CRON_TRIGGER = "cron";
+    public static final String ONE_TIME = "onetime";
 
     //Configuration
     public static final String SERVER_GROUP = "serverGroup";

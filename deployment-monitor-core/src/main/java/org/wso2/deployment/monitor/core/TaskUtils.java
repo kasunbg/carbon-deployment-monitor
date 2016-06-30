@@ -26,8 +26,10 @@ import org.wso2.deployment.monitor.core.model.TaskConfig;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class TaskUtils {
@@ -90,6 +92,64 @@ public class TaskUtils {
         }
 
         return filteredTasks;
+    }
+
+    /**
+     * Returns a Map of the server groups of the given task
+     * @param taskConfig {@link TaskConfig}
+     * @return {@link Map}
+     */
+    public static Map<String, ServerGroup> getServerGroupsByTaskConfig(TaskConfig taskConfig) {
+        Map<String, ServerGroup> serverGroupMap = new Hashtable<>();
+
+        for (ServerGroup serverGroup : ConfigurationManager.getConfiguration().getServerGroups()) {
+            serverGroupMap.put(serverGroup.getName(), serverGroup);
+        }
+
+        if (taskConfig.getServers().size() == 1 && ("ALL".equalsIgnoreCase(taskConfig.getServers().get(0)))) {
+            logger.debug("Scheduling the task " + taskConfig.getName() + " for all the server groups");
+            return serverGroupMap;
+        } else {
+            Map<String, ServerGroup> tempMap = new Hashtable<>();
+            for (String server : taskConfig.getServers()) {
+                if (!serverGroupMap.containsKey(server)) {
+                    logger.warn("Unable to find a Server Group with the name : " + server
+                            + ". Task will not be scheduled for this server");
+                } else {
+                    tempMap.put(server, serverGroupMap.get(server));
+                }
+            }
+            return tempMap;
+        }
+    }
+
+    /**
+     * Returns a Map of the server groups of the Task with the given name
+     * @param name Name of the task
+     * @return {@link Map}
+     */
+    public static Map<String, ServerGroup> getServerGroupsByTaskName(String name) {
+        TaskConfig taskConfig = getTaskConfigByName(name);
+        if(taskConfig != null){
+            return getServerGroupsByTaskConfig(taskConfig);
+        } else {
+            return new Hashtable<>();
+        }
+    }
+
+    /**
+     * Returns a {@link TaskConfig} with the given name
+     * @param name Task Name
+     * @return {@link TaskConfig}
+     */
+    public static TaskConfig getTaskConfigByName(String name){
+        List<TaskConfig> taskConfigs = ConfigurationManager.getConfiguration().getTasks();
+        for (TaskConfig taskConfig : taskConfigs) {
+            if (taskConfig.getName().equals(name)){
+                return taskConfig;
+            }
+        }
+        return null;
     }
 
     public static String getDeploymentMonitorHome() {

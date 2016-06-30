@@ -20,6 +20,7 @@ import org.quartz.CronTrigger;
 import org.quartz.DateBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -27,13 +28,12 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.QuartzJobProxy;
+import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.wso2.deployment.monitor.core.scheduler.utils.SchedulerConstants;
 import org.wso2.deployment.monitor.core.scheduler.utils.TriggerUtilities;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -68,6 +68,7 @@ public class ScheduleManager {
 
     /**
      * Initializes a ScheduleManager if it is null and return it
+     *
      * @return a {@link ScheduleManager} instance
      * @throws SchedulerException
      */
@@ -98,62 +99,182 @@ public class ScheduleManager {
         scheduler.shutdown();
     }
 
-    public void scheduleTask(TaskConfig taskConfig, List<ServerGroup> serverGroups) throws SchedulerException {
+    /**
+     * Schedules jobs of the given Task for each server group defined for the task
+     *
+     * @param taskName Task Name
+     * @throws SchedulerException
+     */
+    public void scheduleTask(String taskName) throws SchedulerException {
+        TaskConfig taskConfig = TaskUtils.getTaskConfigByName(taskName);
+        if (taskConfig == null) {
+            logger.warn("Scheduling Task failed. Unable to find a task with the name " + taskName);
+            return;
+        }
+        scheduleTask(taskConfig);
+    }
+
+    /**
+     * Schedules a job of the given Task for the given server group
+     *
+     * @param taskName Task Name
+     * @throws SchedulerException
+     */
+    public void scheduleTaskForServer(String taskName, String serverGroupName) throws SchedulerException {
+        TaskConfig taskConfig = TaskUtils.getTaskConfigByName(taskName);
+        if (taskConfig == null) {
+            logger.warn("Scheduling Task failed. Unable to find a task with the name " + taskName);
+            return;
+        }
+        ServerGroup serverGroup = TaskUtils.getServerGroupsByTaskConfig(taskConfig).get(serverGroupName);
+        scheduleTaskForServer(taskConfig, serverGroup);
+    }
+
+    /**
+     * Schedules jobs of the given Task for each server group defined for the task
+     *
+     * @param taskConfig {@link TaskConfig}
+     * @throws SchedulerException
+     */
+    public void scheduleTask(TaskConfig taskConfig) throws SchedulerException {
+        Map<String, ServerGroup> serverGroupMap = TaskUtils.getServerGroupsByTaskConfig(taskConfig);
+        for (Map.Entry<String, ServerGroup> entry : serverGroupMap.entrySet()) {
+            scheduleTaskForServer(taskConfig, entry.getValue());
+        }
+    }
+
+    /**
+     * Schedules a job of the given Task for the given server group
+     *
+     * @param taskConfig  {@link TaskConfig}
+     * @param serverGroup {@link ServerGroup}
+     * @throws SchedulerException
+     */
+    public void scheduleTaskForServer(TaskConfig taskConfig, ServerGroup serverGroup) throws SchedulerException {
         JobDataMap dataMap = new JobDataMap();
         dataMap.put(SchedulerConstants.TASK_CLASS, taskConfig.getClassName());
         dataMap.put(SchedulerConstants.TASK_NAME, taskConfig.getName());
         dataMap.put(SchedulerConstants.CALLBACK_CLASS, taskConfig.getOnResult());
         dataMap.put(SchedulerConstants.CUSTOM_PARAMS, taskConfig.getTaskParams());
 
-        //A Task is scheduled per each server group defined for a Task
-        Map<String, ServerGroup> serverGroupMap = new HashMap<>();
-        for (ServerGroup serverGroup : serverGroups) {
-            serverGroupMap.put(serverGroup.getName(), serverGroup);
-        }
-        for (String serverName : taskConfig.getServers()) {
-            if (serverGroupMap.get(serverName) == null) {
-                logger.warn("Unable to find a Server Group with the name : " + serverName
-                        + ". Task will not be scheduled for this server");
-                continue;
-            }
-            dataMap.put(SchedulerConstants.SERVER_GROUP, serverGroupMap.get(serverName));
+        String serverName = serverGroup.getName();
+        dataMap.put(SchedulerConstants.SERVER_GROUP, serverGroup);
 
-            String jobName = taskConfig.getName();
-            JobDetail job = newJob(QuartzJobProxy.class).withIdentity(jobName, serverName)
-                    .usingJobData(dataMap).build();
+        String jobName = taskConfig.getName();
+        JobDetail job = newJob(QuartzJobProxy.class).withIdentity(jobName, serverName).usingJobData(dataMap).build();
 
-            Trigger trigger;
-            if (SchedulerConstants.SIMPLE_TRIGGER.equalsIgnoreCase(taskConfig.getTriggerType())) {
-                if (taskConfig.getTrigger().endsWith(TriggerUtilities.SECONDS)) {
-                    trigger = getSimpleTriggerInSeconds(jobName, serverName, taskConfig.getTrigger());
-                } else if (taskConfig.getTrigger().endsWith(TriggerUtilities.MINUTES)) {
-                    trigger = getSimpleTriggerInMinutes(jobName, serverName, taskConfig.getTrigger());
-                } else {
-                    trigger = getSimpleTriggerInHours(jobName, serverName, taskConfig.getTrigger());
-                }
+        Trigger trigger;
+        if (SchedulerConstants.SIMPLE_TRIGGER.equalsIgnoreCase(taskConfig.getTriggerType())) {
+            if (taskConfig.getTrigger().endsWith(TriggerUtilities.SECONDS)) {
+                trigger = getSimpleTriggerInSeconds(jobName, serverName, taskConfig.getTrigger());
+            } else if (taskConfig.getTrigger().endsWith(TriggerUtilities.MINUTES)) {
+                trigger = getSimpleTriggerInMinutes(jobName, serverName, taskConfig.getTrigger());
             } else {
-                trigger = getCronTrigger(jobName, serverName, taskConfig.getTrigger());
+                trigger = getSimpleTriggerInHours(jobName, serverName, taskConfig.getTrigger());
             }
-            scheduler.scheduleJob(job, trigger);
+        } else if (SchedulerConstants.ONE_TIME.equalsIgnoreCase(taskConfig.getTriggerType())) {
+            trigger = getOneTimeTrigger(jobName, serverName);
+        } else {
+            trigger = getCronTrigger(jobName, serverName, taskConfig.getTrigger());
+        }
+        scheduler.scheduleJob(job, trigger);
+    }
+
+    /**
+     * Un-Schedule all the jobs of the given task
+     *
+     * @param taskName Name of the Task
+     */
+    public void unScheduleTask(String taskName) {
+        TaskConfig taskConfig = TaskUtils.getTaskConfigByName(taskName);
+        if (taskConfig == null) {
+            logger.warn("Un-scheduling Task failed. Unable to find a task with the name " + taskName);
+            return;
+        }
+        for (String server : taskConfig.getServers()) {
+            unScheduleTaskForServer(taskName, server);
         }
     }
 
     /**
-     * Un-Schedule a task
-     * @param jobName Name of the Job. This will be <code>ServerName + "." + TaskName </code>
-     *                i.e gateway.SimpleLoggingTask
-     * @param jobGroup Group name of the Task
-     * @throws SchedulerException
+     * Un-Schedule the job of the Task for the given Server
+     *
+     * @param taskName        Name of the Task
+     * @param serverGroupName Group name of the server
      */
-    public void unScheduleTask(String jobName, String jobGroup) throws SchedulerException {
-        scheduler.unscheduleJob(triggerKey(jobName, jobGroup));
+    public void unScheduleTaskForServer(String taskName, String serverGroupName) {
+        try {
+            scheduler.unscheduleJob(triggerKey(taskName, serverGroupName));
+        } catch (SchedulerException e) {
+            logger.error("Un-Scheduling Task failed {}", e);
+        }
+    }
+
+    /**
+     * Pause all the jobs of the given task
+     *
+     * @param taskName Name of the Task
+     */
+    public void pauseTask(String taskName) {
+        TaskConfig taskConfig = TaskUtils.getTaskConfigByName(taskName);
+        if (taskConfig == null) {
+            logger.warn("Pausing Task failed. Unable to find a task with the name " + taskName);
+            return;
+        }
+        for (String server : taskConfig.getServers()) {
+            pauseTaskForServer(taskName, server);
+        }
+    }
+
+    /**
+     * Pause the job of the Task for the given Server
+     *
+     * @param taskName        Name of the Task
+     * @param serverGroupName Group name of the server
+     */
+    public void pauseTaskForServer(String taskName, String serverGroupName) {
+        try {
+            scheduler.pauseJob(JobKey.jobKey(taskName, serverGroupName));
+        } catch (SchedulerException e) {
+            logger.error("Pausing Task failed {}", e);
+        }
+    }
+
+    /**
+     * Resumes all the jobs of the given task
+     *
+     * @param taskName Name of the Task
+     */
+    public void resumeTask(String taskName) {
+        TaskConfig taskConfig = TaskUtils.getTaskConfigByName(taskName);
+        if (taskConfig == null) {
+            logger.warn("Resuming Task failed. Unable to find a task with the name " + taskName);
+            return;
+        }
+        for (String server : taskConfig.getServers()) {
+            resumeTaskForServer(taskName, server);
+        }
+    }
+
+    /**
+     * Resumes the job of the task for the given server
+     *
+     * @param taskName        Name of the Task
+     * @param serverGroupName Group name of the server
+     */
+    private void resumeTaskForServer(String taskName, String serverGroupName) {
+        try {
+            scheduler.resumeJob(JobKey.jobKey(taskName, serverGroupName));
+        } catch (SchedulerException e) {
+            logger.error("Resuming Task failed {}", e);
+        }
     }
 
     /**
      * Returns cron trigger
      * Triggers will have Task's name as the name and group name as the group name
      *
-     * @return Quartz Simple Trigger
+     * @return Quartz Cron Trigger
      */
     private Trigger getCronTrigger(String triggerName, String triggerGroup, String expression) {
         if (TriggerUtilities.isValidCronExpression(expression)) {
@@ -233,6 +354,15 @@ public class ScheduleManager {
                         futureDate(generator.nextInt(SchedulerConstants.INIT_DURATION),
                                 DateBuilder.IntervalUnit.SECOND)).build();
 
+    }
+
+    /**
+     * Returns a trigger which will only fire one time
+     *
+     * @return Quartz Simple Trigger
+     */
+    private Trigger getOneTimeTrigger(String triggerName, String triggerGroup) {
+        return newTrigger().withIdentity(triggerName, triggerGroup).startNow().build();
     }
 
 }
