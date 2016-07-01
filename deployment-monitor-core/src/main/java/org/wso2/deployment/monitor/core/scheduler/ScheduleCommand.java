@@ -72,13 +72,9 @@ public class ScheduleCommand extends Command {
         try {
             scheduleManager = ScheduleManager.getInstance();
             for (TaskConfig task : tasksToRun) {
-                try {
-                    if (task.isEnable()) {
-                        logger.debug("Scheduling '{}'", task.getName());
-                        scheduleManager.scheduleTask(task);
-                    }
-                } catch (SchedulerException e) {
-                    logger.error("Error occurred while scheduling the task - " + task.getName(), e);
+                if (task.isEnable()) {
+                    logger.debug("Scheduling '{}'", task.getName());
+                    scheduleManager.scheduleTask(task);
                 }
             }
             scheduleManager.startScheduler();

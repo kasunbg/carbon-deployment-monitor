@@ -17,6 +17,9 @@
 */
 package org.wso2.deployment.monitor.core.model;
 
+import org.wso2.deployment.monitor.core.MonitoringConstants;
+import org.wso2.deployment.monitor.core.scheduler.utils.SchedulerConstants;
+
 /**
  * todo
  */

@@ -38,6 +38,7 @@
         <module>deployment-verifier</module>
      -->      
         <module>deployment-monitor-core</module>
+        <module>deployment-monitor-scheduling-service</module>
         <module>distribution</module>
     </modules>
 
