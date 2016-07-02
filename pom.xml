@@ -34,9 +34,9 @@
     <url>http://wso2.org</url>
 
     <modules>
-     <!--   <module>server-status-monitor-agent</module>
-        <module>deployment-verifier</module>
-     -->      
+        <module>server-status-monitor-agent</module>
+        <!--    <module>deployment-verifier</module>
+        -->
         <module>deployment-monitor-core</module>
         <module>distribution</module>
     </modules>
@@ -74,7 +74,13 @@
                 <artifactId>org.eclipse.osgi</artifactId>
                 <version>3.9.1.v20130814-1242</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.org.tigris</groupId>
+                <artifactId>svn-client-adapter</artifactId>
+                <version>${wso2carbon.version.svnclient}</version>
+            </dependency>
         </dependencies>
+
     </dependencyManagement>
 
     <build>
@@ -97,6 +103,7 @@
         <distribution.file.name>wso2dm-${project.version}</distribution.file.name>
         <slf4j.api.version>1.7.12</slf4j.api.version>
         <carbon.import.pkg.version.range>[4.2.0, 5.0.0)</carbon.import.pkg.version.range>
+        <wso2carbon.version.svnclient>1.10.9.wso2v1</wso2carbon.version.svnclient>
     </properties>
 
 </project>
