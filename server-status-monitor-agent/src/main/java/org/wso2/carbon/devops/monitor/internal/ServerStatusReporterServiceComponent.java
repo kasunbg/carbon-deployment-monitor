@@ -24,22 +24,14 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
+/**
+ * Service component
+ *
+ */
 @Component(
         name = "org.wso2.carbon.devops.monitor.internal.ServerStatusReporterServiceComponent",
         immediate = true
 )
-
-/**
- * @ scr.component name="org.wso2.carbon.devops.monitor.internal.ServerStatusReporterServiceComponent" immediate="true"
- * @ scr.reference name="server.configuration.service" interface="org.wso2.carbon.base.api.ServerConfigurationService"
- * cardinality="1..1" policy="dynamic"  bind="setServerConfigurationService" unbind="unsetServerConfigurationService"
- * @scr.reference name="config.context.service"
- * interface="org.wso2.carbon.utils.ConfigurationContextService"
- * cardinality="1..1"
- * policy="dynamic"
- * bind="setConfigurationContextService"
- * unbind="unsetConfigurationContextService"
- */
 public class ServerStatusReporterServiceComponent {
 
     private static final OSGiDataHolder dataHolder = OSGiDataHolder.getInstance();

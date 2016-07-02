@@ -20,6 +20,9 @@ package org.wso2.carbon.devops.monitor.internal;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
+/**
+ * osgi services holder
+ */
 public class OSGiDataHolder {
 
     private static OSGiDataHolder dataHolder = new OSGiDataHolder();

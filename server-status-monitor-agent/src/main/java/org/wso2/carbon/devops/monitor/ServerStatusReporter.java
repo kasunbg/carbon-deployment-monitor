@@ -17,12 +17,12 @@
 */
 package org.wso2.carbon.devops.monitor;
 
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.util.Utils;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.devops.monitor.beans.Bundle;
 import org.wso2.carbon.devops.monitor.beans.Patch;
 import org.wso2.carbon.devops.monitor.beans.ServerInfo;
+import org.wso2.carbon.devops.monitor.internal.DeploymentSynchronizerInfo;
 import org.wso2.carbon.devops.monitor.internal.OSGiDataHolder;
 import org.wso2.carbon.ui.CarbonUIUtil;
 
@@ -34,6 +34,8 @@ import java.math.BigInteger;
 import java.net.SocketException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An axis2 service that returns the Carbon server info
@@ -68,6 +70,10 @@ public class ServerStatusReporter {
 
         //3 get dropins info
 
+        //4 get depsync info
+        DeploymentSynchronizerInfo depsyncInfo = DeploymentSynchronizerUtils.getDeploymentSynchronizerInfo();
+        serverInfo.setDeploymentSynchronizerInfo(depsyncInfo);
+
         return serverInfo;
     }
 
@@ -77,8 +83,6 @@ public class ServerStatusReporter {
         String productVersion = configService.getFirstProperty("Version");
         String profile = System.getProperty("profile", "default");
 
-        ConfigurationContext configContext = dataHolder.getConfigContextService().getServerConfigContext();
-//        String serverURL = CarbonUtils.getServerURL(configService, configContext);
         String serverURL = CarbonUIUtil.getAdminConsoleURL(configService.getFirstProperty("WebContextRoot"));
 
         String ip;
@@ -103,9 +107,8 @@ public class ServerStatusReporter {
         }
 
         //iterate patches
-        Patch[] patches = new Patch[patchFiles.length - 1]; //todo infer the length with skipped urls
-        for (int i = 0; i < patchFiles.length; i++) {
-            File patchFile = patchFiles[i];
+        List<Patch> patches = new ArrayList<>();
+        for (File patchFile : patchFiles) {
             if ("patch0000".equals(patchFile.getName()) || !patchFile.getName().startsWith("patch")) {
                 continue;
             }
@@ -115,23 +118,22 @@ public class ServerStatusReporter {
 
             //iterate bundles inside patches
             File[] bundleFiles = patchFile.listFiles();
+            List<Bundle> bundles = new ArrayList<>();
             if (bundleFiles == null) {
                 continue;
             }
-            Bundle[] bundles = new Bundle[bundleFiles.length];
-            for (int j = 0; j < bundleFiles.length; j++) {
-                File bundleFile = bundleFiles[j];
+            for (File bundleFile : bundleFiles) {
                 Bundle bundle = new Bundle();
                 bundle.setFileName(bundleFile.getName());
                 bundle.setMd5sum(md5sum(bundleFile));
-                bundles[j] = bundle;
+                bundles.add(bundle);
             }
-            patch.setBundles(bundles);
+            patch.setBundles(bundles.toArray(new Bundle[bundles.size()]));
 
-            patches[i] = patch;
+            patches.add(patch);
         }
 
-        return patches;
+        return patches.toArray(new Patch[patches.size()]);
     }
 
     private File getPath(String firstComponent, String... pathComponents) {
@@ -148,8 +150,7 @@ public class ServerStatusReporter {
     }
 
     private String md5sum(File file) {
-        try {
-            InputStream is = new FileInputStream(file);
+        try (InputStream is = new FileInputStream(file)) {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();
             byte[] bytes = new byte[2048];

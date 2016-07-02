@@ -17,6 +17,8 @@
 */
 package org.wso2.carbon.devops.monitor.beans;
 
+import org.wso2.carbon.devops.monitor.internal.DeploymentSynchronizerInfo;
+
 import java.util.List;
 
 /**
@@ -39,6 +41,8 @@ public class ServerInfo {
     private String serverURL;
 
     private Patch[] patchInfo;
+
+    private DeploymentSynchronizerInfo deploymentSynchronizerInfo;
 
     public Patch[] getPatchInfo() {
         return patchInfo;
@@ -107,6 +111,14 @@ public class ServerInfo {
 
     public void setServerURL(String serverURL) {
         this.serverURL = serverURL;
+    }
+
+    public DeploymentSynchronizerInfo getDeploymentSynchronizerInfo() {
+        return deploymentSynchronizerInfo;
+    }
+
+    public void setDeploymentSynchronizerInfo(DeploymentSynchronizerInfo deploymentSynchronizerInfo) {
+        this.deploymentSynchronizerInfo = deploymentSynchronizerInfo;
     }
 
     //  public List<> configurations;
