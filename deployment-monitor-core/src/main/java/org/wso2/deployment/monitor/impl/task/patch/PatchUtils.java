@@ -15,7 +15,7 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.deployment.monitor.impl.task;
+package org.wso2.deployment.monitor.impl.task.patch;
 
 import org.wso2.carbon.devops.monitor.beans.xsd.Patch;
 
