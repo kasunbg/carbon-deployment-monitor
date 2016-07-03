@@ -26,7 +26,6 @@ import org.wso2.deployment.monitor.core.Command;
 import org.wso2.deployment.monitor.core.DeploymentMonitorException;
 import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
-import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 
 import java.util.ArrayList;

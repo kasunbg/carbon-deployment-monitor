@@ -28,7 +28,6 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.deployment.monitor.core.ConfigurationManager;
 import org.wso2.deployment.monitor.core.QuartzJobProxy;
 import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.core.model.ServerGroup;

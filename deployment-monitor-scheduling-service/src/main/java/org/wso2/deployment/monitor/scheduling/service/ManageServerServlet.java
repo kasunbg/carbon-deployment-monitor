@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.apache.wink.common.model.opensearch.OpenSearchQuery.QueryRole.request;
-
 /**
  * Manage Servlet
  * todo Do we need HTTPS.? Auth.? etc
