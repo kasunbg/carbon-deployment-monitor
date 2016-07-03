@@ -78,7 +78,7 @@ tasks:
   -
     name: PatchVerificationTask
     enable: true
-    className: org.wso2.deployment.monitor.impl.task.PatchVerificationTask
+    className: org.wso2.deployment.monitor.impl.task.patch.PatchVerificationTask
     triggerType: simple
     trigger: 10s
     servers: [esb]

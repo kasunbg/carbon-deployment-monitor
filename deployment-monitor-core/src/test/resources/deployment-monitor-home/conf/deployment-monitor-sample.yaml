@@ -85,7 +85,7 @@ tasks:
     enable: true
     name: PatchVerificationTask
     group: apicloud
-    className: org.wso2.deployment.monitor.impl.task.PatchVerificationTask
+    className: org.wso2.deployment.monitor.impl.task.patch.PatchVerificationTask
     triggerType: simple
     trigger: 10s
 #    trigger: 0 0/1 * 1/1 * ? *
