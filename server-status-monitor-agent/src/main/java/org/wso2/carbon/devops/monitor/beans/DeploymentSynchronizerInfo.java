@@ -15,7 +15,7 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.wso2.carbon.devops.monitor.internal;
+package org.wso2.carbon.devops.monitor.beans;
 
 /**
  * bean //todo

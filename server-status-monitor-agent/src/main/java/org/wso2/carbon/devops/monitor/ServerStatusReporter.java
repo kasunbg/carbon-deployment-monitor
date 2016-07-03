@@ -19,23 +19,13 @@ package org.wso2.carbon.devops.monitor;
 
 import org.apache.axis2.util.Utils;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.devops.monitor.beans.Bundle;
+import org.wso2.carbon.devops.monitor.beans.DeploymentSynchronizerInfo;
 import org.wso2.carbon.devops.monitor.beans.Patch;
 import org.wso2.carbon.devops.monitor.beans.ServerInfo;
-import org.wso2.carbon.devops.monitor.internal.DeploymentSynchronizerInfo;
 import org.wso2.carbon.devops.monitor.internal.OSGiDataHolder;
 import org.wso2.carbon.ui.CarbonUIUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.SocketException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An axis2 service that returns the Carbon server info
@@ -62,22 +52,30 @@ public class ServerStatusReporter {
         ServerInfo serverInfo = new ServerInfo();
 
         //1
-        setProductMetadata(serverInfo);
+        fillProductMetadata(serverInfo);
 
         //2 get patch info
-        Patch[] patches = getPatchInfo();
+        Patch[] patches = new PatchInfoGenerator().generate();
         serverInfo.setPatchInfo(patches);
 
         //3 get dropins info
 
         //4 get depsync info
-        DeploymentSynchronizerInfo depsyncInfo = DeploymentSynchronizerUtils.getDeploymentSynchronizerInfo();
+        DeploymentSynchronizerInfo depsyncInfo = new DeploymentSynchronizerInfoGenerator().generate();
         serverInfo.setDeploymentSynchronizerInfo(depsyncInfo);
 
         return serverInfo;
     }
 
-    private void setProductMetadata(ServerInfo serverInfo) {
+    public Patch[] getPatchInfo() {
+        return new PatchInfoGenerator().generate();
+    }
+
+    public DeploymentSynchronizerInfo getDeploymentSynchronizerInfo() {
+        return new DeploymentSynchronizerInfoGenerator().generate();
+    }
+
+    private void fillProductMetadata(ServerInfo serverInfo) {
         ServerConfigurationService configService = dataHolder.getServerConfigurationService();
         String productName = configService.getFirstProperty("Name");
         String productVersion = configService.getFirstProperty("Version");
@@ -97,81 +95,6 @@ public class ServerStatusReporter {
         serverInfo.setServerProfile(profile);
         serverInfo.setServerURL(serverURL);
         serverInfo.setServerIP(ip);
-    }
-
-    private Patch[] getPatchInfo() {
-        File patchPath = getPath(System.getProperty("carbon.home"), "repository", "components", "patches");
-        File[] patchFiles = patchPath.listFiles();
-        if (patchFiles == null) {
-            return new Patch[0];
-        }
-
-        //iterate patches
-        List<Patch> patches = new ArrayList<>();
-        for (File patchFile : patchFiles) {
-            if ("patch0000".equals(patchFile.getName()) || !patchFile.getName().startsWith("patch")) {
-                continue;
-            }
-
-            Patch patch = new Patch();
-            patch.setPatchId(patchFile.getName());
-
-            //iterate bundles inside patches
-            File[] bundleFiles = patchFile.listFiles();
-            List<Bundle> bundles = new ArrayList<>();
-            if (bundleFiles == null) {
-                continue;
-            }
-            for (File bundleFile : bundleFiles) {
-                Bundle bundle = new Bundle();
-                bundle.setFileName(bundleFile.getName());
-                bundle.setMd5sum(md5sum(bundleFile));
-                bundles.add(bundle);
-            }
-            patch.setBundles(bundles.toArray(new Bundle[bundles.size()]));
-
-            patches.add(patch);
-        }
-
-        return patches.toArray(new Patch[patches.size()]);
-    }
-
-    private File getPath(String firstComponent, String... pathComponents) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(firstComponent);
-        builder.append(File.separatorChar);
-
-        for (String path : pathComponents) {
-            builder.append(path);
-            builder.append(File.separator);
-        }
-
-        return new File(builder.toString());
-    }
-
-    private String md5sum(File file) {
-        try (InputStream is = new FileInputStream(file)) {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.reset();
-            byte[] bytes = new byte[2048];
-            int numBytes;
-            while ((numBytes = is.read(bytes)) != -1) {
-                md.update(bytes, 0, numBytes);
-            }
-            byte[] digest = md.digest();
-
-            BigInteger bigInt = new BigInteger(1, digest);
-            String hashtext = bigInt.toString(16);
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
-            }
-
-            return hashtext;
-        } catch (NoSuchAlgorithmException | IOException e) {
-            //md5 algorithm should exist.
-            return "##ERROR## - " + e.getMessage();
-        }
-
     }
 
 }

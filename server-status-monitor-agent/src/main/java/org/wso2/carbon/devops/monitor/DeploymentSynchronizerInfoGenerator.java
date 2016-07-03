@@ -26,7 +26,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.devops.monitor.internal.DeploymentSynchronizerInfo;
+import org.wso2.carbon.devops.monitor.beans.DeploymentSynchronizerInfo;
 import org.wso2.carbon.devops.monitor.internal.OSGiDataHolder;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
@@ -40,9 +40,9 @@ import java.util.List;
 /**
  * depsync utils
  */
-public class DeploymentSynchronizerUtils {
+public class DeploymentSynchronizerInfoGenerator {
 
-    private static final Log log = LogFactory.getLog(DeploymentSynchronizerUtils.class);
+    private static final Log log = LogFactory.getLog(DeploymentSynchronizerInfoGenerator.class);
 
     /**
      * Run svn info, get revision.
@@ -54,8 +54,10 @@ public class DeploymentSynchronizerUtils {
      * If conflicted/obstructed -> NOT OK
      * If not autocommit -> modified/unversioned/added/deleted/missing/replaced/merged/  -> NOT OK
      * If no changes (normal/ignored/external/) -> then OK
+     *
+     * todo get clustering info
      */
-    public static DeploymentSynchronizerInfo getDeploymentSynchronizerInfo() {
+    public DeploymentSynchronizerInfo generate() {
 
         ServerConfigurationService serverConfig = OSGiDataHolder.getInstance().getServerConfigurationService();
 

@@ -17,8 +17,6 @@
 */
 package org.wso2.carbon.devops.monitor.beans;
 
-import org.wso2.carbon.devops.monitor.internal.DeploymentSynchronizerInfo;
-
 import java.util.List;
 
 /**
