@@ -40,4 +40,6 @@ public class MonitoringConstants {
             + "client.SSLSocketFactory";
 
     public static final String TIMEOUT = "timeout";
+
+    public static final String DEFAULT_DEPSYNC_CLIENT_TYPE = "svnkit";
 }
