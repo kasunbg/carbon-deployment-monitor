@@ -47,19 +47,27 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void triggerPaused(TriggerKey triggerKey) {
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Trigger Paused : {}", triggerKey);
+        }
     }
 
     @Override public void triggersPaused(String s) {
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Triggers Paused : {}", s);
+        }
     }
 
     @Override public void triggerResumed(TriggerKey triggerKey) {
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Trigger Resumed : {}", triggerKey);
+        }
     }
 
     @Override public void triggersResumed(String s) {
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Triggers Resumed : {}", s);
+        }
     }
 
     @Override public void jobAdded(JobDetail jobDetail) {
@@ -75,19 +83,27 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void jobPaused(JobKey jobKey) {
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Job Paused : {}", jobKey);
+        }
     }
 
     @Override public void jobsPaused(String s) {
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Jobs Paused : {}", s);
+        }
     }
 
     @Override public void jobResumed(JobKey jobKey) {
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Job Resumed : {}", jobKey);
+        }
     }
 
     @Override public void jobsResumed(String s) {
-
+        if (logger.isDebugEnabled()) {
+            logger.debug("Jobs Resumed : {}", s);
+        }
     }
 
     @Override public void schedulerError(String s, SchedulerException e) {

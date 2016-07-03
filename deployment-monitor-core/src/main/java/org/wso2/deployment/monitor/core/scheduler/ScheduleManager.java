@@ -20,11 +20,12 @@ import org.quartz.CronTrigger;
 import org.quartz.DateBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
-import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.QuartzJobProxy;
@@ -34,6 +35,8 @@ import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.wso2.deployment.monitor.core.scheduler.utils.SchedulerConstants;
 import org.wso2.deployment.monitor.core.scheduler.utils.TriggerUtilities;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -103,40 +106,47 @@ public class ScheduleManager {
      * Schedules jobs of the given Task for each server group defined for the task
      *
      * @param taskName Task Name
-     * @throws SchedulerException
      */
-    public void scheduleTask(String taskName) throws SchedulerException {
+    public void scheduleTask(String taskName) {
         TaskConfig taskConfig = TaskUtils.getTaskConfigByName(taskName);
         if (taskConfig == null) {
-            logger.warn("Scheduling Task failed. Unable to find a task with the name " + taskName);
+            logger.warn("Scheduling Task failed. Unable to find a task with the name : " + taskName);
             return;
         }
         scheduleTask(taskConfig);
     }
 
     /**
+     * Schedules all the jobs of a given server
+     *
+     * @param serverName Task Name
+     */
+    public boolean scheduleTasksOfServer(String serverName) {
+        return false;
+        //todo
+    }
+
+    /**
      * Schedules a job of the given Task for the given server group
      *
      * @param taskName Task Name
-     * @throws SchedulerException
      */
-    public void scheduleTaskForServer(String taskName, String serverGroupName) throws SchedulerException {
+    public boolean scheduleTaskForServer(String taskName, String serverGroupName) {
         TaskConfig taskConfig = TaskUtils.getTaskConfigByName(taskName);
         if (taskConfig == null) {
             logger.warn("Scheduling Task failed. Unable to find a task with the name " + taskName);
-            return;
+            return false;
         }
         ServerGroup serverGroup = TaskUtils.getServerGroupsByTaskConfig(taskConfig).get(serverGroupName);
-        scheduleTaskForServer(taskConfig, serverGroup);
+        return scheduleTaskForServer(taskConfig, serverGroup);
     }
 
     /**
      * Schedules jobs of the given Task for each server group defined for the task
      *
      * @param taskConfig {@link TaskConfig}
-     * @throws SchedulerException
      */
-    public void scheduleTask(TaskConfig taskConfig) throws SchedulerException {
+    void scheduleTask(TaskConfig taskConfig) {
         Map<String, ServerGroup> serverGroupMap = TaskUtils.getServerGroupsByTaskConfig(taskConfig);
         for (Map.Entry<String, ServerGroup> entry : serverGroupMap.entrySet()) {
             scheduleTaskForServer(taskConfig, entry.getValue());
@@ -148,9 +158,8 @@ public class ScheduleManager {
      *
      * @param taskConfig  {@link TaskConfig}
      * @param serverGroup {@link ServerGroup}
-     * @throws SchedulerException
      */
-    public void scheduleTaskForServer(TaskConfig taskConfig, ServerGroup serverGroup) throws SchedulerException {
+    private boolean scheduleTaskForServer(TaskConfig taskConfig, ServerGroup serverGroup) {
         JobDataMap dataMap = new JobDataMap();
         dataMap.put(SchedulerConstants.TASK_CLASS, taskConfig.getClassName());
         dataMap.put(SchedulerConstants.TASK_NAME, taskConfig.getName());
@@ -177,7 +186,14 @@ public class ScheduleManager {
         } else {
             trigger = getCronTrigger(jobName, serverName, taskConfig.getTrigger());
         }
-        scheduler.scheduleJob(job, trigger);
+
+        try {
+            scheduler.scheduleJob(job, trigger);
+            return true;
+        } catch (SchedulerException e) {
+            logger.error("Scheduling Task - " + taskConfig.getName() + " for Server - " + serverName + " failed", e);
+        }
+        return false;
     }
 
     /**
@@ -202,12 +218,29 @@ public class ScheduleManager {
      * @param taskName        Name of the Task
      * @param serverGroupName Group name of the server
      */
-    public void unScheduleTaskForServer(String taskName, String serverGroupName) {
+    public boolean unScheduleTaskForServer(String taskName, String serverGroupName) {
         try {
-            scheduler.unscheduleJob(triggerKey(taskName, serverGroupName));
+            return scheduler.unscheduleJob(triggerKey(taskName, serverGroupName));
         } catch (SchedulerException e) {
             logger.error("Un-Scheduling Task failed {}", e);
         }
+        return false;
+    }
+
+    /**
+     * Un-Schedule all the jobs of a given Server
+     *
+     * @param serverGroupName Group name of the server
+     */
+    public boolean unScheduleTasksOfServer(String serverGroupName) {
+        try {
+            List<TriggerKey> triggerList = new ArrayList<>();
+            triggerList.addAll(scheduler.getTriggerKeys(GroupMatcher.<TriggerKey>groupEquals(serverGroupName)));
+            return scheduler.unscheduleJobs(triggerList);
+        } catch (SchedulerException e) {
+            logger.error("Un-Scheduling Task failed {}", e);
+        }
+        return false;
     }
 
     /**
@@ -232,12 +265,29 @@ public class ScheduleManager {
      * @param taskName        Name of the Task
      * @param serverGroupName Group name of the server
      */
-    public void pauseTaskForServer(String taskName, String serverGroupName) {
+    public boolean pauseTaskForServer(String taskName, String serverGroupName) {
         try {
-            scheduler.pauseJob(JobKey.jobKey(taskName, serverGroupName));
+            scheduler.pauseTrigger(TriggerKey.triggerKey(taskName, serverGroupName));
+            return true;
         } catch (SchedulerException e) {
             logger.error("Pausing Task failed {}", e);
         }
+        return false;
+    }
+
+    /**
+     * Pause all the jobs of the given Server
+     *
+     * @param serverGroupName Group name of the server
+     */
+    public boolean pauseTasksOfServer(String serverGroupName) {
+        try {
+            scheduler.pauseTriggers(GroupMatcher.<TriggerKey>groupEquals(serverGroupName));
+            return true;
+        } catch (SchedulerException e) {
+            logger.error("Pausing Tasks failed for server" + serverGroupName + " {}", e);
+        }
+        return false;
     }
 
     /**
@@ -262,12 +312,29 @@ public class ScheduleManager {
      * @param taskName        Name of the Task
      * @param serverGroupName Group name of the server
      */
-    private void resumeTaskForServer(String taskName, String serverGroupName) {
+    public boolean resumeTaskForServer(String taskName, String serverGroupName) {
         try {
-            scheduler.resumeJob(JobKey.jobKey(taskName, serverGroupName));
+            scheduler.resumeTrigger(TriggerKey.triggerKey(taskName, serverGroupName));
+            return true;
         } catch (SchedulerException e) {
             logger.error("Resuming Task failed {}", e);
         }
+        return false;
+    }
+
+    /**
+     * Resumes all the jobs of a given server
+     *
+     * @param serverGroupName Group name of the server
+     */
+    public boolean resumeTasksOfServer(String serverGroupName) {
+        try {
+            scheduler.resumeTriggers(GroupMatcher.<TriggerKey>groupEquals(serverGroupName));
+            return true;
+        } catch (SchedulerException e) {
+            logger.error("Resuming Tasks failed for server" + serverGroupName + " {}", e);
+        }
+        return false;
     }
 
     /**
