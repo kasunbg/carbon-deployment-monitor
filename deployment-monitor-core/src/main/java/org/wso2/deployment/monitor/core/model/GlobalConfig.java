@@ -17,7 +17,6 @@
 */
 package org.wso2.deployment.monitor.core.model;
 
-
 /**
  * todo
  */
