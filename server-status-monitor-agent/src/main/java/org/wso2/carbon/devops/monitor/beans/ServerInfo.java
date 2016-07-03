@@ -17,7 +17,7 @@
 */
 package org.wso2.carbon.devops.monitor.beans;
 
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * The bean that is populated with the server data
@@ -38,22 +38,22 @@ public class ServerInfo {
 
     private String serverURL;
 
-    private Patch[] patchInfo;
+    private Patch[] patchInfo = new Patch[0];
 
     private DeploymentSynchronizerInfo deploymentSynchronizerInfo;
 
     public Patch[] getPatchInfo() {
-        return patchInfo;
+        return Arrays.copyOf(patchInfo, patchInfo.length);
     }
 
     public void setPatchInfo(Patch[] patchInfo) {
-        this.patchInfo = patchInfo;
+        this.patchInfo = Arrays.copyOf(patchInfo, patchInfo.length);
     }
 
-    public List<Bundle> plugins;
-    public List<DeploymentArtifact> deploymentArtifactInfo;
-    public List<DropinsBundle> dropins;
-    public List<Bundle> libs;
+//    public List<Bundle> plugins;
+//    public List<DeploymentArtifact> deploymentArtifactInfo;
+//    public List<DropinsBundle> dropins;
+//    public List<Bundle> libs;
 
     public String getProductName() {
         return productName;

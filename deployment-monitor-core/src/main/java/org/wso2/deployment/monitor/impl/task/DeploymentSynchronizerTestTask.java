@@ -89,7 +89,7 @@ public class DeploymentSynchronizerTestTask implements DeploymentMonitorTask {
             }
 
             //verify working copy is conflicted
-            if (info.getErrorFiles() != null && info.getErrorFiles().size() >= 1) {
+            if (info.getErrorFiles().size() >= 1) {
                 StringBuilder fileErrorMessage = new StringBuilder();
                 fileErrorMessage.append(host);
                 fileErrorMessage.append(" host working copy has an unrecoverable error on these files : ");
@@ -102,7 +102,7 @@ public class DeploymentSynchronizerTestTask implements DeploymentMonitorTask {
             }
 
             //verify working copy is locally modified even though autocommit is set to false
-            if (info.getInconsistentFiles() != null && info.getInconsistentFiles().size() >= 1) {
+            if (info.getInconsistentFiles().size() >= 1) {
                 StringBuilder fileInconsistenciesMessage = new StringBuilder();
                 fileInconsistenciesMessage.append(host);
                 fileInconsistenciesMessage

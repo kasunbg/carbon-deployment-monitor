@@ -17,6 +17,8 @@
 */
 package org.wso2.carbon.devops.monitor.beans;
 
+import java.util.Arrays;
+
 /**
  * bean //todo
  */
@@ -63,19 +65,19 @@ public class DeploymentSynchronizerInfo {
     }
 
     public String[] getErrorFiles() {
-        return errorFiles;
+        return Arrays.copyOf(errorFiles, errorFiles.length);
     }
 
     public void setErrorFiles(String[] errorFiles) {
-        this.errorFiles = errorFiles;
+        this.errorFiles = Arrays.copyOf(errorFiles, errorFiles.length);
     }
 
     public String[] getInconsistentFiles() {
-        return inconsistentFiles;
+        return Arrays.copyOf(inconsistentFiles, inconsistentFiles.length);
     }
 
     public void setInconsistentFiles(String[] inconsistentFiles) {
-        this.inconsistentFiles = inconsistentFiles;
+        this.inconsistentFiles = Arrays.copyOf(inconsistentFiles, inconsistentFiles.length);
     }
 
     public long getWorkingCopyRevision() {

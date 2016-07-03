@@ -17,12 +17,14 @@
 */
 package org.wso2.carbon.devops.monitor.beans;
 
+import java.util.Arrays;
+
 /**
  * Patch details
  */
 public class Patch {
     private String patchId;
-    private Bundle[] bundles;
+    private Bundle[] bundles = new Bundle[0];
 
     public String getPatchId() {
         return patchId;
@@ -33,10 +35,10 @@ public class Patch {
     }
 
     public Bundle[] getBundles() {
-        return bundles;
+        return Arrays.copyOf(bundles, bundles.length);
     }
 
     public void setBundles(Bundle[] bundles) {
-        this.bundles = bundles;
+        this.bundles = Arrays.copyOf(bundles, bundles.length);
     }
 }
