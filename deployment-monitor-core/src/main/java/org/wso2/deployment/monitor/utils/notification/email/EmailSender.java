@@ -45,7 +45,7 @@ import javax.mail.internet.MimeMultipart;
  */
 public class EmailSender {
     private static final Logger logger = LoggerFactory.getLogger(EmailSender.class);
-    private static EmailSender emailSender = null;
+    private static volatile EmailSender emailSender = null;
 
     private boolean isEmailEnabled;
     private boolean isTlsEnabled;
@@ -121,13 +121,15 @@ public class EmailSender {
                 try {
                     addressTo.add(new InternetAddress(toAddress));
                 } catch (AddressException e) {
-                    logger.error("Mail Notification: AddressException thrown while sending alerts", e);
+                    logger.error("Email Notification: Error occurred while creating recipient address : " + toAddress,
+                            e);
                 }
             }
             try {
                 fromAddress = new InternetAddress(from);
             } catch (AddressException e) {
-                logger.error("Mail Notification: AddressException thrown while sending alerts", e);
+                logger.error("Email Notification: Error occurred while creating from address : " + from,
+                        e);
             }
 
             try {
@@ -147,11 +149,10 @@ public class EmailSender {
                 simpleMessage.setContent(multipart);
                 Transport.send(simpleMessage);
             } catch (MessagingException e) {
-                logger.error("Mail Notification: MessagingException thrown while getting the connection:"
-                        + " sending alerts", e);
+                logger.error("Email Notification: Error occurred while sending email ", e);
             }
         } else {
-            logger.warn("Email Notifications are disabled.");
+            logger.warn("Email Notification is disabled.");
         }
     }
 }
