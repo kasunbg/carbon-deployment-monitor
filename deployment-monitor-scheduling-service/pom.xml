@@ -28,6 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>deployment-monitor-scheduling-service</artifactId>
+    <name>WSO2 Deployment Monitor -  Scheduling Service</name>
 
     <dependencies>
         <dependency>
