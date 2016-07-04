@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.OnResultCallback;
 import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
+import org.wso2.deployment.monitor.utils.notification.sms.SMSSender;
 
 /**
  * Simple Implementation for callback
@@ -44,6 +45,7 @@ public class MultiHostCallback implements OnResultCallback {
             logger.error(msg + ", Failed Hosts : [ " + failedHosts.toString() + " ]");
             EmailSender.getInstance()
                     .send(msg, "Failed Hosts [ " + failedHosts.toString() + " ]");
+            SMSSender.getInstance().send(msg);
         }
     }
 }
