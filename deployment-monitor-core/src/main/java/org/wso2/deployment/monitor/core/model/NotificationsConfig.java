@@ -28,8 +28,14 @@ public class NotificationsConfig {
 
     private EmailConfig email = new EmailConfig();
 
+    private SMSConfig sms = new SMSConfig();
+
     public EmailConfig getEmailConfig() {
         return email;
+    }
+
+    public SMSConfig getSms() {
+        return sms;
     }
 
     /**
@@ -80,6 +86,47 @@ public class NotificationsConfig {
 
         public int getSmtpPort() {
             return smtpPort;
+        }
+    }
+
+    /**
+     * todo
+     */
+    public static class SMSConfig {
+        private boolean enabled = false;
+        private String provider = "";
+        private String endpoint = "";
+        private String apiID = "";
+        private String username = "";
+        private String password = "";
+        private List<String> recipients = new ArrayList<>();
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public String getProvider() {
+            return provider;
+        }
+
+        public String getEndpoint() {
+            return endpoint;
+        }
+
+        public String getApiID() {
+            return apiID;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public List<String> getRecipients() {
+            return recipients;
         }
     }
 
