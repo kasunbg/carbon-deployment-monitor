@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>deployment-monitor-core</artifactId>
+    <name>WSO2 Deployment Monitor - Core Module</name>
 
     <build>
         <plugins>
