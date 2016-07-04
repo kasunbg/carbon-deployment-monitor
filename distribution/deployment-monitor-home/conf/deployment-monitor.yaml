@@ -38,6 +38,17 @@ notifications:
     fromAddress: from@wso2.com
     toAddresses: [to@wso2.com]
 
+datasource:
+  databaseUrl: jdbc:mysql://localhost:3306/wso2dm?autoReconnect=true&useSSL=false
+  driverClassName: jdbc.driver.class
+  username: username
+  password: password
+  testOnBorrow: true
+  validationQuery: SELECT 1
+  validationInterval: 30000
+  maxWait: 60000
+  maxActive: 100
+
 serverGroups:
   -
     name: IdentityServer
