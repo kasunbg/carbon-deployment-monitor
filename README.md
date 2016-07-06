@@ -5,7 +5,7 @@ Instructions:
 
 `usage: [run | schedule] [-all | <task-names>...]`
 
-Commons commands:
+Common commands:
 
 ```
 DM_HOME/monitor.sh help
