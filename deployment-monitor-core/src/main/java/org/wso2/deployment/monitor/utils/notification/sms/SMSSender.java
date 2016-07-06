@@ -42,44 +42,46 @@ public class SMSSender {
     private boolean isEnabled;
     private List<String> recipients;
 
-    private SMSSender(NotificationsConfig.SMSConfig smsConfig) {
-        this.isEnabled = smsConfig.isEnabled();
-        this.provider = "clickatell".equalsIgnoreCase(smsConfig.getProvider()) ?
-                SMSProvider.CLICKATELL :
-                SMSProvider.BULKSMS;
-        this.recipients = smsConfig.getRecipients();
-        initialize(smsConfig);
-
-
-    }
-
-    private void initialize(NotificationsConfig.SMSConfig smsConfig) {
-        try {
-            if (provider == SMSProvider.CLICKATELL) {
-                ClickatellHTTPGateway gateway = new ClickatellHTTPGateway(smsConfig.getEndpoint(), smsConfig.getApiID(),
-                        smsConfig.getUsername(), smsConfig.getPassword());
-                gateway.setOutbound(true);
-                gateway.setSecure(true);
-                Service.getInstance().addGateway(gateway);
-                Service.getInstance().startService();
-            } else if (provider == SMSProvider.BULKSMS) {
-                BulkSmsHTTPGateway gateway = new BulkSmsHTTPGateway(smsConfig.getEndpoint(), smsConfig.getUsername(),
-                        smsConfig.getPassword());
-                gateway.setOutbound(true);
-                Service.getInstance().addGateway(gateway);
-                Service.getInstance().startService();
+    private SMSSender() {
+        NotificationsConfig.SMSConfig smsConfig = ConfigurationManager.getConfiguration().getNotificationsConfig()
+                .getSms();
+        if (smsConfig != null) {
+            this.isEnabled = smsConfig.isEnabled();
+            this.provider = "clickatell".equalsIgnoreCase(smsConfig.getProvider()) ?
+                    SMSProvider.CLICKATELL :
+                    SMSProvider.BULKSMS;
+            this.recipients = smsConfig.getRecipients();
+            try {
+                if (provider == SMSProvider.CLICKATELL) {
+                    ClickatellHTTPGateway gateway = new ClickatellHTTPGateway(smsConfig.getEndpoint(),
+                            smsConfig.getApiID(), smsConfig.getUsername(), smsConfig.getPassword());
+                    gateway.setOutbound(true);
+                    gateway.setSecure(true);
+                    Service.getInstance().addGateway(gateway);
+                    Service.getInstance().startService();
+                } else if (provider == SMSProvider.BULKSMS) {
+                    BulkSmsHTTPGateway gateway = new BulkSmsHTTPGateway(smsConfig.getEndpoint(),
+                            smsConfig.getUsername(), smsConfig.getPassword());
+                    gateway.setOutbound(true);
+                    Service.getInstance().addGateway(gateway);
+                    Service.getInstance().startService();
+                }
+            } catch (IOException | InterruptedException | SMSLibException e) {
+                this.isEnabled = false;
+                logger.error("SMS notification will be disabled. Error occurred while initializing the SMS Sender.", e);
             }
-        } catch (IOException | InterruptedException | SMSLibException e) {
-            isEnabled = false;
-            logger.error("SMS notification will be disabled. Error occurred while initializing the SMS Sender.", e);
+        } else {
+            this.isEnabled = false;
+            logger.warn("SMS Sender configurations were not found. SMS sending will be disabled.");
         }
+
     }
 
-    public static void cleanUpSMSSender(){
-        try {
-            Service.getInstance().stopService();
-        }  catch (IOException | InterruptedException | SMSLibException e) {
-            logger.error("Error occurred while cleaning up SMS Sender", e);
+    private static void initialize() {
+        synchronized (SMSSender.class) {
+            if (instance == null) {
+                instance = new SMSSender();
+            }
         }
     }
 
@@ -90,18 +92,17 @@ public class SMSSender {
      */
     public static SMSSender getInstance() {
         if (instance == null) {
-            synchronized (SMSSender.class) {
-                NotificationsConfig.SMSConfig smsConfig = ConfigurationManager.getConfiguration()
-                        .getNotificationsConfig().getSms();
-                if (smsConfig != null) {
-                    instance = new SMSSender(smsConfig);
-                } else {
-                    logger.warn("SMS Sender configurations were not found. SMS sending will be disabled.");
-                    instance = new SMSSender(new NotificationsConfig.SMSConfig());
-                }
-            }
+            initialize();
         }
         return instance;
+    }
+
+    public static void cleanUpSMSSender() {
+        try {
+            Service.getInstance().stopService();
+        } catch (IOException | InterruptedException | SMSLibException e) {
+            logger.error("Error occurred while cleaning up SMS Sender", e);
+        }
     }
 
     /**

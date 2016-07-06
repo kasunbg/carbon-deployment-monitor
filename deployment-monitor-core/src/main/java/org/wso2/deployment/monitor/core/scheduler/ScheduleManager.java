@@ -70,16 +70,25 @@ public class ScheduleManager {
     }
 
     /**
-     * Initializes a ScheduleManager if it is null and return it
+     * Initializes the {@link ScheduleManager}
+     */
+    private static void initialize() throws SchedulerException {
+        synchronized (ScheduleManager.class) {
+            if (scheduleManager == null) {
+                scheduleManager = new ScheduleManager();
+            }
+        }
+    }
+
+    /**
+     * Returns a {@link ScheduleManager} instance
      *
-     * @return a {@link ScheduleManager} instance
+     * @return {@link ScheduleManager}
      * @throws SchedulerException
      */
     public static ScheduleManager getInstance() throws SchedulerException {
-        if (scheduleManager == null) {
-            synchronized (ScheduleManager.class) {
-                scheduleManager = new ScheduleManager();
-            }
+        if(scheduleManager == null){
+            initialize();
         }
         return scheduleManager;
     }
