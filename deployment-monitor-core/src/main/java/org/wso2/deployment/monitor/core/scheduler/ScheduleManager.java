@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.QuartzJobProxy;
 import org.wso2.deployment.monitor.core.TaskUtils;
-import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.wso2.deployment.monitor.core.scheduler.utils.SchedulerConstants;
