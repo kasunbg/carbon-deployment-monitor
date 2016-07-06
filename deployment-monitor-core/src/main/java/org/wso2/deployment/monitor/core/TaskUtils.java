@@ -115,7 +115,7 @@ public class TaskUtils {
             for (String server : taskConfig.getServers()) {
                 if (!serverGroupMap.containsKey(server)) {
                     logger.warn("Unable to find a Server Group with the name : " + server
-                            + ". Task will not be scheduled for this server");
+                            + ". Task : " + taskConfig.getName() + " will not be scheduled for this server");
                 } else {
                     tempMap.put(server, serverGroupMap.get(server));
                 }

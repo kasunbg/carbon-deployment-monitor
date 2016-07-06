@@ -40,24 +40,47 @@ public class SMSSender {
     private static volatile SMSSender instance;
     private SMSProvider provider;
     private boolean isEnabled;
-    private String endpoint;
-    private String apiId;
-    private String username;
-    private String password;
     private List<String> recipients;
 
     private SMSSender(NotificationsConfig.SMSConfig smsConfig) {
         this.isEnabled = smsConfig.isEnabled();
-        this.endpoint = smsConfig.getEndpoint();
         this.provider = "clickatell".equalsIgnoreCase(smsConfig.getProvider()) ?
                 SMSProvider.CLICKATELL :
                 SMSProvider.BULKSMS;
-        if (this.provider == SMSProvider.CLICKATELL) {
-            this.apiId = smsConfig.getApiID();
-        }
-        this.username = smsConfig.getUsername();
-        this.password = smsConfig.getPassword();
         this.recipients = smsConfig.getRecipients();
+        initialize(smsConfig);
+
+
+    }
+
+    private void initialize(NotificationsConfig.SMSConfig smsConfig) {
+        try {
+            if (provider == SMSProvider.CLICKATELL) {
+                ClickatellHTTPGateway gateway = new ClickatellHTTPGateway(smsConfig.getEndpoint(), smsConfig.getApiID(),
+                        smsConfig.getUsername(), smsConfig.getPassword());
+                gateway.setOutbound(true);
+                gateway.setSecure(true);
+                Service.getInstance().addGateway(gateway);
+                Service.getInstance().startService();
+            } else if (provider == SMSProvider.BULKSMS) {
+                BulkSmsHTTPGateway gateway = new BulkSmsHTTPGateway(smsConfig.getEndpoint(), smsConfig.getUsername(),
+                        smsConfig.getPassword());
+                gateway.setOutbound(true);
+                Service.getInstance().addGateway(gateway);
+                Service.getInstance().startService();
+            }
+        } catch (IOException | InterruptedException | SMSLibException e) {
+            isEnabled = false;
+            logger.error("SMS notification will be disabled. Error occurred while initializing the SMS Sender.", e);
+        }
+    }
+
+    public static void cleanUpSMSSender(){
+        try {
+            Service.getInstance().stopService();
+        }  catch (IOException | InterruptedException | SMSLibException e) {
+            logger.error("Error occurred while cleaning up SMS Sender", e);
+        }
     }
 
     /**
@@ -65,25 +88,20 @@ public class SMSSender {
      *
      * @return SMSSender instance
      */
-    public static synchronized SMSSender getInstance() {
+    public static SMSSender getInstance() {
         if (instance == null) {
-            initialize();
+            synchronized (SMSSender.class) {
+                NotificationsConfig.SMSConfig smsConfig = ConfigurationManager.getConfiguration()
+                        .getNotificationsConfig().getSms();
+                if (smsConfig != null) {
+                    instance = new SMSSender(smsConfig);
+                } else {
+                    logger.warn("SMS Sender configurations were not found. SMS sending will be disabled.");
+                    instance = new SMSSender(new NotificationsConfig.SMSConfig());
+                }
+            }
         }
         return instance;
-    }
-
-    /**
-     * Initializes the SMSSender object
-     */
-    private static void initialize() {
-        NotificationsConfig.SMSConfig smsConfig = ConfigurationManager.getConfiguration().getNotificationsConfig()
-                .getSms();
-        if (smsConfig != null) {
-            instance = new SMSSender(smsConfig);
-        } else {
-            logger.warn("SMS Sender configurations were not found. SMS sending will be disabled.");
-            instance = new SMSSender(new NotificationsConfig.SMSConfig());
-        }
     }
 
     /**
@@ -92,31 +110,20 @@ public class SMSSender {
      * @param text {@link String}
      */
     public synchronized void send(String text) {
-        logger.debug("Sending SMS: " + text);
         try {
             if (isEnabled) {
-                if (provider == SMSProvider.CLICKATELL) {
-                    ClickatellHTTPGateway gateway = new ClickatellHTTPGateway(endpoint, apiId, username, password);
-                    gateway.setOutbound(true);
-                    gateway.setSecure(true);
-                    Service.getInstance().addGateway(gateway);
-                    Service.getInstance().startService();
-                } else if (provider == SMSProvider.BULKSMS) {
-                    BulkSmsHTTPGateway gateway = new BulkSmsHTTPGateway(endpoint, username, password);
-                    gateway.setOutbound(true);
-                    Service.getInstance().addGateway(gateway);
-                    Service.getInstance().startService();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Sending SMS: " + text);
                 }
                 for (String recipient : recipients) {
                     OutboundMessage msg = new OutboundMessage(recipient, "WSO2DM: " + text);
                     Service.getInstance().sendMessage(msg);
                 }
-                Service.getInstance().stopService();
             } else {
                 logger.warn("SMS Notification is disabled");
             }
-        }  catch (IOException | InterruptedException | SMSLibException e) {
-            logger.error("SMS Notification: Error occurred while sending the sms : " + text, e);
+        } catch (IOException | InterruptedException | SMSLibException e) {
+            logger.error("Error occurred while sending the sms : " + text, e);
         }
     }
 }
