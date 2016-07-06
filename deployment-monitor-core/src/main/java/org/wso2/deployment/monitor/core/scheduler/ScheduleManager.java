@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.QuartzJobProxy;
 import org.wso2.deployment.monitor.core.TaskUtils;
+import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.wso2.deployment.monitor.core.scheduler.utils.SchedulerConstants;
@@ -70,16 +71,25 @@ public class ScheduleManager {
     }
 
     /**
-     * Initializes a ScheduleManager if it is null and return it
+     * Initializes the {@link ScheduleManager}
+     */
+    private static void initialize() throws SchedulerException {
+        synchronized (ScheduleManager.class) {
+            if (scheduleManager == null) {
+                scheduleManager = new ScheduleManager();
+            }
+        }
+    }
+
+    /**
+     * Returns a {@link ScheduleManager} instance
      *
-     * @return a {@link ScheduleManager} instance
+     * @return {@link ScheduleManager}
      * @throws SchedulerException
      */
     public static ScheduleManager getInstance() throws SchedulerException {
-        if (scheduleManager == null) {
-            synchronized (ScheduleManager.class) {
-                scheduleManager = new ScheduleManager();
-            }
+        if(scheduleManager == null){
+            initialize();
         }
         return scheduleManager;
     }
