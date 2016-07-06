@@ -27,6 +27,15 @@ import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,6 +56,8 @@ public class Launcher {
         if (System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME) == null) {
             System.setProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME, ".");
         }
+
+        writePID(System.getProperty(MonitoringConstants.DEPLOYMENT_MONITOR_HOME));
 
         DeploymentMonitorConfiguration config = ConfigurationManager.getConfiguration();
         Monitor monitor = new Monitor();
@@ -72,6 +83,47 @@ public class Launcher {
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
+        }
+    }
+
+    /**
+     * Write the process ID of this process to the file.
+     *
+     * @param deploymentMonitorHome deployment.monitor.home sys property value.
+     */
+    private static void writePID(String deploymentMonitorHome) {
+
+        String[] cmd = { "bash", "-c", "echo $PPID" };
+        Process p;
+        String pid = "";
+        try {
+            p = Runtime.getRuntime().exec(cmd);
+        } catch (IOException e) {
+            //Ignored. We might be invoking this on a Window platform. Therefore if an error occurs
+            //we simply ignore the error.
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            pid = builder.toString();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        if (pid.length() != 0) {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(Paths.get(deploymentMonitorHome, "carbon.pid").toString()),
+                    StandardCharsets.UTF_8))) {
+                writer.write(pid);
+            } catch (IOException e) {
+                logger.warn("Cannot write carbon.pid file");
+            }
         }
     }
 
