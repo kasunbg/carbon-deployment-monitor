@@ -92,9 +92,11 @@ public class SMSSender {
      * @param text {@link String}
      */
     public synchronized void send(String text) {
-        logger.debug("Sending SMS: " + text);
         try {
             if (isEnabled) {
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Sending SMS: " + text);
+                }
                 if (provider == SMSProvider.CLICKATELL) {
                     ClickatellHTTPGateway gateway = new ClickatellHTTPGateway(endpoint, apiId, username, password);
                     gateway.setOutbound(true);

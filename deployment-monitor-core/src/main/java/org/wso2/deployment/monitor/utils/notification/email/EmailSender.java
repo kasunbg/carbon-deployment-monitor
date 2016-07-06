@@ -99,8 +99,10 @@ public class EmailSender {
      * @param body   Text body part one
      */
     public void send(String subject, String body) {
-
         if (isEmailEnabled) {
+            if(logger.isDebugEnabled()) {
+                logger.debug("Sending Email: " + subject);
+            }
             Properties props = new Properties();
             props.put(EmailConstants.MAIL_SMTP_STARTTLS_ENABLE, String.valueOf(isTlsEnabled));
             props.put(EmailConstants.MAIL_SMTP_SERVER, smtpServer);
