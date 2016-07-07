@@ -22,8 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.OnResultCallback;
 import org.wso2.deployment.monitor.api.RunStatus;
-import org.wso2.deployment.monitor.core.ConfigurationManager;
-import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.impl.task.util.HostBean;
 import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
 import org.wso2.deployment.monitor.utils.notification.sms.SMSSender;
