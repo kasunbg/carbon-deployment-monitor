@@ -51,6 +51,7 @@ public class EmailSender {
     private boolean isEmailEnabled;
     private InternetAddress fromAddress;
     private InternetAddress[] toAddresses;
+    private String subjectPrefix;
 
     private EmailSender() {
         NotificationsConfig.EmailConfig emailConfig = ConfigurationManager.getConfiguration().
@@ -89,6 +90,7 @@ public class EmailSender {
                 logger.error("Email Notification will be disabled. Error occurred while creating from address : "
                         + emailConfig.getFromAddress(), e);
             }
+            this.subjectPrefix = emailConfig.getSubjectPrefix();
         } else {
             this.isEmailEnabled = false;
             logger.warn("Email Sender configurations were not found. Email sending will be disabled.");
@@ -126,7 +128,7 @@ public class EmailSender {
             try {
                 simpleMessage.setFrom(fromAddress);
                 simpleMessage.setRecipients(RecipientType.TO, toAddresses);
-                simpleMessage.setSubject(EmailConstants.SUBJECT_START + subject);
+                simpleMessage.setSubject(subjectPrefix + subject);
 
                 Multipart multipart = new MimeMultipart();
 

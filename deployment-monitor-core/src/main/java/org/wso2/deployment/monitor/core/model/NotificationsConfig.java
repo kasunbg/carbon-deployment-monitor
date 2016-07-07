@@ -51,6 +51,7 @@ public class NotificationsConfig {
         private int smtpPort = 25;
         private String fromAddress = "";
         private List<String> toAddresses = new ArrayList<>();
+        private String subjectPrefix = "[WSO2DM]";
 
         public boolean isEnabled() {
             return enabled;
@@ -87,6 +88,10 @@ public class NotificationsConfig {
         public int getSmtpPort() {
             return smtpPort;
         }
+
+        public String getSubjectPrefix() {
+            return subjectPrefix;
+        }
     }
 
     /**
@@ -100,6 +105,7 @@ public class NotificationsConfig {
         private String username = "";
         private String password = "";
         private List<String> recipients = new ArrayList<>();
+        private String messagePrefix = "WSO2DM";
 
         public boolean isEnabled() {
             return enabled;
@@ -127,6 +133,10 @@ public class NotificationsConfig {
 
         public List<String> getRecipients() {
             return recipients;
+        }
+
+        public String getMessagePrefix() {
+            return messagePrefix;
         }
     }
 

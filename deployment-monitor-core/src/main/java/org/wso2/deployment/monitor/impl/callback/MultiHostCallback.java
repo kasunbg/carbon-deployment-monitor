@@ -36,12 +36,12 @@ public class MultiHostCallback implements OnResultCallback {
 
     @Override public void callback(RunStatus runStatus) {
         if (runStatus.isSuccess()) {
-            logger.info(" [Task Successful] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName());
+            logger.info("[Task Successful]" + runStatus.getServerGroupName() + " : " + runStatus.getTaskName());
         } else {
             Map<String, Object> hostBeans = runStatus.getCustomTaskDetails();
 
             //Creating Msg for logging and Emails
-            String msg = " [Task Failed] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName();
+            String msg = "[Task Failed] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName();
             StringBuilder failedHosts = new StringBuilder();
             String sep = "";
             HostBean hostBean;
