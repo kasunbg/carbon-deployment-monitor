@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.OnResultCallback;
 import org.wso2.deployment.monitor.api.RunStatus;
+import org.wso2.deployment.monitor.core.ConfigurationManager;
+import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.impl.task.util.HostBean;
 import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
 import org.wso2.deployment.monitor.utils.notification.sms.SMSSender;
@@ -36,12 +38,12 @@ public class MultiHostCallback implements OnResultCallback {
 
     @Override public void callback(RunStatus runStatus) {
         if (runStatus.isSuccess()) {
-            logger.info(" [Task Successful] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName());
+            logger.info("[Task Successful]" + runStatus.getServerGroupName() + " : " + runStatus.getTaskName());
         } else {
             Map<String, Object> hostBeans = runStatus.getCustomTaskDetails();
 
             //Creating Msg for logging and Emails
-            String msg = " [Task Failed] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName();
+            String msg = "[Task Failed] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName();
             StringBuilder failedHosts = new StringBuilder();
             String sep = "";
             HostBean hostBean;

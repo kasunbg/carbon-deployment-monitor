@@ -37,6 +37,7 @@ notifications:
     smtpPort: 25
     fromAddress: from@wso2.com
     toAddresses: [to@wso2.com]
+    subjectPrefix: "[WSO2DM]"
   #sms alerts are supported only for clickatell and bulksms.
   sms:
     enabled: false
@@ -46,6 +47,7 @@ notifications:
     username: username
     password: password
     recipients: [+9471XXXXXXX,+9477XXXXXXX]
+    messagePrefix: Cloud Heartbeat
 
 datasource:
   databaseUrl: jdbc:mysql://localhost:3306/wso2dm?autoReconnect=true&useSSL=false

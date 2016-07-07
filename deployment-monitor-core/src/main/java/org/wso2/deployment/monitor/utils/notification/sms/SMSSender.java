@@ -41,6 +41,7 @@ public class SMSSender {
     private SMSProvider provider;
     private boolean isEnabled;
     private List<String> recipients;
+    private String messagePrefix;
 
     private SMSSender() {
         NotificationsConfig.SMSConfig smsConfig = ConfigurationManager.getConfiguration().getNotificationsConfig()
@@ -51,6 +52,7 @@ public class SMSSender {
                     SMSProvider.CLICKATELL :
                     SMSProvider.BULKSMS;
             this.recipients = smsConfig.getRecipients();
+            this.messagePrefix = smsConfig.getMessagePrefix();
             try {
                 if (provider == SMSProvider.CLICKATELL) {
                     ClickatellHTTPGateway gateway = new ClickatellHTTPGateway(smsConfig.getEndpoint(),
@@ -117,7 +119,7 @@ public class SMSSender {
                     logger.debug("Sending SMS: " + text);
                 }
                 for (String recipient : recipients) {
-                    OutboundMessage msg = new OutboundMessage(recipient, "WSO2DM: " + text);
+                    OutboundMessage msg = new OutboundMessage(recipient, messagePrefix + " : " + text);
                     Service.getInstance().sendMessage(msg);
                 }
             } else {

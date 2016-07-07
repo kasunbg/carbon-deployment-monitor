@@ -23,8 +23,6 @@ package org.wso2.deployment.monitor.utils.notification.email;
  */
 public class EmailConstants {
 
-    public static final String SUBJECT_START = "[WSO2DM]";
-
     public static final String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
 
     public static final String MAIL_SMTP_SERVER = "mail.smtp.host";
