@@ -125,6 +125,22 @@ public class TaskUtils {
     }
 
     /**
+     * Returns a {@link ServerGroup} with the given name
+     *
+     * @param name Name of the task
+     * @return {@link Map}
+     */
+    public static ServerGroup getServerGroupByName(String name) {
+        List<ServerGroup> serverGroups = ConfigurationManager.getConfiguration().getServerGroups();
+        for(ServerGroup serverGroup : serverGroups){
+            if(serverGroup.getName().equalsIgnoreCase(name)){
+                return serverGroup;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns a Map of server groups of the Task with the given name
      *
      * @param name Name of the task
