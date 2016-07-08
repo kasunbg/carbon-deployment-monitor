@@ -23,7 +23,7 @@ import org.apache.wink.client.ClientResponse;
 import org.wso2.deployment.monitor.api.DeploymentMonitorTask;
 import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
-import org.wso2.deployment.monitor.impl.task.util.HostBean;
+import org.wso2.deployment.monitor.api.HostBean;
 import org.wso2.deployment.monitor.utils.http.HttpRestClient;
 
 import java.util.ArrayList;
@@ -45,8 +45,8 @@ public class PingTask implements DeploymentMonitorTask {
     private static final String STATUS_CODE = "statusCode";
     private static final String RESPONSE_CONTAINS = "responseContains";
 
-    private List<String> failedHosts = new ArrayList<>();
-    private List<String> successHosts = new ArrayList<>();
+    private List<HostBean> failedHosts = new ArrayList<>();
+    private List<HostBean> successHosts = new ArrayList<>();
 
     //We use this map to send the details of each failed host
     private Map<String, Object> resultMap = new HashMap<>();
@@ -87,19 +87,21 @@ public class PingTask implements DeploymentMonitorTask {
                 response = restClient
                         .get(host + path, new HashMap<String, String>(), new HashMap<String, String>(), null);
             } catch (Exception e) {
-                addErrorDetails(host, hostBean, e.getMessage());
+                addErrorDetails(hostBean, e.getMessage());
                 continue;
             }
 
             if (response.getStatusCode() != statusCode) {
-                addErrorDetails(host, hostBean, response.getStatusCode() + " " + response.getMessage());
+                addErrorDetails(hostBean, response.getStatusCode() + " " + response.getMessage());
                 continue;
             }
 
             String responseAsString = response.getEntity(String.class);
             if (!responseAsString.contains(bodyValue)) {
-                addErrorDetails(host, hostBean, "Response body does not contain the defined value");
+                addErrorDetails(hostBean, "Response body does not contain the defined value");
             }
+            hostBean.setTaskSuccess(true);
+            successHosts.add(hostBean);
         }
 
         if (failedHosts.isEmpty()) {
@@ -108,16 +110,16 @@ public class PingTask implements DeploymentMonitorTask {
             return status;
         } else {
             status.setSuccess(false);
+            status.setSuccessHosts(successHosts);
             status.setFailedHosts(failedHosts);
             status.setCustomTaskDetails(resultMap);
             return status;
         }
     }
 
-    private void addErrorDetails(String host, HostBean hostBean, String message) {
-        failedHosts.add(host);
+    private void addErrorDetails(HostBean hostBean, String message) {
         hostBean.setTaskSuccess(false);
         hostBean.setErrorMsg(message);
-        resultMap.put(host, hostBean);
+        failedHosts.add(hostBean);
     }
 }

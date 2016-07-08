@@ -26,7 +26,7 @@ import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.core.MonitoringConstants;
 import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
-import org.wso2.deployment.monitor.impl.task.util.HostBean;
+import org.wso2.deployment.monitor.api.HostBean;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -40,8 +40,8 @@ import java.util.Properties;
  */
 public class TenantLoginTask implements DeploymentMonitorTask {
 
-    private List<String> failedHosts = new ArrayList<>();
-    private List<String> successHosts = new ArrayList<>();
+    private List<HostBean> failedHosts = new ArrayList<>();
+    private List<HostBean> successHosts = new ArrayList<>();
 
     //We use this map to send the details of each failed host
     private Map<String, Object> resultMap = new HashMap<>();
@@ -63,7 +63,7 @@ public class TenantLoginTask implements DeploymentMonitorTask {
             try {
                 authenticationAdminStub = new AuthenticationAdminStub(endPoint);
             } catch (AxisFault axisFault) {
-                addErrorDetails(host, hostBean, axisFault.getMessage());
+                addErrorDetails(hostBean, axisFault.getMessage());
                 continue;
             }
 
@@ -72,16 +72,13 @@ public class TenantLoginTask implements DeploymentMonitorTask {
                 String username = tenantConfig.getUsername() + "@" + tenantConfig.getDomain();
                 boolean loginSuccess = authenticationAdminStub.login(username, tenantConfig.getPassword(), "localhost");
                 if (loginSuccess) {
-                    successHosts.add(host);
                     hostBean.setTaskSuccess(true);
-                    resultMap.put(host, hostBean);
+                    successHosts.add(hostBean);
                 } else {
-                    addErrorDetails(host, hostBean, "Invalid Credentials");
+                    addErrorDetails(hostBean, "Returned false as login Status. Please check the credentials");
                 }
-            } catch (RemoteException e) {
-                addErrorDetails(host, hostBean, e.getMessage());
-            } catch (LoginAuthenticationExceptionException e){
-                addErrorDetails(host, hostBean, e.getMessage());
+            } catch (RemoteException | LoginAuthenticationExceptionException e) {
+                addErrorDetails(hostBean, e.getMessage());
             }
         }
 
@@ -91,16 +88,16 @@ public class TenantLoginTask implements DeploymentMonitorTask {
             return status;
         } else {
             status.setSuccess(false);
+            status.setSuccessHosts(successHosts);
             status.setFailedHosts(failedHosts);
             status.setCustomTaskDetails(resultMap);
             return status;
         }
     }
 
-    private void addErrorDetails(String host, HostBean hostBean, String message) {
-        failedHosts.add(host);
+    private void addErrorDetails(HostBean hostBean, String errorMsg) {
         hostBean.setTaskSuccess(false);
-        hostBean.setErrorMsg(message);
-        resultMap.put(host, hostBean);
+        hostBean.setErrorMsg(errorMsg);
+        failedHosts.add(hostBean);
     }
 }

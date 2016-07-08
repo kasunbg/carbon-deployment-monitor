@@ -1,7 +1,7 @@
-package org.wso2.deployment.monitor.impl.task.util;
+package org.wso2.deployment.monitor.api;
 
 /**
- * A bean to represent a Login for a Host
+ * A bean to represent a Task Run for a Host
  */
 public class HostBean {
 

@@ -40,9 +40,9 @@ public class RunStatus {
 
     private String message;
 
-    private List<String> successHosts;
+    private List<HostBean> successHosts;
 
-    private List<String> failedHosts;
+    private List<HostBean> failedHosts;
 
     private Map<String, Object> customTaskDetails = new HashMap<>();
 
@@ -86,19 +86,19 @@ public class RunStatus {
         this.customTaskDetails = customTaskDetails;
     }
 
-    public List<String> getSuccessHosts() {
+    public List<HostBean> getSuccessHosts() {
         return successHosts;
     }
 
-    public void setSuccessHosts(List<String> successHosts) {
+    public void setSuccessHosts(List<HostBean> successHosts) {
         this.successHosts = successHosts;
     }
 
-    public List<String> getFailedHosts() {
+    public List<HostBean> getFailedHosts() {
         return failedHosts;
     }
 
-    public void setFailedHosts(List<String> failedHosts) {
+    public void setFailedHosts(List<HostBean> failedHosts) {
         this.failedHosts = failedHosts;
     }
 }

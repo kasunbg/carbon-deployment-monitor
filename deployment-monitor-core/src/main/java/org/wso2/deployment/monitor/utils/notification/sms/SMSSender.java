@@ -113,13 +113,14 @@ public class SMSSender {
      * @param text {@link String}
      */
     public synchronized void send(String text) {
+        text = messagePrefix + text;
         try {
             if (isEnabled) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Sending SMS: " + text);
                 }
                 for (String recipient : recipients) {
-                    OutboundMessage msg = new OutboundMessage(recipient, messagePrefix + " : " + text);
+                    OutboundMessage msg = new OutboundMessage(recipient, text);
                     Service.getInstance().sendMessage(msg);
                 }
             } else {
