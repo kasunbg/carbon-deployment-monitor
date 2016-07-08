@@ -1,4 +1,4 @@
-package org.wso2.deployment.monitor.impl.task.util;
+package org.wso2.deployment.monitor.api;
 
 /**
  * A bean to represent a Login for a Host
