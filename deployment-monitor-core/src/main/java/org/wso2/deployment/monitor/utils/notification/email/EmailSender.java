@@ -119,6 +119,7 @@ public class EmailSender {
      * @param body    Text body part one
      */
     public synchronized void send(String subject, String body) {
+        subject = subjectPrefix + subject;
         if (isEmailEnabled) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Sending Email: " + subject);
@@ -128,7 +129,7 @@ public class EmailSender {
             try {
                 simpleMessage.setFrom(fromAddress);
                 simpleMessage.setRecipients(RecipientType.TO, toAddresses);
-                simpleMessage.setSubject(subjectPrefix + subject);
+                simpleMessage.setSubject(subject);
 
                 Multipart multipart = new MimeMultipart();
 
