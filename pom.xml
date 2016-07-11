@@ -38,8 +38,25 @@
         <!--    <module>deployment-verifier</module>
         -->
         <module>deployment-monitor-core</module>
+        <module>deployment-monitor-scheduling-service</module>
         <module>distribution</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>smslib-maven2-repository</id>
+            <name>smslib Maven2 Repository</name>
+            <url>http://smslib.org/maven2/v3/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>

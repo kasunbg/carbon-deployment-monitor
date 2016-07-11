@@ -37,7 +37,7 @@ import java.nio.file.Paths;
 public class ConfigurationManager {
 
     private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
-    private static DeploymentMonitorConfiguration deploymentMonitorConfiguration = null;
+    private static volatile DeploymentMonitorConfiguration deploymentMonitorConfiguration = null;
 
     private ConfigurationManager() {
     }

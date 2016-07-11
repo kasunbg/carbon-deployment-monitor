@@ -45,28 +45,64 @@ import javax.mail.internet.MimeMultipart;
  */
 public class EmailSender {
     private static final Logger logger = LoggerFactory.getLogger(EmailSender.class);
-    private static EmailSender emailSender = null;
+    private static volatile EmailSender emailSender = null;
 
+    private Session session;
     private boolean isEmailEnabled;
-    private boolean isTlsEnabled;
-    private boolean authEnabled;
-    private String mailUser;
-    private String mailUserPwd;
-    private String smtpServer;
-    private int smtpPort;
-    private String from;
-    private List<String> toAddresses;
+    private InternetAddress fromAddress;
+    private InternetAddress[] toAddresses;
+    private String subjectPrefix;
 
-    private EmailSender(NotificationsConfig.EmailConfig emailConfig) {
-        this.isEmailEnabled = emailConfig.isEnabled();
-        this.isTlsEnabled = emailConfig.isTlsEnabled();
-        this.toAddresses = emailConfig.getToAddresses();
-        this.from = emailConfig.getFromAddress();
-        this.smtpPort = emailConfig.getSmtpPort();
-        this.smtpServer = emailConfig.getSmtpServer();
-        this.mailUserPwd = emailConfig.getPassword();
-        this.mailUser = emailConfig.getUsername();
-        this.authEnabled = emailConfig.isAuthentication();
+    private EmailSender() {
+        NotificationsConfig.EmailConfig emailConfig = ConfigurationManager.getConfiguration().
+                getNotificationsConfig().getEmailConfig();
+        if (emailConfig != null) {
+            this.isEmailEnabled = emailConfig.isEnabled();
+            Properties props = new Properties();
+            props.put(EmailConstants.MAIL_SMTP_STARTTLS_ENABLE, String.valueOf(emailConfig.isTlsEnabled()));
+            props.put(EmailConstants.MAIL_SMTP_SERVER, emailConfig.getSmtpServer());
+            props.put(EmailConstants.MAIL_SMTP_PORT, emailConfig.getSmtpPort());
+
+            if (emailConfig.isAuthentication()) {
+                props.put(EmailConstants.MAIL_SMTP_AUTH, "true");
+                session = Session.getInstance(props,
+                        new MailAuthenticator(emailConfig.getUsername(), emailConfig.getPassword()));
+            } else {
+                session = Session.getDefaultInstance(props);
+            }
+
+            List<InternetAddress> to = new ArrayList<>(emailConfig.getToAddresses().size());
+            for (String toAddress : emailConfig.getToAddresses()) {
+                try {
+                    to.add(new InternetAddress(toAddress));
+                } catch (AddressException e) {
+                    logger.error("Error occurred while creating recipient address : " + toAddress, e);
+                }
+            }
+            toAddresses = new InternetAddress[to.size()];
+            toAddresses = to.toArray(toAddresses);
+
+            try {
+                fromAddress = new InternetAddress(emailConfig.getFromAddress());
+            } catch (AddressException e) {
+                //disables email sending in this case
+                this.isEmailEnabled = false;
+                logger.error("Email Notification will be disabled. Error occurred while creating from address : "
+                        + emailConfig.getFromAddress(), e);
+            }
+            this.subjectPrefix = emailConfig.getSubjectPrefix();
+        } else {
+            this.isEmailEnabled = false;
+            logger.warn("Email Sender configurations were not found. Email sending will be disabled.");
+        }
+    }
+
+    private static void initialize() {
+        synchronized (EmailSender.class) {
+            if (emailSender == null) {
+                emailSender = new EmailSender();
+            }
+        }
     }
 
     public static EmailSender getInstance() {
@@ -77,65 +113,23 @@ public class EmailSender {
     }
 
     /**
-     * Initializes EmailSender object
-     */
-    private static void initialize() {
-        synchronized (EmailSender.class) {
-            NotificationsConfig.EmailConfig emailConfig = ConfigurationManager.getConfiguration().
-                    getNotificationsConfig().getEmailConfig();
-            if (emailConfig != null) {
-                emailSender = new EmailSender(emailConfig);
-            } else {
-                logger.warn("Email Sender configurations were not found. Email sending will be disabled.");
-                emailSender = new EmailSender(new NotificationsConfig.EmailConfig());
-            }
-        }
-    }
-
-    /**
      * Sends mail with specified params
      *
      * @param subject Subject of the mail
-     * @param body   Text body part one
+     * @param body    Text body part one
      */
-    public void send(String subject, String body) {
-
+    public synchronized void send(String subject, String body) {
+        subject = subjectPrefix + subject;
         if (isEmailEnabled) {
-            Properties props = new Properties();
-            props.put(EmailConstants.MAIL_SMTP_STARTTLS_ENABLE, String.valueOf(isTlsEnabled));
-            props.put(EmailConstants.MAIL_SMTP_SERVER, smtpServer);
-            props.put(EmailConstants.MAIL_SMTP_PORT, smtpPort);
-
-            Session session;
-            if (authEnabled) {
-                props.put(EmailConstants.MAIL_SMTP_AUTH, "true");
-                session = Session.getInstance(props, new MailAuthenticator(mailUser, mailUserPwd));
-            } else {
-                session = Session.getDefaultInstance(props);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Sending Email: " + subject);
             }
+
             Message simpleMessage = new MimeMessage(session);
-            InternetAddress fromAddress = null;
-
-            List<InternetAddress> addressTo = new ArrayList<>(toAddresses.size());
-            for (String toAddress : toAddresses) {
-                try {
-                    addressTo.add(new InternetAddress(toAddress));
-                } catch (AddressException e) {
-                    logger.error("Mail Notification: AddressException thrown while sending alerts", e);
-                }
-            }
-            try {
-                fromAddress = new InternetAddress(from);
-            } catch (AddressException e) {
-                logger.error("Mail Notification: AddressException thrown while sending alerts", e);
-            }
-
             try {
                 simpleMessage.setFrom(fromAddress);
-                InternetAddress[] to = new InternetAddress[addressTo.size()];
-                to = addressTo.toArray(to);
-                simpleMessage.setRecipients(RecipientType.TO, to);
-                simpleMessage.setSubject(EmailConstants.SUBJECT_START + subject);
+                simpleMessage.setRecipients(RecipientType.TO, toAddresses);
+                simpleMessage.setSubject(subject);
 
                 Multipart multipart = new MimeMultipart();
 
@@ -147,11 +141,10 @@ public class EmailSender {
                 simpleMessage.setContent(multipart);
                 Transport.send(simpleMessage);
             } catch (MessagingException e) {
-                logger.error("Mail Notification: MessagingException thrown while getting the connection:"
-                        + " sending alerts", e);
+                logger.error("Error occurred while sending email ", e);
             }
         } else {
-            logger.warn("Email Notifications are disabled.");
+            logger.warn("Email Notification is disabled.");
         }
     }
 }

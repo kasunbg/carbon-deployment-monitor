@@ -26,6 +26,7 @@ import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.core.MonitoringConstants;
 import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
+import org.wso2.deployment.monitor.api.HostBean;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -39,6 +40,12 @@ import java.util.Properties;
  */
 public class TenantLoginTask implements DeploymentMonitorTask {
 
+    private List<HostBean> failedHosts = new ArrayList<>();
+    private List<HostBean> successHosts = new ArrayList<>();
+
+    //We use this map to send the details of each failed host
+    private Map<String, Object> resultMap = new HashMap<>();
+
     @Override public RunStatus execute(ServerGroup serverGroup, Properties customParams) {
         GlobalConfig.TenantConfig tenantConfig = (GlobalConfig.TenantConfig) customParams
                 .get(MonitoringConstants.DEFAULT_TENANT_KEY);
@@ -48,49 +55,49 @@ public class TenantLoginTask implements DeploymentMonitorTask {
         AuthenticationAdminStub authenticationAdminStub;
         RunStatus status = new RunStatus();
 
-        List<String> failedHosts = new ArrayList<>();
-        List<String> successHosts = new ArrayList<>();
-
-        //We use this map to send the details of each failed host
-        Map<String, Object> resultMap = new HashMap<>();
-
         for (String host : serverGroup.getHosts()) {
+            HostBean hostBean = new HostBean();
+            hostBean.setHostName(host);
+            hostBean.setNodeIndex(serverGroup.getHosts().indexOf(host) + 1);
             String endPoint = host + "/services/AuthenticationAdmin";
             try {
                 authenticationAdminStub = new AuthenticationAdminStub(endPoint);
             } catch (AxisFault axisFault) {
-                failedHosts.add(host);
-                resultMap.put(host, axisFault.getMessage());
+                addErrorDetails(hostBean, axisFault.getMessage());
                 continue;
             }
 
             try {
                 authenticationAdminStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(timeout);
-                String username =  tenantConfig.getUsername() + "@" + tenantConfig.getDomain();
-                boolean loginSuccess = authenticationAdminStub
-                        .login(username, tenantConfig.getPassword(), "localhost");
+                String username = tenantConfig.getUsername() + "@" + tenantConfig.getDomain();
+                boolean loginSuccess = authenticationAdminStub.login(username, tenantConfig.getPassword(), "localhost");
                 if (loginSuccess) {
-                    successHosts.add(host);
+                    hostBean.setTaskSuccess(true);
+                    successHosts.add(hostBean);
                 } else {
-                    failedHosts.add(host);
-                    resultMap.put(host, "Invalid Credentials");
+                    addErrorDetails(hostBean, "Returned false as login Status. Please check the credentials");
                 }
             } catch (RemoteException | LoginAuthenticationExceptionException e) {
-                failedHosts.add(host);
-                resultMap.put(host, e.getMessage());
+                addErrorDetails(hostBean, e.getMessage());
             }
-
         }
+
         if (failedHosts.isEmpty()) {
             status.setSuccess(true);
             status.setSuccessHosts(successHosts);
             return status;
         } else {
             status.setSuccess(false);
+            status.setSuccessHosts(successHosts);
             status.setFailedHosts(failedHosts);
             status.setCustomTaskDetails(resultMap);
             return status;
         }
+    }
 
+    private void addErrorDetails(HostBean hostBean, String errorMsg) {
+        hostBean.setTaskSuccess(false);
+        hostBean.setErrorMsg(errorMsg);
+        failedHosts.add(hostBean);
     }
 }

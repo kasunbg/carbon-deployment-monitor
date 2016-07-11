@@ -29,6 +29,8 @@ public class DeploymentMonitorConfiguration {
 
     private NotificationsConfig notifications = new NotificationsConfig();
 
+    private DatasourceConfig datasource = new DatasourceConfig();
+
     private List<ServerGroup> serverGroups = new ArrayList<>();
 
     private List<TaskConfig> tasks = new ArrayList<>();
@@ -47,5 +49,9 @@ public class DeploymentMonitorConfiguration {
 
     public List<TaskConfig> getTasks() {
         return tasks;
+    }
+
+    public DatasourceConfig getDatasourceConfig() {
+        return datasource;
     }
 }

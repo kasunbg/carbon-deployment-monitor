@@ -22,7 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.OnResultCallback;
 import org.wso2.deployment.monitor.api.RunStatus;
+import org.wso2.deployment.monitor.api.HostBean;
+import org.wso2.deployment.monitor.core.TaskUtils;
+import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
+import org.wso2.deployment.monitor.utils.notification.sms.SMSSender;
 
 /**
  * Simple Implementation for callback
@@ -32,18 +36,42 @@ public class MultiHostCallback implements OnResultCallback {
 
     @Override public void callback(RunStatus runStatus) {
         if (runStatus.isSuccess()) {
-            logger.info(" [Task Successful] " +  runStatus.getServerGroupName() + " : " + runStatus.getTaskName());
+            logger.info("[Task Successful] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName());
         } else {
-            String msg = " [Task Failed] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName();
+            //Creating Msg for Emails
+            String msg = "[Task Failed] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName();
+            //Creating Msg for logging and Emails
             StringBuilder failedHosts = new StringBuilder();
             String sep = "";
-            for(String host : runStatus.getFailedHosts()) {
-                failedHosts.append(sep).append(host).append(" - ").append(runStatus.getCustomTaskDetails().get(host));
+            for (HostBean hostBean : runStatus.getFailedHosts()) {
+                // format: https://10.100.20.11:9443 - Error Msg
+                failedHosts.append(sep).append(hostBean.getHostName()).append(" - ").append(hostBean.getErrorMsg());
                 sep = ", ";
             }
             logger.error(msg + ", Failed Hosts : [ " + failedHosts.toString() + " ]");
-            EmailSender.getInstance()
-                    .send(msg, "Failed Hosts [ " + failedHosts.toString() + " ]");
+            EmailSender.getInstance().send(msg, "Failed Hosts [ " + failedHosts.toString() + " ]");
+
+            //Creating the SMS friendly message
+            if (isSingleHost(runStatus)) {
+                // format : APIKeyManager : LoginTask
+                msg = "[Task Failed] " + runStatus.getServerGroupName() + " : " + runStatus.getTaskName();
+            } else {
+                // format : APIKeyManagerServer-1 : LoginTask
+                sep = "";
+                failedHosts = new StringBuilder();
+                for (HostBean hostBean : runStatus.getFailedHosts()) {
+                    failedHosts.append(sep).append(runStatus.getServerGroupName()).append("-")
+                            .append(hostBean.getNodeIndex());
+                    sep = ", ";
+                }
+                msg = "[Task Failed] " + failedHosts.toString() + " : " + runStatus.getTaskName();
+            }
+            SMSSender.getInstance().send(msg);
         }
+    }
+
+    private boolean isSingleHost(RunStatus runStatus) {
+        ServerGroup serverGroup = TaskUtils.getServerGroupByName(runStatus.getServerGroupName());
+        return serverGroup != null && serverGroup.getHosts().size() == 1;
     }
 }

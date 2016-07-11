@@ -115,13 +115,29 @@ public class TaskUtils {
             for (String server : taskConfig.getServers()) {
                 if (!serverGroupMap.containsKey(server)) {
                     logger.warn("Unable to find a Server Group with the name : " + server
-                            + ". Task will not be scheduled for this server");
+                            + ". Task : " + taskConfig.getName() + " will not be scheduled for this server");
                 } else {
                     tempMap.put(server, serverGroupMap.get(server));
                 }
             }
             return tempMap;
         }
+    }
+
+    /**
+     * Returns a {@link ServerGroup} with the given name
+     *
+     * @param name Name of the task
+     * @return {@link Map}
+     */
+    public static ServerGroup getServerGroupByName(String name) {
+        List<ServerGroup> serverGroups = ConfigurationManager.getConfiguration().getServerGroups();
+        for(ServerGroup serverGroup : serverGroups){
+            if(serverGroup.getName().equalsIgnoreCase(name)){
+                return serverGroup;
+            }
+        }
+        return null;
     }
 
     /**
