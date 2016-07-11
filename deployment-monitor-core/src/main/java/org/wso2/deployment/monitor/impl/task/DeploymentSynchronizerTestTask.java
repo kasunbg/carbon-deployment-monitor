@@ -66,6 +66,10 @@ public class DeploymentSynchronizerTestTask implements DeploymentMonitorTask {
         List<String> workingCopyFileErrors = new ArrayList<>();
         List<String> workingCopyFileInconsistencies = new ArrayList<>();
 
+        if (serverGroup.getHosts().isEmpty()) {
+            logger.info("No hosts");
+        }
+
         for (String host : serverGroup.getHosts()) {
             DeploymentSynchronizerInfo info = serverStatusReporterClient.getDeploymentSynchronizerInfo(host);
 
