@@ -39,7 +39,9 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     @Override public void jobUnscheduled(TriggerKey triggerKey) {
-        logger.info("Job : {} un-scheduled", triggerKey);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Job : {} un-scheduled", triggerKey);
+        }
     }
 
     @Override public void triggerFinalized(Trigger trigger) {

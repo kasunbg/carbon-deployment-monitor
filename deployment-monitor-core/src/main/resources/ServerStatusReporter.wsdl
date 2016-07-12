@@ -1,17 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://monitor.devops.carbon.wso2.org"
-                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
-                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                  xmlns:ax21="http://beans.monitor.devops.carbon.wso2.org/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
-                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://monitor.devops.carbon.wso2.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                  xmlns:ax2636="http://beans.monitor.devops.carbon.wso2.org/xsd" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:tns="http://monitor.devops.carbon.wso2.org" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:ns1="http://org.apache.axis2/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  targetNamespace="http://monitor.devops.carbon.wso2.org">
+    <wsdl:documentation>ServerStatusReporter</wsdl:documentation>
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://beans.monitor.devops.carbon.wso2.org/xsd">
             <xs:complexType name="ServerInfo">
                 <xs:sequence>
-                    <xs:element minOccurs="0" name="deploymentSynchronizerInfo" nillable="true" type="ax21:DeploymentSynchronizerInfo"/>
+                    <xs:element minOccurs="0" name="deploymentSynchronizerInfo" nillable="true" type="ax2636:DeploymentSynchronizerInfo"/>
                     <xs:element minOccurs="0" name="hostName" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="mgtHostName" nillable="true" type="xs:string"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="patchInfo" nillable="true" type="ax21:Patch"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="patchInfo" nillable="true" type="ax2636:Patch"/>
                     <xs:element minOccurs="0" name="productName" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="productVersion" nillable="true" type="xs:string"/>
                     <xs:element minOccurs="0" name="serverIP" nillable="true" type="xs:string"/>
@@ -33,7 +34,7 @@
             </xs:complexType>
             <xs:complexType name="Patch">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="bundles" nillable="true" type="ax21:Bundle"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="bundles" nillable="true" type="ax2636:Bundle"/>
                     <xs:element minOccurs="0" name="patchId" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
@@ -44,8 +45,7 @@
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax22="http://beans.monitor.devops.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified"
-                   targetNamespace="http://monitor.devops.carbon.wso2.org">
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://org.apache.axis2/xsd">
             <xs:import namespace="http://beans.monitor.devops.carbon.wso2.org/xsd"/>
             <xs:element name="getServerInfo">
                 <xs:complexType>
@@ -55,7 +55,7 @@
             <xs:element name="getServerInfoResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax22:ServerInfo"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2636:ServerInfo"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -67,7 +67,7 @@
             <xs:element name="getPatchInfoResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax22:Patch"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax2636:Patch"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -79,45 +79,45 @@
             <xs:element name="getDeploymentSynchronizerInfoResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax22:DeploymentSynchronizerInfo"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2636:DeploymentSynchronizerInfo"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
         </xs:schema>
     </wsdl:types>
     <wsdl:message name="getServerInfoRequest">
-        <wsdl:part name="parameters" element="ns:getServerInfo"/>
+        <wsdl:part name="parameters" element="ns1:getServerInfo"/>
     </wsdl:message>
     <wsdl:message name="getServerInfoResponse">
-        <wsdl:part name="parameters" element="ns:getServerInfoResponse"/>
+        <wsdl:part name="parameters" element="ns1:getServerInfoResponse"/>
     </wsdl:message>
     <wsdl:message name="getDeploymentSynchronizerInfoRequest">
-        <wsdl:part name="parameters" element="ns:getDeploymentSynchronizerInfo"/>
+        <wsdl:part name="parameters" element="ns1:getDeploymentSynchronizerInfo"/>
     </wsdl:message>
     <wsdl:message name="getDeploymentSynchronizerInfoResponse">
-        <wsdl:part name="parameters" element="ns:getDeploymentSynchronizerInfoResponse"/>
+        <wsdl:part name="parameters" element="ns1:getDeploymentSynchronizerInfoResponse"/>
     </wsdl:message>
     <wsdl:message name="getPatchInfoRequest">
-        <wsdl:part name="parameters" element="ns:getPatchInfo"/>
+        <wsdl:part name="parameters" element="ns1:getPatchInfo"/>
     </wsdl:message>
     <wsdl:message name="getPatchInfoResponse">
-        <wsdl:part name="parameters" element="ns:getPatchInfoResponse"/>
+        <wsdl:part name="parameters" element="ns1:getPatchInfoResponse"/>
     </wsdl:message>
     <wsdl:portType name="ServerStatusReporterPortType">
         <wsdl:operation name="getServerInfo">
-            <wsdl:input message="ns:getServerInfoRequest" wsaw:Action="urn:getServerInfo"/>
-            <wsdl:output message="ns:getServerInfoResponse" wsaw:Action="urn:getServerInfoResponse"/>
+            <wsdl:input message="tns:getServerInfoRequest" wsaw:Action="urn:getServerInfo"/>
+            <wsdl:output message="tns:getServerInfoResponse" wsaw:Action="urn:getServerInfoResponse"/>
         </wsdl:operation>
         <wsdl:operation name="getDeploymentSynchronizerInfo">
-            <wsdl:input message="ns:getDeploymentSynchronizerInfoRequest" wsaw:Action="urn:getDeploymentSynchronizerInfo"/>
-            <wsdl:output message="ns:getDeploymentSynchronizerInfoResponse" wsaw:Action="urn:getDeploymentSynchronizerInfoResponse"/>
+            <wsdl:input message="tns:getDeploymentSynchronizerInfoRequest" wsaw:Action="urn:getDeploymentSynchronizerInfo"/>
+            <wsdl:output message="tns:getDeploymentSynchronizerInfoResponse" wsaw:Action="urn:getDeploymentSynchronizerInfoResponse"/>
         </wsdl:operation>
         <wsdl:operation name="getPatchInfo">
-            <wsdl:input message="ns:getPatchInfoRequest" wsaw:Action="urn:getPatchInfo"/>
-            <wsdl:output message="ns:getPatchInfoResponse" wsaw:Action="urn:getPatchInfoResponse"/>
+            <wsdl:input message="tns:getPatchInfoRequest" wsaw:Action="urn:getPatchInfo"/>
+            <wsdl:output message="tns:getPatchInfoResponse" wsaw:Action="urn:getPatchInfoResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="ServerStatusReporterSoap11Binding" type="ns:ServerStatusReporterPortType">
+    <wsdl:binding name="ServerStatusReporterSoap11Binding" type="tns:ServerStatusReporterPortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="getServerInfo">
             <soap:operation soapAction="urn:getServerInfo" style="document"/>
@@ -147,7 +147,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="ServerStatusReporterSoap12Binding" type="ns:ServerStatusReporterPortType">
+    <wsdl:binding name="ServerStatusReporterSoap12Binding" type="tns:ServerStatusReporterPortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="getServerInfo">
             <soap12:operation soapAction="urn:getServerInfo" style="document"/>
@@ -177,7 +177,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="ServerStatusReporterHttpBinding" type="ns:ServerStatusReporterPortType">
+    <wsdl:binding name="ServerStatusReporterHttpBinding" type="tns:ServerStatusReporterPortType">
         <http:binding verb="POST"/>
         <wsdl:operation name="getServerInfo">
             <http:operation location="getServerInfo"/>
@@ -208,14 +208,23 @@
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="ServerStatusReporter">
-        <wsdl:port name="ServerStatusReporterHttpSoap11Endpoint" binding="ns:ServerStatusReporterSoap11Binding">
-            <soap:address location="http://localhost:9763/services/ServerStatusReporter/"/>
+        <wsdl:port name="ServerStatusReporterHttpSoap11Endpoint" binding="tns:ServerStatusReporterSoap11Binding">
+            <soap:address location="http://kasung-workstation.local:8290/services/ServerStatusReporter.ServerStatusReporterHttpSoap11Endpoint"/>
         </wsdl:port>
-        <wsdl:port name="ServerStatusReporterHttpSoap12Endpoint" binding="ns:ServerStatusReporterSoap12Binding">
-            <soap12:address location="http://localhost:9763/services/ServerStatusReporter/"/>
+        <wsdl:port name="ServerStatusReporterHttpsSoap11Endpoint" binding="tns:ServerStatusReporterSoap11Binding">
+            <soap:address location="https://kasung-workstation.local:8253/services/ServerStatusReporter.ServerStatusReporterHttpsSoap11Endpoint"/>
         </wsdl:port>
-        <wsdl:port name="ServerStatusReporterHttpEndpoint" binding="ns:ServerStatusReporterHttpBinding">
-            <http:address location="http://localhost:9763/services/ServerStatusReporter/"/>
+        <wsdl:port name="ServerStatusReporterHttpSoap12Endpoint" binding="tns:ServerStatusReporterSoap12Binding">
+            <soap12:address location="http://kasung-workstation.local:8290/services/ServerStatusReporter.ServerStatusReporterHttpSoap12Endpoint"/>
+        </wsdl:port>
+        <wsdl:port name="ServerStatusReporterHttpsSoap12Endpoint" binding="tns:ServerStatusReporterSoap12Binding">
+            <soap12:address location="https://kasung-workstation.local:8253/services/ServerStatusReporter.ServerStatusReporterHttpsSoap12Endpoint"/>
+        </wsdl:port>
+        <wsdl:port name="ServerStatusReporterHttpsEndpoint" binding="tns:ServerStatusReporterHttpBinding">
+            <http:address location="https://kasung-workstation.local:8253/services/ServerStatusReporter.ServerStatusReporterHttpsEndpoint"/>
+        </wsdl:port>
+        <wsdl:port name="ServerStatusReporterHttpEndpoint" binding="tns:ServerStatusReporterHttpBinding">
+            <http:address location="http://kasung-workstation.local:8290/services/ServerStatusReporter.ServerStatusReporterHttpEndpoint"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

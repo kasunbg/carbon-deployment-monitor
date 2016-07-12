@@ -45,6 +45,8 @@ import javax.xml.ws.Service;
 
 /**
  * A service client for ServerStatusReporter agent
+ *
+ * todo handle connection refused gracefully
  */
 public class ServerStatusReporterClient {
 

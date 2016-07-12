@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Deployment Monitor tests" verbose="2" annotations="JDK">
+    <test name="Deployment Monitor tests" preserve-order="true" >
+        <packages>
+            <package name="org.wso2.deployment.monitor.test"/>
+        </packages>
+    </test>
+</suite>
