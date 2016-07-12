@@ -95,6 +95,9 @@ public class EmailSender {
             this.isEmailEnabled = false;
             logger.warn("Email Sender configurations were not found. Email sending will be disabled.");
         }
+        if(!this.isEmailEnabled){
+            logger.warn("Email Notifications are disabled.");
+        }
     }
 
     private static void initialize() {
@@ -143,8 +146,6 @@ public class EmailSender {
             } catch (MessagingException e) {
                 logger.error("Error occurred while sending email ", e);
             }
-        } else {
-            logger.warn("Email Notification is disabled.");
         }
     }
 }
