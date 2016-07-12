@@ -365,6 +365,38 @@ public class ScheduleManager {
     }
 
     /**
+     * Reschedules a given task for the given server group with the given trigger
+     * @param taskName {@link String}
+     * @param serverGroupName {@link String}
+     * @param triggerType {@link String}
+     * @param triggerValue {@link String}
+     */
+    public void reScheduleTaskForServer(String taskName, String serverGroupName, String triggerType,
+            String triggerValue) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Re-Scheduling Task : {} for Server : {} with Trigger : {}-{}", taskName, serverGroupName,
+                    triggerType, triggerValue);
+        }
+        Trigger trigger;
+        if (SchedulerConstants.SIMPLE_TRIGGER.equalsIgnoreCase(triggerType)) {
+            if (triggerValue.endsWith(TriggerUtilities.SECONDS)) {
+                trigger = getSimpleTriggerInSeconds(taskName, serverGroupName, triggerValue);
+            } else if (triggerValue.endsWith(TriggerUtilities.MINUTES)) {
+                trigger = getSimpleTriggerInMinutes(taskName, serverGroupName, triggerValue);
+            } else {
+                trigger = getSimpleTriggerInHours(taskName, serverGroupName, triggerValue);
+            }
+        } else {
+            trigger = getCronTrigger(taskName, serverGroupName, triggerValue);
+        }
+        try {
+            scheduler.rescheduleJob(TriggerKey.triggerKey(taskName, serverGroupName), trigger);
+        } catch (SchedulerException e) {
+            logger.error("Re - Scheduling Task - " + taskName + " for Server - " + serverGroupName + " failed", e);
+        }
+    }
+
+    /**
      * Returns cron trigger
      * Triggers will have Task's name as the name and group name as the group name
      *

@@ -26,6 +26,7 @@ import org.wso2.deployment.monitor.core.model.DeploymentMonitorConfiguration;
 import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
+import org.wso2.deployment.monitor.service.ServiceStarter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -79,6 +80,7 @@ public class Launcher {
             setTrustStoreParams(global.getTrustStore(), global.getTrustStorePassword());
 
             monitor.cmd.execute(config);
+            ServiceStarter.startService(config.getServiceConfig());
 
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());

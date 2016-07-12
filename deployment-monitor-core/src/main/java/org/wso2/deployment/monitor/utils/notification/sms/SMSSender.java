@@ -72,6 +72,9 @@ public class SMSSender {
                 this.isEnabled = false;
                 logger.error("SMS notification will be disabled. Error occurred while initializing the SMS Sender.", e);
             }
+            if(!isEnabled){
+                logger.warn("SMS Notifications are disabled");
+            }
         } else {
             this.isEnabled = false;
             logger.warn("SMS Sender configurations were not found. SMS sending will be disabled.");
@@ -123,8 +126,6 @@ public class SMSSender {
                     OutboundMessage msg = new OutboundMessage(recipient, text);
                     Service.getInstance().sendMessage(msg);
                 }
-            } else {
-                logger.warn("SMS Notification is disabled");
             }
         } catch (IOException | InterruptedException | SMSLibException e) {
             logger.error("Error occurred while sending the sms : " + text, e);
