@@ -26,6 +26,10 @@ global:
     username: admin
     password: admin
 
+service:
+  enabled: true
+  port: 8080
+
 notifications:
   email:
     enabled: false
