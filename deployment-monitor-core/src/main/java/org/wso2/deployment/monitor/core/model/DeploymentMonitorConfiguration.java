@@ -27,6 +27,8 @@ public class DeploymentMonitorConfiguration {
 
     private GlobalConfig global = new GlobalConfig();
 
+    private ServiceConfig service = new ServiceConfig();
+
     private NotificationsConfig notifications = new NotificationsConfig();
 
     private DatasourceConfig datasource = new DatasourceConfig();
@@ -37,6 +39,10 @@ public class DeploymentMonitorConfiguration {
 
     public GlobalConfig getGlobal() {
         return global;
+    }
+
+    public ServiceConfig getServiceConfig() {
+        return service;
     }
 
     public NotificationsConfig getNotificationsConfig() {
