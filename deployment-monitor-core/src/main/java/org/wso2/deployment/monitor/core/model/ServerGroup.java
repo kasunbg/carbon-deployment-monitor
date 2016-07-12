@@ -28,6 +28,7 @@ import java.util.List;
 public class ServerGroup {
     private String name = "wso2carbon";
     private List<String> hosts = new ArrayList<>();
+    private boolean allowConcurrentExecution = false;
     private String trustStore = "";
     private String trustStorePassword = "";
 
@@ -35,8 +36,20 @@ public class ServerGroup {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<String> getHosts() {
         return hosts;
+    }
+
+    public void setHosts(List<String> hosts) {
+        this.hosts = hosts;
+    }
+
+    public boolean allowConcurrentExecution() {
+        return allowConcurrentExecution;
     }
 
     public String getTrustStore() {
