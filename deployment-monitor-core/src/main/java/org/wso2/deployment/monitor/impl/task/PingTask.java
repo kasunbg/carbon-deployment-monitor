@@ -41,9 +41,27 @@ public class PingTask implements DeploymentMonitorTask {
     private static final String DEFAULT_PATH = "/carbon/product/about.html";
     private static final String DEFAULT_RESPONSE_CONTAIN = "About WSO2 Carbon";
 
+    private static final String HTTP_METHOD = "httpMethod";
+    private static final String HTTP_GET = "GET";
+    private static final String HTTP_POST = "POST";
+
     private static final String PATH = "path";
+
+    private static final String QUERY_PARAMS = "queryParams";
+    private static final String QUERY_PARAM_SEPARATOR = "&";
+    private static final String QUERY_PARAM_VALUE_SEPARATOR = "=";
+
+    private static final String POST_BODY = "postBody";
+    private static final String ACCEPT_MEDIA_TYPE = "acceptMediaType";
+    private static final String CONTENT_TYPE = "contentType";
+
     private static final String STATUS_CODE = "statusCode";
+
     private static final String RESPONSE_CONTAINS = "responseContains";
+
+    private static final String HEADERS = "headers";
+    private static final String HEADERS_SEPARATOR = ",";
+    private static final String HEADER_VALUE_SEPARATOR = ":";
 
     private List<HostBean> failedHosts = new ArrayList<>();
     private List<HostBean> successHosts = new ArrayList<>();
@@ -56,12 +74,45 @@ public class PingTask implements DeploymentMonitorTask {
         RunStatus status = new RunStatus();
         HttpRestClient restClient = new HttpRestClient();
 
-        //Check for below values in the response
+        String httpMethod;
+        if (customParams.get(HTTP_METHOD) != null) {
+            httpMethod = (String) customParams.get(HTTP_METHOD);
+        } else {
+            httpMethod = HTTP_GET;
+        }
+
         String path;
         if (customParams.get(PATH) != null) {
             path = (String) customParams.get(PATH);
         } else {
             path = DEFAULT_PATH;
+        }
+
+        String queryParams = null;
+        if (customParams.get(QUERY_PARAMS) != null) {
+            queryParams = (String) customParams.get(QUERY_PARAMS);
+        }
+        Map<String, String> queryParamsMap = new HashMap<>();
+        if(queryParams != null) {
+            for (String queryParam : queryParams.split(QUERY_PARAM_SEPARATOR)) {
+                String[] tmpArray = queryParam.split(QUERY_PARAM_VALUE_SEPARATOR);
+                queryParamsMap.put(tmpArray[0].trim(), tmpArray[1].trim());
+            }
+        }
+
+        String postBody = null;
+        if (customParams.get(POST_BODY) != null) {
+            postBody = (String) customParams.get(POST_BODY);
+        }
+
+        String acceptMediaType = null;
+        if (customParams.get(ACCEPT_MEDIA_TYPE) != null) {
+            acceptMediaType = (String) customParams.get(ACCEPT_MEDIA_TYPE);
+        }
+
+        String contentType = null;
+        if (customParams.get(CONTENT_TYPE) != null) {
+            contentType = (String) customParams.get(CONTENT_TYPE);
         }
 
         int statusCode;
@@ -78,14 +129,32 @@ public class PingTask implements DeploymentMonitorTask {
             bodyValue = DEFAULT_RESPONSE_CONTAIN;
         }
 
+        //i.e Authorization:Bearer XXXXXXXXXXXX,Accept: Application/json
+        String headers = null;
+        if (customParams.get(HEADERS) != null) {
+            headers = (String) customParams.get(HEADERS);
+        }
+        Map<String, String> headersMap = new HashMap<>();
+        if(headers != null) {
+            for (String header : headers.split(HEADERS_SEPARATOR)) {
+                String[] tmpArray = header.split(HEADER_VALUE_SEPARATOR);
+                headersMap.put(tmpArray[0].trim(), tmpArray[1].trim());
+            }
+        }
+
         for (String host : serverGroup.getHosts()) {
             HostBean hostBean = new HostBean();
             hostBean.setHostName(host);
             hostBean.setNodeIndex(serverGroup.getHosts().indexOf(host));
             ClientResponse response;
             try {
-                response = restClient
-                        .get(host + path, new HashMap<String, String>(), new HashMap<String, String>(), null);
+                if (HTTP_POST.equalsIgnoreCase(httpMethod)) {
+                    response = restClient
+                            .post(host + path, contentType, acceptMediaType, postBody, queryParamsMap, headersMap,
+                                    null);
+                } else {
+                    response = restClient.get(host + path, queryParamsMap, headersMap, null);
+                }
             } catch (Exception e) {
                 addErrorDetails(hostBean, e.getMessage());
                 continue;
