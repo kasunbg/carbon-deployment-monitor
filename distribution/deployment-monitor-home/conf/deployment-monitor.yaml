@@ -29,6 +29,7 @@ global:
 service:
   enabled: true
   port: 8080
+  serviceClass: org.wso2.deployment.monitor.service.DeploymentMonitorService
 
 notifications:
   email:
