@@ -18,10 +18,10 @@
 
 package org.wso2.deployment.monitor.utils.database;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.core.ConfigurationManager;
 import org.wso2.deployment.monitor.core.DeploymentMonitorException;
 import org.wso2.deployment.monitor.core.model.DatasourceConfig;
@@ -35,8 +35,8 @@ import java.sql.SQLException;
  * Database Management class.
  */
 public class DatabaseManager {
-    private static final Log log = LogFactory.getLog(DatabaseManager.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
     private static volatile DataSource dataSource = null;
 
     private DatabaseManager() {
@@ -48,8 +48,8 @@ public class DatabaseManager {
     private static void initialize() throws DeploymentMonitorException {
         synchronized (DatabaseManager.class) {
             if (dataSource == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Initializing data source");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Initializing data source");
                 }
                 dataSource = createDatasource();
             }
@@ -139,7 +139,7 @@ public class DatabaseManager {
             try {
                 dbConnection.close();
             } catch (SQLException e) {
-                log.warn("Error occurred while closing the database connection.", e);
+                logger.warn("Error occurred while closing the database connection.", e);
             }
         }
     }
@@ -154,7 +154,7 @@ public class DatabaseManager {
             try {
                 resultSet.close();
             } catch (SQLException e) {
-                log.warn("Error occurred while closing the result set.", e);
+                logger.warn("Error occurred while closing the result set.", e);
             }
         }
 
@@ -170,7 +170,7 @@ public class DatabaseManager {
             try {
                 preparedStatement.close();
             } catch (SQLException e) {
-                log.warn("Error occurred while closing the prepared statement.", e);
+                logger.warn("Error occurred while closing the prepared statement.", e);
             }
         }
 
