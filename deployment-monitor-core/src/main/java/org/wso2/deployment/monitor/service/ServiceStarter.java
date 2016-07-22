@@ -16,29 +16,33 @@ public class ServiceStarter {
     private static final Logger logger = LoggerFactory.getLogger(ServiceStarter.class);
 
     public static void startService(ServiceConfig serviceConfig) {
+        logger.info("Starting MSF4J Server in port : " + serviceConfig.getPort());
+        MicroservicesRunner runner = new MicroservicesRunner(serviceConfig.getPort());
 
         if (serviceConfig.isEnabled()) {
-            logger.info("Starting Deployment Monitor Service in port : " + serviceConfig.getPort());
-            try {
-                Class<?> taskClass = Class.forName(serviceConfig.getServiceClass());
-                Constructor[] constructors = taskClass.getDeclaredConstructors();
-                Constructor constructor = null;
-                for (Constructor tempConstructor : constructors) {
-                    constructor = tempConstructor;
-                    if (constructor.getGenericParameterTypes().length == 0) {
-                        break;
+            for (String serviceClass : serviceConfig.getServiceClasses()) {
+                logger.info("Starting Service : " + serviceClass);
+                try {
+                    Class<?> taskClass = Class.forName(serviceClass);
+                    Constructor[] constructors = taskClass.getDeclaredConstructors();
+                    Constructor constructor = null;
+                    for (Constructor tempConstructor : constructors) {
+                        constructor = tempConstructor;
+                        if (constructor.getGenericParameterTypes().length == 0) {
+                            break;
+                        }
                     }
+                    if (constructor != null) {
+                        runner.deploy(constructor.newInstance());
+                    } else {
+                        logger.error("Error occurred while starting the service : " + serviceClass
+                                + " Constructor was not found.");
+                    }
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                    logger.error("Error occurred while starting the service", e);
                 }
-                if (constructor != null) {
-                    new MicroservicesRunner(serviceConfig.getPort()).deploy(constructor.newInstance()).start();
-                } else {
-                    logger.error("Error occurred while starting the service : " + serviceConfig.getServiceClass()
-                            + " Constructor was not found.");
-                }
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                logger.error("Error occurred while starting the service", e);
             }
-
+            runner.start();
         } else {
             logger.warn("Deployment Monitor service is disabled");
         }
