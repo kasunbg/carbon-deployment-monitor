@@ -29,7 +29,8 @@ global:
 service:
   enabled: true
   port: 8080
-  serviceClass: org.wso2.deployment.monitor.service.DeploymentMonitorService
+  serviceClasses:
+    - org.wso2.deployment.monitor.service.DeploymentMonitorService
 
 notifications:
   email:
@@ -97,7 +98,7 @@ tasks:
     enable: true
     className: org.wso2.deployment.monitor.impl.task.SimpleLoggingTask
     triggerType: simple
-    trigger: 10s
+    trigger: 30s
 #    trigger: 0 0/1 * 1/1 * ? *
     servers: [gateway, keymanager]
     taskParams:
@@ -124,7 +125,7 @@ tasks:
        severity: 1
   -
     name: PingTask
-    enable: true
+    enable: false
     className: org.wso2.deployment.monitor.impl.task.PingTask
     onResult: org.wso2.deployment.monitor.impl.callback.MultiHostCallback
     triggerType: simple
