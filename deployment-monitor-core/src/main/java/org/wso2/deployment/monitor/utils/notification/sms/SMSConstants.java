@@ -16,27 +16,17 @@
  * under the License.
  */
 
-package org.wso2.deployment.monitor.utils.notification.email;
+package org.wso2.deployment.monitor.utils.notification.sms;
 
 /**
- * Constants used in Email Sending
+ * Constants used in SMS Sending
  */
-public class EmailConstants {
+public class SMSConstants {
 
-    public static final String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
+    public static final String CLICKATELL = "clickatell";
 
-    public static final String MAIL_SMTP_SERVER = "mail.smtp.host";
-
-    public static final String MAIL_SMTP_PORT = "mail.smtp.port";
-
-    public static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
-
-    public static final String BODY_CONTENT_TYPE = "text/html";
-
-
-    public static final String EMAIL_BODY = "email.body";
-
-    public static final String EMAIL_SUBJECT = "email.subject";
+    public static final String SMS_MESSAGE = "sms.message";
 
     public static final int DEFAULT_TIMEOUT_VALUE = 60;
+
 }

@@ -25,8 +25,8 @@ import org.wso2.deployment.monitor.api.RunStatus;
 import org.wso2.deployment.monitor.api.HostBean;
 import org.wso2.deployment.monitor.core.TaskUtils;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
-import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
-import org.wso2.deployment.monitor.utils.notification.sms.SMSSender;
+import org.wso2.deployment.monitor.utils.notification.email.EmailNotifications;
+import org.wso2.deployment.monitor.utils.notification.sms.SMSNotifications;
 
 /**
  * Simple Implementation for callback
@@ -49,7 +49,7 @@ public class MultiHostCallback implements OnResultCallback {
                 sep = ", ";
             }
             logger.error(msg + ", Failed Hosts : [ " + failedHosts.toString() + " ]");
-            EmailSender.getInstance().send(msg, "Failed Hosts [ " + failedHosts.toString() + " ]");
+            EmailNotifications.getInstance().sendMail(msg, "Failed Hosts [ " + failedHosts.toString() + " ]");
 
             //Creating the SMS friendly message
             if (isSingleHost(runStatus)) {
@@ -66,7 +66,7 @@ public class MultiHostCallback implements OnResultCallback {
                 }
                 msg = "[Task Failed] " + failedHosts.toString() + " : " + runStatus.getTaskName();
             }
-            SMSSender.getInstance().send(msg);
+            SMSNotifications.getInstance().sendSMS(msg);
         }
     }
 
