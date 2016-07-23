@@ -35,7 +35,6 @@ public class ServerGroup {
         return name;
     }
 
-
     public List<String> getHosts() {
         return hosts;
     }
