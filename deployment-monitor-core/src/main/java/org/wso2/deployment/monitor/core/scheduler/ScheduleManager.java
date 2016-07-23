@@ -152,31 +152,13 @@ public class ScheduleManager {
 
     /**
      * Schedules jobs of the given Task for each server group defined for the task
-     * If allowConcurrentExecution is set to true in multi host server groups, A task will be scheduled for each host
      *
      * @param taskConfig {@link TaskConfig}
      */
     void scheduleTask(TaskConfig taskConfig) {
         Map<String, ServerGroup> serverGroupMap = TaskUtils.getServerGroupsByTaskConfig(taskConfig);
         for (Map.Entry<String, ServerGroup> entry : serverGroupMap.entrySet()) {
-            ServerGroup serverGroup = entry.getValue();
-            if (serverGroup.allowConcurrentExecution()) {
-                for (String host : serverGroup.getHosts()) {
-                    int index = serverGroup.getHosts().indexOf(host) + 1;
-                    List<String> hosts = new ArrayList<>();
-                    hosts.add(host);
-
-                    ServerGroup newServerGroup = new ServerGroup();
-                    newServerGroup.setName(serverGroup.getName() + "-" + index);
-                    newServerGroup.setHosts(hosts);
-                    newServerGroup.setTrustStore(serverGroup.getTrustStore());
-                    newServerGroup.setTrustStorePassword(serverGroup.getTrustStorePassword());
-
-                    scheduleTaskForServer(taskConfig, newServerGroup);
-                }
-            } else {
-                scheduleTaskForServer(taskConfig, entry.getValue());
-            }
+            scheduleTaskForServer(taskConfig, entry.getValue());
         }
     }
 
