@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.deployment.monitor.api.OnResultCallback;
 import org.wso2.deployment.monitor.api.RunStatus;
-import org.wso2.deployment.monitor.utils.notification.email.EmailSender;
 
 /**
  * Simple Logging Implementation for callback
@@ -39,10 +38,8 @@ public class SimpleLoggingCallBack implements OnResultCallback {
                     && runStatus.getCustomTaskDetails().get("Exception") != null) {
                 Exception e = (Exception) runStatus.getCustomTaskDetails().get("Exception");
                 logger.error(msg, e);
-                EmailSender.getInstance().send(msg, e.getMessage());
             } else {
                 logger.error(msg);
-                EmailSender.getInstance().send(msg, msg);
             }
         }
     }

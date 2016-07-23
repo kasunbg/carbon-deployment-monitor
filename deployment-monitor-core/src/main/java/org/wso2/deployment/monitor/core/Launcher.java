@@ -27,6 +27,8 @@ import org.wso2.deployment.monitor.core.model.GlobalConfig;
 import org.wso2.deployment.monitor.core.model.ServerGroup;
 import org.wso2.deployment.monitor.core.model.TaskConfig;
 import org.wso2.deployment.monitor.service.ServiceStarter;
+import org.wso2.deployment.monitor.utils.notification.email.EmailNotifications;
+import org.wso2.deployment.monitor.utils.notification.sms.SMSNotifications;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -81,6 +83,11 @@ public class Launcher {
 
             monitor.cmd.execute(config);
             ServiceStarter.startService(config.getServiceConfig());
+
+            //Initializing the Email and SMS Senders
+            logger.info("Initializing Email and SMS notifications");
+            EmailNotifications.getInstance();
+            SMSNotifications.getInstance();
 
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
